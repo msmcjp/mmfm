@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="MyFileManager.FileManagerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"        
+             xmlns:local="clr-namespace:MyFileManager"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <local:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+        <local:FocusCommand x:Key="FocusCommand"/>
+    </UserControl.Resources>
+
+    <UserControl.Style>
+        <Style TargetType="{x:Type UserControl}">
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin" Value="False">
+                    <Setter Property="Opacity" Value="0.7"/>
+                </Trigger>
+
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="Opacity" Value="1.0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+
+    <Grid>
+        <Grid.InputBindings>
+            <KeyBinding Command="{Binding CurrentDirectory.BackCommand}" Gesture="Back"/>
+            <KeyBinding Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=DirectoryList}" Gesture="Oem2"/>
+            <KeyBinding Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=FileList}" Gesture="OemPeriod"/>
+        </Grid.InputBindings>
+        
+        <Grid.Resources>
+            <DataTemplate x:Key="CheckCell">
+                <StackPanel Orientation="Horizontal" Visibility="{Binding IsNotAlias, Converter={StaticResource BoolVisibilityConverter}}">
+                    <CheckBox IsChecked="{Binding IsSelected}" Focusable="False"/>
+                </StackPanel>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding CurrentDirectory.FullPath}" FontSize="14" Margin="8"/>
+
+        <ListView x:Name="DirectoryList" Grid.Row="1" ItemsSource="{Binding CurrentDirectory.SubDirectories}" SelectedItem="{Binding CurrentDirectory.SelectedItem}" DisplayMemberPath="Value" TextSearch.TextPath="Name" IsTextSearchEnabled="True" SelectionMode="Single" IsTabStop="False" FontFamily="Lucida Console">
+            <b:Interaction.Behaviors>
+                <local:ListViewFocusNextItemOnSpaceKeyBehavior />
+                <local:ListViewFocusOnSelectItemBehavior />
+            </b:Interaction.Behaviors>
+
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="PreviewMouseRightButtonUp">
+                    <b:InvokeCommandAction Command="{Binding ShowContextCommand}"/>
+                </b:EventTrigger>
+                <b:EventTrigger EventName="MouseDoubleClick">
+                    <b:InvokeCommandAction Command="{Binding CurrentDirectory.LaunchCommand}"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+
+            <ListView.InputBindings>
+                <KeyBinding Gesture="Space" Command="{Binding CurrentDirectory.SelectCommand}"/>
+                <KeyBinding Gesture="Enter" Command="{Binding CurrentDirectory.LaunchCommand}"/>
+            </ListView.InputBindings>
+
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn CellTemplate="{StaticResource CheckCell}"  Width="30" />
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding ModifiedAt}" Width="150"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <GridSplitter Height="5" Grid.Row="2" HorizontalAlignment="Stretch" IsTabStop="False"/>
+
+        <ListView x:Name="FileList" Grid.Row="3" TextSearch.TextPath="Name" IsTextSearchEnabled="True" ItemsSource="{Binding Files.Items}" SelectedItem="{Binding Files.SelectedItem}" FontFamily="Lucida Console" SelectionMode="Single" IsTabStop="False">
+            <b:Interaction.Behaviors>
+                <local:ListViewFocusNextItemOnSpaceKeyBehavior />
+                <local:ListViewFocusOnSelectItemBehavior />
+            </b:Interaction.Behaviors>
+
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="PreviewMouseRightButtonUp">
+                    <b:InvokeCommandAction Command="{Binding ShowContextCommand}"/>
+                </b:EventTrigger>
+                <b:EventTrigger EventName="MouseDoubleClick">
+                    <b:InvokeCommandAction Command="{Binding Files.LaunchCommand}"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+
+            <ListView.InputBindings>
+                <KeyBinding Gesture="Space" Command="{Binding Files.SelectCommand}"/>
+                <KeyBinding Gesture="Enter" Command="{Binding Files.LaunchCommand}"/>
+            </ListView.InputBindings>
+
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn CellTemplate="{StaticResource CheckCell}" Width="30" />
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Extension" DisplayMemberBinding="{Binding Extension}" Width="Auto"/>
+                    <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding ModifiedAt}" Width="150"/>
+                    <GridViewColumn Header="Size" DisplayMemberBinding="{Binding FileSize}" Width="75"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>
