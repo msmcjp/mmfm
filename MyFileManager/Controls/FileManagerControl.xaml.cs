@@ -23,7 +23,8 @@ namespace MyFileManager
         public static readonly DependencyProperty IsActiveProperty =
             DependencyProperty.Register(
             "IsActive", typeof(Boolean),
-            typeof(FileManagerControl)
+            typeof(FileManagerControl),
+            new FrameworkPropertyMetadata(false, null)
         );
 
         public bool IsActive

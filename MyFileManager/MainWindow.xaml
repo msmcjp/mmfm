@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyFileManager"
         mc:Ignorable="d"  
-        Height="800" Width="900" >
-
+        Height="800" 
+        Width="900" 
+        WindowStartupLocation="CenterScreen" 
+        Title="mmfm"
+        local:InputBindingsSourceAttachedProperty.InputBindingsSource="{Binding InputBindings}"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing" >
     <Grid>
         <Grid.InputBindings>
             <KeyBinding Command="" Gesture="Tab"/>
@@ -18,41 +23,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" IsTabStop="False">
-            <MenuItem Header="File(_F)" IsTabStop="False">
-                <MenuItem Header="Copy(_C)" InputGestureText="Ctrl+C" IsTabStop="False" Command="{Binding ActiveFileManager.CopyCommand}" />
-                <MenuItem Header="Paste(_P)" InputGestureText="Ctrl+V" IsTabStop="False" />
-                <MenuItem Header="Delete(_P)" InputGestureText="Ctrl+D" IsTabStop="False" />
-                <MenuItem Header="Quit(_Q)" Click="ApplicationQuit_Click" InputGestureText="Alt+F4" IsTabStop="False"/>
-            </MenuItem>
-            <MenuItem Header="Edit(_E)" IsTabStop="False">
-                <MenuItem Header="Select All(_A)" IsTabStop="False" Command="{Binding ActiveFileManager.SelectAllCommand}"/>
-                <MenuItem Header="Deselect All(_U)" IsTabStop="False" Command="{Binding ActiveFileManager.DeselectAllCommand}"/>
-            </MenuItem>
-            <MenuItem Header="View(_V)" IsTabStop="False">
-
-            </MenuItem>
-            <MenuItem Header="Tool(_T)" IsTabStop="False">
-                <MenuItem Header="Option(_O)" InputGestureText="Ctrl+," IsTabStop="False" Click="Option_Click" />
-            </MenuItem>
-            <MenuItem Header="Help(_H)" IsTabStop="False">
-                <MenuItem Header="Help(_H)" InputGestureText="F1" IsTabStop="False"/>
-            </MenuItem>
-        </Menu>
-
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <local:FileManagerControl Grid.Column="0" DataContext="{Binding First}" IsActive="{Binding IsActive, Mode=OneWayToSource}"/>
+            <local:FileManagerControl x:Name="First" Grid.Column="0" DataContext="{Binding DualFileManager.First}" IsActive="{Binding IsActive, Mode=OneWayToSource}" />
             <GridSplitter HorizontalAlignment="Stretch" Grid.Column="1" IsTabStop="False"/>
-            <local:FileManagerControl  Grid.Column="2"  DataContext="{Binding Second}" IsActive="{Binding IsActive, Mode=OneWayToSource}"/>
+            <local:FileManagerControl x:Name="Second"  Grid.Column="2" DataContext="{Binding DualFileManager.Second}" IsActive="{Binding IsActive, Mode=OneWayToSource}" />
         </Grid>
 
         <StatusBar Grid.Row="2" Height="24">
-            <TextBlock Text="{Binding ActiveFileManager.SelectionStatusText}"/>
+            <TextBlock Text="{Binding DualFileManager.ActiveFileManager.SelectionStatusText}"/>
         </StatusBar>
     </Grid>
 </Window>

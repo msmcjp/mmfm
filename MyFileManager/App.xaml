@@ -4,6 +4,14 @@
              xmlns:local="clr-namespace:MyFileManager"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <DataTemplate DataType="{x:Type local:OperationProgressViewModel}">
+            <local:OperationProgressControl />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:CommandPaletteViewModel}">
+            <local:CommandPaletteControl/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:FileConflictViewModel}">
+            <local:FileConflictControl/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

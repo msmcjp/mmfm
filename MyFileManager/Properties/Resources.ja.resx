@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Copy_UnauthorizedException" xml:space="preserve">
-    <value>File is opened by other process or you don't have permission to access. Do you continue to copy files?</value>
+    <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないためコピーできませんでした。コピーを続けますか？</value>
   </data>
   <data name="Delete_UnauthorizedException" xml:space="preserve">
-    <value>File is opened by other process or you don't have permission to access. Do you continue to delete files?</value>
+    <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないためコピーできませんでした。削除を続けますか？</value>
   </data>
   <data name="Posfix_Copy" xml:space="preserve">
-    <value>- Copy</value>
+    <value>- コピー</value>
   </data>
 </root>

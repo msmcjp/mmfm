@@ -4,20 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"        
-             xmlns:local="clr-namespace:MyFileManager"
+             xmlns:behaviors="clr-namespace:MyFileManager.Behaviors"
+             xmlns:commands="clr-namespace:MyFileManager.Commands"
+             xmlns:converters="clr-namespace:MyFileManager.Converters"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
-        <local:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
-        <local:FocusCommand x:Key="FocusCommand"/>
+        <converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+        <commands:FocusCommand x:Key="FocusCommand"/>
     </UserControl.Resources>
 
     <UserControl.Style>
         <Style TargetType="{x:Type UserControl}">
             <Style.Triggers>
                 <Trigger Property="IsKeyboardFocusWithin" Value="False">
-                    <Setter Property="Opacity" Value="0.7"/>
+                    <Setter Property="Opacity" Value="0.5"/>
                 </Trigger>
 
                 <Trigger Property="IsKeyboardFocusWithin" Value="True">
@@ -29,8 +31,7 @@
 
     <Grid>
         <Grid.InputBindings>
-            <KeyBinding Command="{Binding CurrentDirectory.BackCommand}" Gesture="Back"/>
-            <KeyBinding Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=DirectoryList}" Gesture="Oem2"/>
+            <KeyBinding Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=DirectoryList}" Gesture="Oem2" Key="OemQuestion"/>
             <KeyBinding Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=FileList}" Gesture="OemPeriod"/>
         </Grid.InputBindings>
         
@@ -38,6 +39,12 @@
             <DataTemplate x:Key="CheckCell">
                 <StackPanel Orientation="Horizontal" Visibility="{Binding IsNotAlias, Converter={StaticResource BoolVisibilityConverter}}">
                     <CheckBox IsChecked="{Binding IsSelected}" Focusable="False"/>
+                </StackPanel>
+            </DataTemplate>
+            <DataTemplate x:Key="NameCell">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{Binding IconImage}" Width="20" Height="20"/>
+                    <TextBlock Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </DataTemplate>
         </Grid.Resources>
@@ -51,15 +58,19 @@
 
         <TextBlock Grid.Row="0" Text="{Binding CurrentDirectory.FullPath}" FontSize="14" Margin="8"/>
 
-        <ListView x:Name="DirectoryList" Grid.Row="1" ItemsSource="{Binding CurrentDirectory.SubDirectories}" SelectedItem="{Binding CurrentDirectory.SelectedItem}" DisplayMemberPath="Value" TextSearch.TextPath="Name" IsTextSearchEnabled="True" SelectionMode="Single" IsTabStop="False" FontFamily="Lucida Console">
+        <ListView x:Name="DirectoryList" Grid.Row="1" ItemsSource="{Binding CurrentDirectory.SubDirectories}" SelectedItem="{Binding CurrentDirectory.SelectedItem, Mode=OneWayToSource}" SelectedIndex="{Binding CurrentDirectory.SelectedIndex, Mode=TwoWay}" DisplayMemberPath="Value" TextSearch.TextPath="Name" IsTextSearchEnabled="True" SelectionMode="Single" IsTabStop="False" FontFamily="Segoe UI">
             <b:Interaction.Behaviors>
-                <local:ListViewFocusNextItemOnSpaceKeyBehavior />
-                <local:ListViewFocusOnSelectItemBehavior />
+                <behaviors:ListViewFocusNextItemOnSpaceKeyBehavior />
+                <behaviors:ListViewFocusOnSelectItemBehavior />
+                <behaviors:ListViewFocusSelectedIndexOnItemContainersGenerated />
             </b:Interaction.Behaviors>
 
             <b:Interaction.Triggers>
-                <b:EventTrigger EventName="PreviewMouseRightButtonUp">
-                    <b:InvokeCommandAction Command="{Binding ShowContextCommand}"/>
+                <!--<b:EventTrigger EventName="PreviewMouseRightButtonUp">
+                    <b:InvokeCommandAction Command="{Binding ShowContextCommand}" CommandParameter="{Binding SelectedPaths}"/>
+                </b:EventTrigger>-->
+                <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                    <b:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
                 </b:EventTrigger>
                 <b:EventTrigger EventName="MouseDoubleClick">
                     <b:InvokeCommandAction Command="{Binding CurrentDirectory.LaunchCommand}"/>
@@ -74,7 +85,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn CellTemplate="{StaticResource CheckCell}"  Width="30" />
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn Header="Name" CellTemplate="{StaticResource NameCell}" />
                     <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding ModifiedAt}" Width="150"/>
                 </GridView>
             </ListView.View>
@@ -82,15 +93,18 @@
 
         <GridSplitter Height="5" Grid.Row="2" HorizontalAlignment="Stretch" IsTabStop="False"/>
 
-        <ListView x:Name="FileList" Grid.Row="3" TextSearch.TextPath="Name" IsTextSearchEnabled="True" ItemsSource="{Binding Files.Items}" SelectedItem="{Binding Files.SelectedItem}" FontFamily="Lucida Console" SelectionMode="Single" IsTabStop="False">
+        <ListView x:Name="FileList" Grid.Row="3" TextSearch.TextPath="Name" IsTextSearchEnabled="True" ItemsSource="{Binding Files.Items}" SelectedItem="{Binding Files.SelectedItem}" FontFamily="Segoe UI" SelectionMode="Single" IsTabStop="False">
             <b:Interaction.Behaviors>
-                <local:ListViewFocusNextItemOnSpaceKeyBehavior />
-                <local:ListViewFocusOnSelectItemBehavior />
+                <behaviors:ListViewFocusNextItemOnSpaceKeyBehavior />
+                <behaviors:ListViewFocusOnSelectItemBehavior />
             </b:Interaction.Behaviors>
 
             <b:Interaction.Triggers>
-                <b:EventTrigger EventName="PreviewMouseRightButtonUp">
-                    <b:InvokeCommandAction Command="{Binding ShowContextCommand}"/>
+                <!--<b:EventTrigger EventName="PreviewMouseRightButtonUp">
+                    <b:InvokeCommandAction Command="{Binding ShowContextCommand}" CommandParameter="{Binding SelectedPaths}"/>
+                </b:EventTrigger>-->
+                <b:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                    <b:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
                 </b:EventTrigger>
                 <b:EventTrigger EventName="MouseDoubleClick">
                     <b:InvokeCommandAction Command="{Binding Files.LaunchCommand}"/>
@@ -104,8 +118,8 @@
 
             <ListView.View>
                 <GridView>
-                    <GridViewColumn CellTemplate="{StaticResource CheckCell}" Width="30" />
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn CellTemplate="{StaticResource CheckCell}" Width="30"/>
+                    <GridViewColumn Header="Name" CellTemplate="{StaticResource NameCell}" Width="Auto"/>
                     <GridViewColumn Header="Extension" DisplayMemberBinding="{Binding Extension}" Width="Auto"/>
                     <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding ModifiedAt}" Width="150"/>
                     <GridViewColumn Header="Size" DisplayMemberBinding="{Binding FileSize}" Width="75"/>

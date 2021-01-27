@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace MyFileManager
+namespace MyFileManager.Commands
 {
     public class FocusCommand : ICommand
     {
@@ -21,6 +21,11 @@ namespace MyFileManager
         public void Execute(object parameter)
         {
             (parameter as FrameworkElement).Focus();
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using MyFileManager.Commands;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,11 +15,10 @@ namespace MyFileManager
 {
     public class FilesViewModel : INotifyPropertyChanged
     {
-        private bool isFocused;
         private FileViewModel selectedItem;
 
         #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;        
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -26,17 +26,7 @@ namespace MyFileManager
         }
         #endregion
 
-        public ObservableCollection<FileViewModel> Items { get; } = new ObservableCollection<FileViewModel>();       
-
-        public bool IsFocused
-        {
-            get => isFocused;
-            set
-            {
-                isFocused = value;
-                OnPropertyChanged("IsFocused");
-            }
-        }
+        public ObservableCollection<FileViewModel> Items { get; } = new ObservableCollection<FileViewModel>();
 
         public FileViewModel SelectedItem
         {
@@ -48,7 +38,10 @@ namespace MyFileManager
             }
         }
 
-        public FileViewModel[] SelectedItems => Items.Where(item => item.IsSelected).ToArray();              
+        public FileViewModel[] SelectedItems
+        {
+            get => Items.Where(item => item.IsSelected).ToArray();
+        }
 
         public ICommand SelectCommand
         {
@@ -74,7 +67,8 @@ namespace MyFileManager
                     {
                         if (SelectedItem != null)
                         {
-                            System.Diagnostics.Process.Start(SelectedItem.Path);
+                            var startInfo = new ProcessStartInfo(SelectedItem.Path) { UseShellExecute = true };
+                            Process.Start(startInfo);
                         }
                     }
                     catch (Win32Exception)

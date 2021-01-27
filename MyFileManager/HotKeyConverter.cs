@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MyFileManager.Converters
+namespace MyFileManager
 {
     /// <summary>
     /// http://web.archive.org/web/20111225141637/http://huddledmasses.org:80/how-to-get-the-character-and-virtualkey-from-a-wpf-keydown-event/

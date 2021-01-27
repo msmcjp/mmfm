@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyFileManager.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,17 +22,14 @@ namespace MyFileManager
     public partial class MainWindow : Window
     {
         private HotKey.HotKey hotKey;
+        private Window overlayWindow = new OverlayWindow();
+        private Stack<Window> dialogStack = new Stack<Window>();
 
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new DualFileManagerViewModel();
+            this.DataContext = new MainViewModel();          
 
-            if (hotKey != null)
-            {
-                hotKey.Pressed -= HotKey_Pressed;
-                hotKey.Dispose();
-            }
             try
             {
                 hotKey = new HotKey.HotKey(this, ModifierKeys.Control, HotKeyConverter.ConvertFromString(";"));
@@ -41,6 +39,31 @@ namespace MyFileManager
             {
                 MessageBox.Show("Hot-key is already in use. Please use another key.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+
+            Msmc.Patterns.Messenger.Messenger.Default.Register<MessageBoxViewModel>(this, (vm) =>
+            {
+                MessageBox.Show(this, vm.Text, vm.Caption, vm.Button, vm.Icon, vm.Result, vm.Options);
+            });
+            
+            Msmc.Patterns.Messenger.Messenger.Default.Register<DialogViewModel>(this, (vm) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    var owner = (dialogStack.Count == 0) ? this : dialogStack.Peek();
+                    var window = new DialogWindow { Owner = owner, DataContext = vm };
+                    dialogStack.Push(window);
+                    vm.Result = window.ShowDialog();
+                    dialogStack.Pop();
+                });
+            });
+
+            Msmc.Patterns.Messenger.Messenger.Default.Register<OverlayViewModel>(this, (vm) =>
+            {
+                overlayWindow.DataContext = vm.Content;
+                overlayWindow.Show();
+                overlayWindow.Top = this.Top + SystemParameters.WindowCaptionHeight;
+                overlayWindow.Left = this.Left + this.Width / 2 - overlayWindow.Width / 2;
+            });
         }
 
         private void HotKey_Pressed(HotKey.HotKey obj)
@@ -56,14 +79,14 @@ namespace MyFileManager
             }
         }
 
-        private void ApplicationQuit_Click(object sender, RoutedEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Application.Current.Shutdown();
+            overlayWindow.Close();
         }
 
-        private void Option_Click(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            new OptionWindow { Owner = this }.ShowDialog();
+            First.DirectoryList.Focus();
         }
     }
 }

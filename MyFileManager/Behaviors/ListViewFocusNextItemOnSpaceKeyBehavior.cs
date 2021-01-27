@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace MyFileManager
+namespace MyFileManager.Behaviors
 {
     public class ListViewFocusNextItemOnSpaceKeyBehavior : Behavior<ListView>
     {       

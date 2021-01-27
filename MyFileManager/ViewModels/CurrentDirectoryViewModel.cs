@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyFileManager.Commands;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,20 +26,19 @@ namespace MyFileManager
 
         private Stack<FileViewModel> selectionStack;
         private FileViewModel[] rootDirectories;
-        private bool isFocused;
         private ObservableCollection<FileViewModel> subDirectories;
         private FileViewModel selectedItem;
 
-        public CurrentDirectoryViewModel(KeyValuePair<string, string>[] roots)
+        public CurrentDirectoryViewModel(DirectoryEntryViewModel[] roots)
         {
             selectionStack = new Stack<FileViewModel>();
-            rootDirectories = roots.Select(e => new FileViewModel(e.Key, e.Value)).ToArray();
+            rootDirectories = roots.Select(e => new FileViewModel(e.Path, e.Name, e.Icon)).ToArray();
             SubDirectories = new ObservableCollection<FileViewModel>(rootDirectories);
         }
 
         private FileViewModel Current => selectionStack.Count == 0 ? new FileViewModel("") : selectionStack.Peek();
 
-        public string Titlet => selectionStack.Count == 0 ? "" : selectionStack.Peek().Name;
+        public string Title => selectionStack.Count == 0 ? "" : selectionStack.Peek().Name;
 
         public string FullPath => selectionStack.Count == 0 ? "" : selectionStack.Peek().Path;        
 
@@ -53,16 +53,6 @@ namespace MyFileManager
             }
         }
 
-        public bool IsFocused
-        {
-            get => isFocused;
-            set
-            {
-                isFocused = value;
-                OnPropertyChanged("IsFocused");
-            }
-        }
-
         public FileViewModel SelectedItem
         {
             get => selectedItem;
@@ -73,8 +63,22 @@ namespace MyFileManager
             }
         }
 
-        public FileViewModel[] SelectedItems => SubDirectories.Where(item => item.IsSelected).ToArray();              
+        private int selectedIndex;
+        public int SelectedIndex
+        {
+            get => selectedIndex;
+            set
+            {
+                selectedIndex = value;
+                OnPropertyChanged("SelectedIndex");
+            }
+        }
 
+        public FileViewModel[] SelectedItems
+        {
+            get => SubDirectories.Where(item => item.IsSelected).ToArray();  
+        }
+                     
         public ICommand SelectCommand
         {
             get
@@ -102,7 +106,7 @@ namespace MyFileManager
 
                     if (SelectedItem.Name == "..")
                     {
-                        selectionStack.Pop();
+                        SelectedItem = selectionStack.Pop();
                     }
                     else
                     {
@@ -113,19 +117,18 @@ namespace MyFileManager
             }
         }
 
-        public ICommand BackCommand
+        public void BackToParent()
         {
-            get
+            if (selectionStack.Count > 0)
             {
-                return new RelayCommand(() =>
-                {
-                    if (selectionStack.Count > 0)
-                    {
-                        selectionStack.Pop();
-                        OnCurrentChanged();
-                    }
-                });
+                SelectedItem = selectionStack.Pop();
+                OnCurrentChanged();
             }
+        }
+
+        public void RaiseCurrentChanged()
+        {
+            OnCurrentChanged();
         }
 
         private FileViewModel[] ExtractDirectory(string directoryName)
@@ -159,7 +162,15 @@ namespace MyFileManager
             {
                 item.PropertyChanged -= SubDirectory_PropertyChanged;
             }
+
+            //SubDirectories.Clear();            
+            //var subDirectories = new ObservableCollection<FileViewModel>(selectionStack.Count == 0 ? rootDirectories : ExtractDirectory(Current.Path));
+            //foreach(var subDirectory in subDirectories)
+            //{
+            //    SubDirectories.Add(subDirectory);
+            //}
             SubDirectories = new ObservableCollection<FileViewModel>(selectionStack.Count == 0 ? rootDirectories : ExtractDirectory(Current.Path));
+
             foreach (var item in SubDirectories)
             {
                 item.PropertyChanged += SubDirectory_PropertyChanged;

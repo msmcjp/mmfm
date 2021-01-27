@@ -18,29 +18,27 @@ namespace MyFileManager
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
-        
+
         public FileManagerViewModel First { get; } = new FileManagerViewModel();
         public FileManagerViewModel Second { get; } = new FileManagerViewModel();
-        public FileManagerViewModel ActiveFileManager => First.IsActive ? First : (Second.IsActive ? Second : null);
+
+        public FileManagerViewModel ActiveFileManager
+        {
+            get;
+            private set;
+        }
 
         public DualFileManagerViewModel()
         {
-            First.PropertyChanged += First_PropertyChanged;
-            Second.PropertyChanged += Second_PropertyChanged;
+            First.PropertyChanged += FileManager_PropertyChanged;
+            Second.PropertyChanged += FileManager_PropertyChanged;
         }
 
-        private void Second_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void FileManager_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == "IsActive")
+            if(e.PropertyName == "IsActive" && ((FileManagerViewModel)sender).IsActive)
             {
-                OnPropertyChanged("ActiveFileManager");
-            }
-        }
-
-        private void First_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "IsActive")
-            {
+                ActiveFileManager = (FileManagerViewModel)sender;
                 OnPropertyChanged("ActiveFileManager");
             }
         }

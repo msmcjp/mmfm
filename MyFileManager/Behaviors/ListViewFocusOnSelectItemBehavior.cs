@@ -6,12 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace MyFileManager
+namespace MyFileManager.Behaviors
 {
     public class ListViewFocusOnSelectItemBehavior : Behavior<ListView>
     {
-        private int lastSelectedIndex = -1
-            ;
+        private int lastSelectedIndex = 0;
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -26,7 +25,7 @@ namespace MyFileManager
 
         private void AssociatedObject_IsKeyboardFocusWithinChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
         {
-            if((bool)e.NewValue == false)
+            if ((bool)e.NewValue == false)
             {
                 lastSelectedIndex = AssociatedObject.SelectedIndex;
                 AssociatedObject.SelectedIndex = -1;
@@ -37,5 +36,4 @@ namespace MyFileManager
             }
         }
     }
-
 }

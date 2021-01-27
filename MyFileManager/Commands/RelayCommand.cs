@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MyFileManager
+namespace MyFileManager.Commands
 {
-    public class RelayCommand<T> : ICommand 
+    public class RelayCommand<T> : ICommand
     {
         private Action<T> _action;
         private Func<T, bool> _canExecute;
@@ -20,18 +20,33 @@ namespace MyFileManager
             _canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add
+            {
+                CommandManager.RequerySuggested += value;
+            }
+            remove
+            {
+                CommandManager.RequerySuggested -= value;
+            }
+        }
 
         public bool CanExecute(object parameter)
         {
-            bool canExecute =  _action != null && parameter is T;
+            bool canExecute = _action != null && parameter is T;
 
-            if(_canExecute != null && canExecute)
+            if (_canExecute != null && canExecute)
             {
                 canExecute &= _canExecute((T)parameter);
             }
 
             return canExecute;
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
         }
 
         public void Execute(object parameter)
@@ -53,7 +68,17 @@ namespace MyFileManager
             _canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add
+            {
+                CommandManager.RequerySuggested += value;
+            }
+            remove
+            {
+                CommandManager.RequerySuggested -= value;
+            }
+        }
 
         public bool CanExecute(object parameter)
         {
@@ -62,6 +87,11 @@ namespace MyFileManager
                 return _canExecute();
             }
             return true;
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
         }
 
         public void Execute(object parameter)

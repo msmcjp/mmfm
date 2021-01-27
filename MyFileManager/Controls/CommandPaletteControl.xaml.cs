@@ -10,18 +10,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace MyFileManager
 {
     /// <summary>
-    /// OptionWindow.xaml の相互作用ロジック
+    /// CommandPaletteControl.xaml の相互作用ロジック
     /// </summary>
-    public partial class OptionWindow : Window
+    public partial class CommandPaletteControl : UserControl
     {
-        public OptionWindow()
+        public CommandPaletteControl()
         {
             InitializeComponent();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            CommandText.Focus();
         }
     }
 }
