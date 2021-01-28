@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyFileManager"
         mc:Ignorable="d"
-        Title="{Binding Title}"
+        Title="{Binding Title}"   
+        ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner">
     <Grid>
-        <ContentControl Content="{Binding Content}" />
+        <ContentControl Content="{Binding Content}" Focusable="False" />
     </Grid>
 </Window>
