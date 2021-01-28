@@ -76,7 +76,7 @@ namespace MyFileManager
 
         public FileViewModel[] SelectedItems
         {
-            get => SubDirectories.Where(item => item.IsSelected).ToArray();  
+            get => SubDirectories.Where(item => item.IsSelected && item.IsNotAlias).ToArray();  
         }
                      
         public ICommand SelectCommand

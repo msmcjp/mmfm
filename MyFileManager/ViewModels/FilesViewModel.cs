@@ -26,7 +26,15 @@ namespace MyFileManager
         }
         #endregion
 
-        public ObservableCollection<FileViewModel> Items { get; } = new ObservableCollection<FileViewModel>();
+        private ObservableCollection<FileViewModel> items = new ObservableCollection<FileViewModel>();
+        public ObservableCollection<FileViewModel> Items { 
+            get => items;
+            set
+            {
+                items = value;
+                OnPropertyChanged("Items");
+            }
+        }
 
         public FileViewModel SelectedItem
         {
@@ -35,6 +43,17 @@ namespace MyFileManager
             {
                 selectedItem = value;
                 OnPropertyChanged("SelectedItem");
+            }
+        }
+
+        private int selectedIndex;
+        public int SelectedIndex
+        {
+            get => selectedIndex;
+            set
+            {
+                selectedIndex = value;
+                OnPropertyChanged("SelectedIndex");
             }
         }
 

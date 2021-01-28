@@ -2,6 +2,7 @@
 using MyFileManager.Commands;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,6 @@ namespace MyFileManager
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
-        public event OperationProgressedEventHandler OperationProgressed;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -92,7 +92,7 @@ namespace MyFileManager
             get
             {
                 var targets = CurrentDirectory.SelectedItems.Concat(Files.SelectedItems).Select(i => i.Path).ToArray();
-                if (targets.Count() == 0 && SelectedItem != null)
+                if (targets.Count() == 0 && SelectedItem != null && SelectedItem.IsNotAlias)
                 {
                     targets = new string[1] { SelectedItem.Path };
                 }
@@ -412,8 +412,8 @@ namespace MyFileManager
             {
                 item.PropertyChanged -= File_PropertyChanged;
             }
-            Files.Items.Clear();
 
+            var files = new ObservableCollection<FileViewModel>();
             if (Directory.Exists(CurrentDirectory.FullPath) == true)
             {
                 try
@@ -422,14 +422,16 @@ namespace MyFileManager
                     {
                         var item = new FileViewModel(path);
                         item.PropertyChanged += File_PropertyChanged;
-                        Files.Items.Add(item);
+                        files.Add(item);
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
 
                 }
-            }          
+            }
+
+            Files.Items = files;
 
             OnPropertyChanged("SelectionStatusText");
             OnPropertyChanged("SelectedPaths");

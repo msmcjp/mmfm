@@ -58,7 +58,17 @@
 
         <TextBlock Grid.Row="0" Text="{Binding CurrentDirectory.FullPath}" FontSize="14" Margin="8"/>
 
-        <ListView x:Name="DirectoryList" Grid.Row="1" ItemsSource="{Binding CurrentDirectory.SubDirectories}" SelectedItem="{Binding CurrentDirectory.SelectedItem, Mode=OneWayToSource}" SelectedIndex="{Binding CurrentDirectory.SelectedIndex, Mode=TwoWay}" DisplayMemberPath="Value" TextSearch.TextPath="Name" IsTextSearchEnabled="True" SelectionMode="Single" IsTabStop="False" FontFamily="Segoe UI">
+        <ListView x:Name="DirectoryList"
+                  Grid.Row="1" 
+                  ItemsSource="{Binding CurrentDirectory.SubDirectories}" 
+                  SelectedItem="{Binding CurrentDirectory.SelectedItem, Mode=OneWayToSource}" 
+                  SelectedIndex="{Binding CurrentDirectory.SelectedIndex, Mode=TwoWay}"
+                  DisplayMemberPath="Value" 
+                  TextSearch.TextPath="Name"
+                  IsTextSearchEnabled="True" 
+                  SelectionMode="Single"
+                  IsTabStop="False" 
+                  FontFamily="Segoe UI">
             <b:Interaction.Behaviors>
                 <behaviors:ListViewFocusNextItemOnSpaceKeyBehavior />
                 <behaviors:ListViewFocusOnSelectItemBehavior />
@@ -93,10 +103,20 @@
 
         <GridSplitter Height="5" Grid.Row="2" HorizontalAlignment="Stretch" IsTabStop="False"/>
 
-        <ListView x:Name="FileList" Grid.Row="3" TextSearch.TextPath="Name" IsTextSearchEnabled="True" ItemsSource="{Binding Files.Items}" SelectedItem="{Binding Files.SelectedItem}" FontFamily="Segoe UI" SelectionMode="Single" IsTabStop="False">
+        <ListView x:Name="FileList" 
+                  Grid.Row="3" 
+                  TextSearch.TextPath="Name" 
+                  IsTextSearchEnabled="True" 
+                  ItemsSource="{Binding Files.Items}"
+                  SelectedItem="{Binding Files.SelectedItem, Mode=OneWayToSource}"
+                  SelectedIndex="{Binding Files.SelectedIndex, Mode=TwoWay}" 
+                  FontFamily="Segoe UI" 
+                  SelectionMode="Single" 
+                  IsTabStop="False">
             <b:Interaction.Behaviors>
                 <behaviors:ListViewFocusNextItemOnSpaceKeyBehavior />
                 <behaviors:ListViewFocusOnSelectItemBehavior />
+                <behaviors:ListViewFocusSelectedIndexOnItemContainersGenerated />
             </b:Interaction.Behaviors>
 
             <b:Interaction.Triggers>
