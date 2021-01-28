@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace MyFileManager
+namespace Mmfm
 {
     public class IconExtractor
     {

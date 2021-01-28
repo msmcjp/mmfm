@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
-namespace MyFileManager
+namespace Mmfm
 {
     /// <summary>
     /// https://stackoverflow.com/questions/9385129/window-inputbindings-with-a-bound-collection

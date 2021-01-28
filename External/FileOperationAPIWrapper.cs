@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
-namespace MyFileManager
+namespace Mmfm
 {
     /// <summary>
     /// https://stackoverflow.com/questions/3282418/send-a-file-to-the-recycle-bin
