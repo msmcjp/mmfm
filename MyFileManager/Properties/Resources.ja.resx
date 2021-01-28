@@ -126,4 +126,7 @@
   <data name="Posfix_Copy" xml:space="preserve">
     <value>- コピー</value>
   </data>
+  <data name="Rename_UnauthorizedException" xml:space="preserve">
+    <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないため名前を変更できませんでした。名前の変更を続けますか？</value>
+  </data>
 </root>

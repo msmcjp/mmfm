@@ -220,7 +220,7 @@ namespace MyFileManager
         {
             var message = new MessageBoxViewModel
             {
-                Caption = "An error occurred.",
+                Caption = "Error",
                 Icon = MessageBoxImage.Error,
                 Button = MessageBoxButton.YesNo,
                 Text = messageText
@@ -295,7 +295,7 @@ namespace MyFileManager
 
             Messenger.Default.Send(new DialogViewModel
             {
-                Title = "Copy file",
+                Title = "Copy",
                 Content = new OperationProgressViewModel(operation) { Title = $"Copying {operation.MaxValue} files." }
             });                  
             CurrentDirectory.RaiseCurrentChanged();
@@ -353,9 +353,47 @@ namespace MyFileManager
             }
 
             Messenger.Default.Send(new DialogViewModel { 
-                Title = "Delete files",
+                Title = "Delete",
                 Content = new OperationProgressViewModel(operation) { Title = $"Deleting {operation.MaxValue} files." }
             });            
+            CurrentDirectory.RaiseCurrentChanged();
+        }
+
+        public void RenameFiles()
+        {
+            foreach(var path in SelectedPaths)
+            {
+                var content = new FileRenameViewModel(path);
+                var dialog = new DialogViewModel
+                {
+                    Title = "Rename",
+                    Content = content
+                };
+
+                Messenger.Default.Send(dialog);
+
+                if(dialog.Result == false)
+                {
+                    break;
+                }
+
+                try
+                {
+                    if(path != content.Next)
+                    {
+                        File.Move(path, content.Next);
+                    }
+                }
+                catch(UnauthorizedAccessException)
+                {
+                    if(ConfirmContinueOperation(Properties.Resources.Rename_UnauthorizedException))
+                    {
+                        continue;
+                    }
+                    break;
+                }
+            }
+  
             CurrentDirectory.RaiseCurrentChanged();
         }
 

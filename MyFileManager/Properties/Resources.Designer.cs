@@ -86,5 +86,14 @@ namespace MyFileManager.Properties {
                 return ResourceManager.GetString("Posfix_Copy", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   File is opened by other process or you don&apos;t have permission to access. Do you continue to rename file? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Rename_UnauthorizedException {
+            get {
+                return ResourceManager.GetString("Rename_UnauthorizedException", resourceCulture);
+            }
+        }
     }
 }

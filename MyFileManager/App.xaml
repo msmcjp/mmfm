@@ -13,5 +13,8 @@
         <DataTemplate DataType="{x:Type local:FileConflictViewModel}">
             <local:FileConflictControl/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type local:FileRenameViewModel}">
+            <local:FileRenameControl/>
+        </DataTemplate>
     </Application.Resources>
 </Application>
