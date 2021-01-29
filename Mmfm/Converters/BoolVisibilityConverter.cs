@@ -8,14 +8,13 @@ namespace Mmfm.Converters
 {
     public class BoolVisibilityConverter : IValueConverter
     {
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if(value is bool == false || targetType != typeof(Visibility))
             {
-                return Visibility.Hidden;
+                return Visibility.Collapsed;
             }
-            return (bool)value ? Visibility.Visible : Visibility.Hidden;
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
