@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Mmfm.Behaviors
 {
@@ -29,12 +30,12 @@ namespace Mmfm.Behaviors
         {
             if (AssociatedObject.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
             {
-                if(AssociatedObject.SelectedIndex < 0)
+                // https://stackoverflow.com/questions/7366961/listbox-scrollintoview-when-using-collectionviewsource-with-groupdescriptions-i
+                Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
                 {
-                    return;
-                }
-                var container = AssociatedObject.ItemContainerGenerator.ContainerFromIndex(AssociatedObject.SelectedIndex);
-                (container as UIElement)?.Focus();
+                    var container = AssociatedObject.ItemContainerGenerator.ContainerFromItem(AssociatedObject.SelectedItem);
+                    (container as UIElement)?.Focus();
+                }));
             }
         }
     }
