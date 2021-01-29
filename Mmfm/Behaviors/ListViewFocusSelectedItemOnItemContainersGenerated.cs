@@ -12,7 +12,7 @@ using System.Windows.Threading;
 
 namespace Mmfm.Behaviors
 {
-    public class ListViewFocusSelectedIndexOnItemContainersGenerated : Behavior<ListView>
+    public class ListViewFocusSelectedItemOnItemContainersGenerated : Behavior<ListView>
     {        
         protected override void OnAttached()
         {

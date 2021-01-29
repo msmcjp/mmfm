@@ -32,7 +32,7 @@ namespace Mmfm
             commands.Add(new CommandItemViewModel("Select All", "Alt+U", new RelayCommand(() => DualFileManager.ActiveFileManager.SelectAll(), CanExecute)));
             commands.Add(new CommandItemViewModel("Deselect All", "Shift+Alt+U", new RelayCommand(() => DualFileManager.ActiveFileManager.DeselectAll(), CanExecute)));
             commands.Add(new CommandItemViewModel("Rename", "F2", new RelayCommand(() => DualFileManager.ActiveFileManager.RenameFiles(), CanExecute)));
-
+ 
             var commandsToRegister = commands.ToArray();
             commands.Add(new CommandItemViewModel("", "Ctrl+Shift+P", new RelayCommand(() => {
                 var content = new CommandPaletteViewModel(commandsToRegister);

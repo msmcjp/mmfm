@@ -24,26 +24,41 @@ namespace Mmfm
 
         public event EventHandler CurrentChanged;
 
-        private Stack<FileViewModel> selectionStack;
-        private FileViewModel[] rootDirectories;
-        private ObservableCollection<FileViewModel> subDirectories;
+        private Stack<FileViewModel> selectionStack = new Stack<FileViewModel>();
+        private FileViewModel[] roots;
+        private ObservableCollection<FileViewModel> subDirectories = new ObservableCollection<FileViewModel>();
         private FileViewModel selectedItem;
 
-        public CurrentDirectoryViewModel(DirectoryEntryViewModel[] roots)
+        public CurrentDirectoryViewModel()
         {
-            selectionStack = new Stack<FileViewModel>();
-            rootDirectories = roots.Select(e => new FileViewModel(e.Path, e.Name, e.Icon)).ToArray();
-            SubDirectories = new ObservableCollection<FileViewModel>(rootDirectories);
         }
 
-        private FileViewModel Current => selectionStack.Count == 0 ? new FileViewModel("") : selectionStack.Peek();
+        private FileViewModel Current => selectionStack.Count == 0 ? new FileViewModel("", "") : selectionStack.Peek();
+
+        public bool IsRoot => selectionStack.Count == 0;
+
+        public bool IsNotRoot => !IsRoot;
 
         public string Title => selectionStack.Count == 0 ? "" : selectionStack.Peek().Name;
 
-        public string FullPath => selectionStack.Count == 0 ? "" : selectionStack.Peek().Path;        
+        public string FullPath => selectionStack.Count == 0 ? "" : selectionStack.Peek().Path;
 
-        public ObservableCollection<FileViewModel> SubDirectories 
-        { 
+        public FileViewModel[] Roots
+        {
+            get => roots;
+            set
+            {
+                roots = value;
+                OnPropertyChanged("Roots");
+                if (IsRoot)
+                {
+                    OnCurrentChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<FileViewModel> SubDirectories
+        {
             get => subDirectories;
             private set
             {
@@ -63,29 +78,18 @@ namespace Mmfm
             }
         }
 
-        private int selectedIndex;
-        public int SelectedIndex
-        {
-            get => selectedIndex;
-            set
-            {
-                selectedIndex = value;
-                OnPropertyChanged("SelectedIndex");
-            }
-        }
-
         public FileViewModel[] SelectedItems
         {
-            get => SubDirectories.Where(item => item.IsSelected && item.IsNotAlias).ToArray();  
+            get => SubDirectories.Where(item => item.IsSelected && item.IsNotAlias).ToArray();
         }
-                     
+
         public ICommand SelectCommand
         {
             get
             {
                 return new RelayCommand(() =>
                 {
-                    if(SelectedItem != null) 
+                    if (SelectedItem != null)
                     {
                         SelectedItem.IsSelected = !SelectedItem.IsSelected;
                     }
@@ -99,20 +103,20 @@ namespace Mmfm
             {
                 return new RelayCommand(() =>
                 {
-                    if(SelectedItem == null)
+                    if (SelectedItem == null)
                     {
                         return;
                     }
 
                     if (SelectedItem.Name == "..")
                     {
-                        SelectedItem = selectionStack.Pop();
+                        OnCurrentChanged(selectionStack.Pop());
                     }
                     else
                     {
                         selectionStack.Push(SelectedItem);
+                        OnCurrentChanged();
                     }
-                    OnCurrentChanged();
                 });
             }
         }
@@ -121,8 +125,7 @@ namespace Mmfm
         {
             if (selectionStack.Count > 0)
             {
-                SelectedItem = selectionStack.Pop();
-                OnCurrentChanged();
+                OnCurrentChanged(selectionStack.Pop());
             }
         }
 
@@ -138,14 +141,14 @@ namespace Mmfm
                 return null;
             }
 
-            var subDirectories = new SortedDictionary<string, string>();
-            subDirectories.Add(directoryName, "..");
-
+            var subDirectories = new List<FileViewModel>();
+            
+            subDirectories.Add(FileViewModel.CreateAlias(directoryName, "..", FullPath));
             try
             {
                 foreach (var path in Directory.GetDirectories(directoryName))
                 {
-                    subDirectories.Add(path, Path.GetFileName(path));
+                    subDirectories.Add(new FileViewModel(path, FullPath));
                 }
             }
             catch (UnauthorizedAccessException)
@@ -153,31 +156,32 @@ namespace Mmfm
 
             }
 
-            return subDirectories.Select(e => e.Value != ".." ? new FileViewModel(e.Key) : new FileViewModel(e.Key , e.Value)).ToArray();
+            return subDirectories.ToArray();
         }
 
-        protected void OnCurrentChanged()
+        protected void OnCurrentChanged(FileViewModel selectedItem = null)
         {
             foreach(var item in SubDirectories)
             {
                 item.PropertyChanged -= SubDirectory_PropertyChanged;
             }
 
-            //SubDirectories.Clear();            
-            //var subDirectories = new ObservableCollection<FileViewModel>(selectionStack.Count == 0 ? rootDirectories : ExtractDirectory(Current.Path));
-            //foreach(var subDirectory in subDirectories)
-            //{
-            //    SubDirectories.Add(subDirectory);
-            //}
-            SubDirectories = new ObservableCollection<FileViewModel>(selectionStack.Count == 0 ? rootDirectories : ExtractDirectory(Current.Path));
+            SubDirectories = new ObservableCollection<FileViewModel>(selectionStack.Count == 0 ? roots : ExtractDirectory(Current.Path));
 
             foreach (var item in SubDirectories)
             {
                 item.PropertyChanged += SubDirectory_PropertyChanged;
             }
 
+            if(selectedItem != null)
+            {
+                SelectedItem = selectedItem;
+            }
+
             OnPropertyChanged("Title");
             OnPropertyChanged("FullPath");
+            OnPropertyChanged("IsRoot");
+            OnPropertyChanged("IsNotRoot");
             CurrentChanged?.Invoke(this, new EventArgs());
         }
 

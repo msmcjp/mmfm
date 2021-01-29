@@ -24,20 +24,20 @@ namespace Mmfm
 
         private bool isActive;
 
-        private static DirectoryEntryViewModel[] DefaultEntries()
+        private static IEnumerable<FileViewModel> PCEntries()
         {
-            var entries = new DirectoryEntryViewModel[] {
-                new DirectoryEntryViewModel { Path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop), Name = "Desktop" , Icon = IconExtractor.Extract("shell32.dll", 34, true) },
-                new DirectoryEntryViewModel { Path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Name = "My Documents",   Icon = IconExtractor.Extract("shell32.dll", 1, true) },
-                new DirectoryEntryViewModel { Path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), Name = "My Pictures", Icon = IconExtractor.Extract("shell32.dll", 325, true) }
+            var entries = new FileViewModel[] {
+                FileViewModel.CreatePC(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Desktop" , IconExtractor.Extract("shell32.dll", 34, true) ),
+                FileViewModel.CreatePC(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Documents", IconExtractor.Extract("shell32.dll", 1, true) ),
+                FileViewModel.CreatePC(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "My Pictures", IconExtractor.Extract("shell32.dll", 325, true) )
              }.ToList();
 
             foreach (var di in DriveInfo.GetDrives())
-            {
-                entries.Add(new DirectoryEntryViewModel { Path = di.Name, Name = $"{di.Name.Trim(Path.DirectorySeparatorChar)} {DriveDescription(di)}", Icon = DriveIcon(di) });
+            { 
+                entries.Add(FileViewModel.CreatePC(di.Name, $"{di.Name.Trim(Path.DirectorySeparatorChar)} {DriveDescription(di)}", DriveIcon(di) ));
             }
 
-            return entries.ToArray();
+            return entries;
         }
 
         private static string DriveDescription(DriveInfo di)
@@ -81,9 +81,11 @@ namespace Mmfm
             }
         }
 
-        public CurrentDirectoryViewModel CurrentDirectory { get; } = new CurrentDirectoryViewModel(DefaultEntries());
+        public CurrentDirectoryViewModel CurrentDirectory { get; } = new CurrentDirectoryViewModel();
 
         public FilesViewModel Files { get; } = new FilesViewModel();
+
+        public ObservableCollection<FileViewModel> Favorites { get;} = new ObservableCollection<FileViewModel>();
 
         public bool IsActive { get => isActive; set { isActive = value; OnPropertyChanged("IsActive"); } }
 
@@ -401,7 +403,14 @@ namespace Mmfm
         {
             CurrentDirectory.CurrentChanged += CurrentDirectory_CurrentChanged;
             CurrentDirectory.PropertyChanged += CurrentDirectory_PropertyChanged;
-            Files.PropertyChanged += Files_PropertyChanged;            
+            Favorites.CollectionChanged += Favorites_CollectionChanged;
+            Files.PropertyChanged += Files_PropertyChanged;
+            CurrentDirectory.Roots = PCEntries().Concat(Favorites).ToArray();
+        }
+
+        private void Favorites_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            CurrentDirectory.Roots = PCEntries().Concat(Favorites).ToArray();
         }
 
         private void CurrentDirectory_CurrentChanged(object sender, EventArgs e)
@@ -420,7 +429,7 @@ namespace Mmfm
                 {
                     foreach (var path in Directory.GetFiles(CurrentDirectory.FullPath))
                     {
-                        var item = new FileViewModel(path);
+                        var item = new FileViewModel(path, "");
                         item.PropertyChanged += File_PropertyChanged;
                         files.Add(item);
                     }

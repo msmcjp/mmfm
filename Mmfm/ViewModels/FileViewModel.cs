@@ -32,28 +32,41 @@ namespace Mmfm
         private DateTime modifiedAt;
         private long fileSize;
         private bool isAlias;
+        private string itemGroup;
 
-        public FileViewModel(string path, string name) : this(path, name, null)
+        public static FileViewModel CreateAlias(string path, string aliasName, string itemGroup)
         {
-
+            return new FileViewModel(path, aliasName, null, itemGroup);
         }
 
-        public FileViewModel(string path, string alias, Icon icon)
+        public static FileViewModel CreatePC(string path, string name, Icon icon)
         {
-            this.path = path;
-            name = alias;
+            return new FileViewModel(path, name, icon, "\U0001f4bb PC");
+        }
+
+        public static FileViewModel CreateFavorite(string path, string name, Icon icon)
+        {
+            return new FileViewModel(path, name, icon, "\U0001f496 Favorite");
+        }
+
+        private FileViewModel(string path, string aliasName, Icon icon, string itemGroup)
+        {
+            Path = path;
+            Name = aliasName;
             isAlias = true;
+            ItemGroup = itemGroup;
             if (icon != null)
             {
                 iconImage = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             }
         }
 
-        public FileViewModel(string path)
+        public FileViewModel(string path, string itemGroup)
         {
-            this.path = path;
-            name = System.IO.Path.GetFileNameWithoutExtension(path);
-            extension = System.IO.Path.GetExtension(path);
+            Path = path;
+            ItemGroup = itemGroup;
+            Name = System.IO.Path.GetFileNameWithoutExtension(path);
+            Extension = System.IO.Path.GetExtension(path);
 
             var fi = new FileInfo(path);
             modifiedAt = fi.LastWriteTime;
@@ -61,6 +74,24 @@ namespace Mmfm
             if (fi.Attributes.HasFlag(FileAttributes.Directory) == false)
             {
                 fileSize = fi.Length;
+            }
+        }
+
+        public string Path
+        {
+            get => path;
+            private set
+            {
+                path = value;
+            }
+        }
+
+        public string ItemGroup
+        {
+            get => itemGroup;
+            private set
+            {
+                itemGroup = value;
             }
         }
 
@@ -73,10 +104,6 @@ namespace Mmfm
                 OnPropertyChanged("IsSelected");
             }
         }
-
-        public bool IsNotAlias => !isAlias;
-
-        public bool IsFolder => Directory.Exists(path);
 
         public BitmapSource IconImage
         {
@@ -97,7 +124,7 @@ namespace Mmfm
         public string Name
         {
             get => name;
-            set
+            private set
             {
                 name = value;
                 OnPropertyChanged("Name");
@@ -107,19 +134,21 @@ namespace Mmfm
         public string Extension
         {
             get => extension;
-            set
+            private set
             {
                 extension = value;
                 OnPropertyChanged("Extension");
             }
         }
 
+        public bool IsNotAlias => !isAlias;
+
+        public bool IsFolder => Directory.Exists(path);
+
         public string ModifiedAt => isAlias ? "" : modifiedAt.ToString("yyyy/MM/dd HH:mm");
 
         public string FileSize => isAlias ? "" : fileSize.ToFileSize();
-
-        public string Path => path;
-
+      
         public override bool Equals(object obj)
         {
             if (obj == null || this.GetType() != obj.GetType())

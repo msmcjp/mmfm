@@ -7,6 +7,9 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Behaviors\ListViewFocusOnSelectItemBehavior.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\External\FileOperationAPIWrapper.cs" Link="FileOperationAPIWrapper.cs" />
     <Compile Include="..\External\HotKey.cs" Link="HotKey.cs" />
     <Compile Include="..\External\HotKeyConverter.cs" Link="HotKeyConverter.cs" />

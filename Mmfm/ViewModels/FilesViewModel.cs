@@ -46,17 +46,6 @@ namespace Mmfm
             }
         }
 
-        private int selectedIndex;
-        public int SelectedIndex
-        {
-            get => selectedIndex;
-            set
-            {
-                selectedIndex = value;
-                OnPropertyChanged("SelectedIndex");
-            }
-        }
-
         public FileViewModel[] SelectedItems
         {
             get => Items.Where(item => item.IsSelected).ToArray();
