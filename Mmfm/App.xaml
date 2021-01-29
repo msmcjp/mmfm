@@ -16,5 +16,8 @@
         <DataTemplate DataType="{x:Type local:FileRenameViewModel}">
             <local:FileRenameControl/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type local:FavoriteRegisterViewModel}">
+            <local:FavoriteRegisterControl/>
+        </DataTemplate>
     </Application.Resources>
 </Application>
