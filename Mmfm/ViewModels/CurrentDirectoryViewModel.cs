@@ -55,7 +55,7 @@ namespace Mmfm
 
         public bool IsNotRoot => !IsRoot;
 
-        public string Title => selectionStack.Count == 0 ? "" : selectionStack.Peek().Name;
+        public string Title => FullPath.Replace("\\", " \U0001f782 ");
 
         public string FullPath => selectionStack.Count == 0 ? "" : selectionStack.Peek().Path;
 

@@ -67,7 +67,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{Binding CurrentDirectory.FullPath}" FontSize="14" FontWeight="Bold" Margin="5" Visibility="{Binding CurrentDirectory.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}"/>
+        <TextBlock Grid.Row="0" Text="{Binding CurrentDirectory.Title}" FontSize="14" FontWeight="Bold" Margin="5" Visibility="{Binding CurrentDirectory.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
 
         <ListView x:Name="DirectoryList"
                   Grid.Row="1" 
