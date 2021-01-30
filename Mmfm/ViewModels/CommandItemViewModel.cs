@@ -73,14 +73,23 @@ namespace Mmfm
 
         public CommandItemViewModel(string name, Func<IEnumerable<ICommandItem>> subItems, string shortCut = null)
         {
+            if (subItems == null)
+            {
+                throw new ArgumentNullException("subItems");
+            }
+
             Name = name;
             Shortcut = shortCut;
             Command = new RelayCommand(() =>
             {
-                var content = new CommandPaletteViewModel(subItems());
+                var content = new CommandPaletteViewModel(subItems.Invoke().Where(i => i.Command.CanExecute(null)));
                 Messenger.Default.Send(new OverlayViewModel(content));
             },
-            () => subItems?.Invoke().Count() > 0);
+            () =>
+            {
+                return subItems.Invoke().Where(i => i.Command.CanExecute(null)).Count() > 0;
+            });
+
             this.subItems = subItems;
         }
     }
