@@ -33,6 +33,7 @@ namespace Mmfm
         }
 
         private ObservableCollection<FileViewModel> favorites = new ObservableCollection<FileViewModel>();
+
         private void Favorite()
         {
             var path = DualFileManager.ActiveFileManager.CurrentDirectory.FullPath;
@@ -106,18 +107,13 @@ namespace Mmfm
             commands.Add(new CommandItemViewModel("Deselect All", "Shift+Alt+U", new RelayCommand(() => DualFileManager.ActiveFileManager.DeselectAll(), CanExecute)));
             commands.Add(new CommandItemViewModel("Rename", "F2", new RelayCommand(() => DualFileManager.ActiveFileManager.RenameFiles(), CanExecute)));
             commands.Add(new CommandItemViewModel("Favorite", "Alt+F", new RelayCommand(() => Favorite(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Unfavorite", "Shift+Alt+F", new RelayCommand(() => Unfavorite(), CanExecute)));
-            
+            commands.Add(new CommandItemViewModel("Unfavorite", "Shift+Alt+F", new RelayCommand(() => Unfavorite(), CanExecute)));           
             commands.Add(CreateJumptoFavoriteCommand(favorites));
-            favorites.CollectionChanged += Favorites_CollectionChanged;
-            DualFileManager.First.Favorites = DualFileManager.Second.Favorites = favorites;
-
+            
             commandPallete = new CommandItemViewModel("", commands, "Ctrl+Shift+P");
-        }
 
-        private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged("InputBindings");
-        }
+            favorites.CollectionChanged += (s, e) => OnPropertyChanged("InputBindings");
+            DualFileManager.First.Favorites = DualFileManager.Second.Favorites = favorites;
+        } 
     }
 }
