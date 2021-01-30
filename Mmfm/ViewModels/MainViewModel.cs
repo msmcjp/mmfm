@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace Mmfm
 {
@@ -22,7 +23,8 @@ namespace Mmfm
             return DualFileManager.ActiveFileManager.CurrentDirectory.FullPath.Length > 0;
         }
 
-        private void ShowsAddFavorite()
+        private ObservableCollection<FileViewModel> favorites = new ObservableCollection<FileViewModel>();
+        private void Favorite()
         {
             var path = DualFileManager.ActiveFileManager.CurrentDirectory.FullPath;
             var content = new FavoriteRegisterViewModel(path);
@@ -32,8 +34,38 @@ namespace Mmfm
             if (dialog.Result == true)
             {
                 var favorite = FileViewModel.CreateFavorite(path, content.FavoriteName, IconExtractor.Extract(path));
-                DualFileManager.First.Favorites.Add(favorite);
-                DualFileManager.Second.Favorites.Add(favorite);
+                favorites.Add(favorite);
+            }
+        }
+
+        private void Unfavorite()
+        {
+            var path = DualFileManager.ActiveFileManager.CurrentDirectory.FullPath;
+
+            FileViewModel favorite = null;
+            if((favorite = favorites.SingleOrDefault(f => f.Path == path)) == null){
+                Messenger.Default.Send(new MessageBoxViewModel
+                {
+                    Caption = "Error",
+                    Text = $"{path} is not registered to favorite.",
+                    Icon = System.Windows.MessageBoxImage.Error,
+                    Button = System.Windows.MessageBoxButton.OK
+                });
+                return;
+            }
+
+            var message = new MessageBoxViewModel
+            {
+                Caption = "Confirm",
+                Text = $"Remove {path} from favorite?",
+                Icon = System.Windows.MessageBoxImage.Question,
+                Button = System.Windows.MessageBoxButton.YesNo
+            };
+
+            Messenger.Default.Send(message);
+            if (message.Result == System.Windows.MessageBoxResult.Yes)
+            {
+                favorites.Remove(favorite);
             }
         }
 
@@ -47,13 +79,16 @@ namespace Mmfm
             commands.Add(new CommandItemViewModel("Select All", "Alt+U", new RelayCommand(() => DualFileManager.ActiveFileManager.SelectAll(), CanExecute)));
             commands.Add(new CommandItemViewModel("Deselect All", "Shift+Alt+U", new RelayCommand(() => DualFileManager.ActiveFileManager.DeselectAll(), CanExecute)));
             commands.Add(new CommandItemViewModel("Rename", "F2", new RelayCommand(() => DualFileManager.ActiveFileManager.RenameFiles(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Favorite", "Alt+F", new RelayCommand(() => ShowsAddFavorite(), CanExecute)));
+            commands.Add(new CommandItemViewModel("Favorite", "Alt+F", new RelayCommand(() => Favorite(), CanExecute)));
+            commands.Add(new CommandItemViewModel("Unfavorite", "Shift+Alt+F", new RelayCommand(() => Unfavorite(), CanExecute)));
 
             var commandsToRegister = commands.ToArray();
             commands.Add(new CommandItemViewModel("", "Ctrl+Shift+P", new RelayCommand(() => {
                 var content = new CommandPaletteViewModel(commandsToRegister);
                 Messenger.Default.Send(new OverlayViewModel(content));
             })));
+
+            DualFileManager.First.Favorites = DualFileManager.Second.Favorites = favorites;
         }
     }
 }

@@ -85,7 +85,27 @@ namespace Mmfm
 
         public FilesViewModel Files { get; } = new FilesViewModel();
 
-        public ObservableCollection<FileViewModel> Favorites { get;} = new ObservableCollection<FileViewModel>();
+        private ObservableCollection<FileViewModel> favorites;
+        public ObservableCollection<FileViewModel> Favorites
+        {
+            get => favorites; 
+            set
+            {
+                if (favorites != null)
+                {
+                    favorites.CollectionChanged -= Favorites_CollectionChanged;
+                }
+
+                favorites = value;
+
+                if(favorites != null)
+                {
+                    favorites.CollectionChanged += Favorites_CollectionChanged;
+                }
+
+                OnPropertyChanged("Favorites");
+            }
+        }
 
         public bool IsActive { get => isActive; set { isActive = value; OnPropertyChanged("IsActive"); } }
 
@@ -403,9 +423,8 @@ namespace Mmfm
         {
             CurrentDirectory.CurrentChanged += CurrentDirectory_CurrentChanged;
             CurrentDirectory.PropertyChanged += CurrentDirectory_PropertyChanged;
-            Favorites.CollectionChanged += Favorites_CollectionChanged;
             Files.PropertyChanged += Files_PropertyChanged;
-            CurrentDirectory.Roots = PCEntries().Concat(Favorites).ToArray();
+            CurrentDirectory.Roots = PCEntries().ToArray();
         }
 
         private void Favorites_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
