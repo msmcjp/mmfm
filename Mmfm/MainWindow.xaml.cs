@@ -42,7 +42,7 @@ namespace Mmfm
 
             Msmc.Patterns.Messenger.Messenger.Default.Register<MessageBoxViewModel>(this, (vm) =>
             {
-                MessageBox.Show(this, vm.Text, vm.Caption, vm.Button, vm.Icon, vm.Result, vm.Options);
+                vm.Result = MessageBox.Show(this, vm.Text, vm.Caption, vm.Button, vm.Icon, vm.Result, vm.Options);
             });
             
             Msmc.Patterns.Messenger.Messenger.Default.Register<DialogViewModel>(this, (vm) =>
