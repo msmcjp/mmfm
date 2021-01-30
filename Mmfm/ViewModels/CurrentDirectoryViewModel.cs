@@ -33,7 +33,23 @@ namespace Mmfm
         {
         }
 
-        private FileViewModel Current => selectionStack.Count == 0 ? new FileViewModel("", "") : selectionStack.Peek();
+        public FileViewModel Current
+        {
+            get => selectionStack.Count == 0 ? new FileViewModel("", "") : selectionStack.Peek();
+            set
+            {
+                if(value != null)
+                {
+                    selectionStack.Push(value);
+                    OnCurrentChanged(null);
+                }
+                else
+                {
+                    selectionStack.Clear();
+                    OnCurrentChanged(null);
+                }
+            }
+        }
 
         public bool IsRoot => selectionStack.Count == 0;
 

@@ -33,8 +33,8 @@ namespace Mmfm
              }.ToList();
 
             foreach (var di in DriveInfo.GetDrives())
-            { 
-                entries.Add(FileViewModel.CreatePC(di.Name, $"{di.Name.Trim(Path.DirectorySeparatorChar)} {DriveDescription(di)}", DriveIcon(di) ));
+            {
+                entries.Add(FileViewModel.CreatePC(di.Name, $"{di.Name.Trim(Path.DirectorySeparatorChar)} {DriveDescription(di)}", DriveIcon(di)));
             }
 
             return entries;
@@ -88,7 +88,7 @@ namespace Mmfm
         private ObservableCollection<FileViewModel> favorites;
         public ObservableCollection<FileViewModel> Favorites
         {
-            get => favorites; 
+            get => favorites;
             set
             {
                 if (favorites != null)
@@ -98,7 +98,7 @@ namespace Mmfm
 
                 favorites = value;
 
-                if(favorites != null)
+                if (favorites != null)
                 {
                     favorites.CollectionChanged += Favorites_CollectionChanged;
                 }
@@ -152,7 +152,7 @@ namespace Mmfm
 
                 return $"{text} {(fc + dc > 1 ? "are" : "is")} selected.";
             }
-        }     
+        }
 
         public void SelectAll()
         {
@@ -204,8 +204,8 @@ namespace Mmfm
                 files.Add(path);
             }
             Clipboard.SetFileDropList(files);
-        }      
-        
+        }
+
         private FileConflictAction ConfirmFileConflictAction(string source, ref string destination)
         {
             if (source == destination)
@@ -214,7 +214,7 @@ namespace Mmfm
                 return FileConflictAction.Overwrite;
             }
 
-            if(File.Exists(destination) == false)
+            if (File.Exists(destination) == false)
             {
                 return FileConflictAction.Overwrite;
             }
@@ -299,9 +299,9 @@ namespace Mmfm
                         {
                             File.Copy(source, destination, true);
                         }
-                        catch(UnauthorizedAccessException)
+                        catch (UnauthorizedAccessException)
                         {
-                            return ConfirmContinueOperation(Properties.Resources.Copy_UnauthorizedException);  
+                            return ConfirmContinueOperation(Properties.Resources.Copy_UnauthorizedException);
                         }
 
                         if (restoreReadOnly)
@@ -319,7 +319,7 @@ namespace Mmfm
             {
                 Title = "Copy",
                 Content = new OperationProgressViewModel(operation) { Title = $"Copying {operation.MaxValue} files." }
-            });                  
+            });
             CurrentDirectory.RaiseCurrentChanged();
         }
 
@@ -333,7 +333,7 @@ namespace Mmfm
                 // TODO: 読み取り専用のファイルを削除するか確認が必要
                 File.SetAttributes(path, FileAttributes.Normal);
 
-                try 
+                try
                 {
                     if (fi.Attributes.HasFlag(FileAttributes.Directory))
                     {
@@ -352,7 +352,7 @@ namespace Mmfm
                     }
                     return true;
                 }
-                catch(UnauthorizedAccessException)
+                catch (UnauthorizedAccessException)
                 {
                     return ConfirmContinueOperation(Properties.Resources.Delete_UnauthorizedException);
                 }
@@ -374,16 +374,16 @@ namespace Mmfm
                 return;
             }
 
-            Messenger.Default.Send(new DialogViewModel { 
+            Messenger.Default.Send(new DialogViewModel {
                 Title = "Delete",
                 Content = new OperationProgressViewModel(operation) { Title = $"Deleting {operation.MaxValue} files." }
-            });            
+            });
             CurrentDirectory.RaiseCurrentChanged();
         }
 
         public void RenameFiles()
         {
-            foreach(var path in SelectedPaths)
+            foreach (var path in SelectedPaths)
             {
                 var content = new FileRenameViewModel(path);
                 var dialog = new DialogViewModel
@@ -394,29 +394,38 @@ namespace Mmfm
 
                 Messenger.Default.Send(dialog);
 
-                if(dialog.Result == false)
+                if (dialog.Result == false)
                 {
                     break;
                 }
 
                 try
                 {
-                    if(path != content.Next)
+                    if (path != content.Next)
                     {
                         File.Move(path, content.Next);
                     }
                 }
-                catch(UnauthorizedAccessException)
+                catch (UnauthorizedAccessException)
                 {
-                    if(ConfirmContinueOperation(Properties.Resources.Rename_UnauthorizedException))
+                    if (ConfirmContinueOperation(Properties.Resources.Rename_UnauthorizedException))
                     {
                         continue;
                     }
                     break;
                 }
             }
-  
+
             CurrentDirectory.RaiseCurrentChanged();
+        }
+
+        public void JumpTo(FileViewModel aFolder)
+        {
+            if(aFolder.IsFolder == false)
+            {
+                throw new ArgumentException("aFolder");
+            }
+            CurrentDirectory.Current = aFolder;
         }
 
         public FileManagerViewModel()

@@ -67,7 +67,13 @@
                             </Grid.ColumnDefinitions>
                             
                             <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10" FontSize="18" />
-                            <TextBlock Grid.Column="1" Text="{Binding Shortcut}" Margin="4,4,10,4" Foreground="Gray" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" 
+                                       Text="{Binding Shortcut}" 
+                                       Margin="4,4,10,4" 
+                                       Foreground="Gray" 
+                                       FontSize="12"
+                                       HorizontalAlignment="Right" 
+                                       VerticalAlignment="Center" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

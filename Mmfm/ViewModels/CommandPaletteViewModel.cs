@@ -19,12 +19,10 @@ namespace Mmfm
         }
         #endregion
 
-        private readonly CommandItemViewModel[] commandItems;
-
-        public CommandPaletteViewModel(CommandItemViewModel[] commandItems)
+        public CommandPaletteViewModel(IEnumerable<ICommandItem> allCommandItems)
         {
-            this.commandItems = commandItems;
-            Items = new List<CommandItemViewModel>(commandItems);
+            AllCommandItems = allCommandItems;
+            Items = new List<ICommandItem>(allCommandItems);
             SelectedItem = Items.FirstOrDefault();
             InputText = "";
         }
@@ -41,8 +39,8 @@ namespace Mmfm
             }
         }
 
-        private CommandItemViewModel selectedItem;
-        public CommandItemViewModel SelectedItem
+        private ICommandItem selectedItem;
+        public ICommandItem SelectedItem
         {
             get => selectedItem;
             set
@@ -52,8 +50,19 @@ namespace Mmfm
             }
         }
 
-        private List<CommandItemViewModel> items;
-        public List<CommandItemViewModel> Items
+        private IEnumerable<ICommandItem> allCommandItems;
+        public IEnumerable<ICommandItem> AllCommandItems
+        {
+            get => allCommandItems;
+            private set
+            {
+                allCommandItems = value;
+                OnPropertyChanged("AllCommandItems");
+            }
+        }
+
+        private List<ICommandItem> items;
+        public List<ICommandItem> Items
         {
             get => items;
             private set
@@ -70,7 +79,7 @@ namespace Mmfm
 
         private void OnInputTextChanged()
         {
-            Items = new List<CommandItemViewModel>(commandItems.Where(c => c.Name.Contains(InputText, StringComparison.CurrentCultureIgnoreCase)).OrderBy(c => c.Name));
+            Items = new List<ICommandItem>(allCommandItems.Where(c => c.Name.Contains(InputText, StringComparison.CurrentCultureIgnoreCase)).OrderBy(c => c.Name));
             SelectedItem = Items.FirstOrDefault();
             OnPropertyChanged("IsInputTextNullOrEmpty");
         }

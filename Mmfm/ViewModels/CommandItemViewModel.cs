@@ -9,9 +9,32 @@ using System.Windows.Input;
 
 namespace Mmfm
 {
-    public class CommandItemViewModel
+    public class CommandItemViewModel : ICommandItem
     {
-        public static implicit operator InputBinding(CommandItemViewModel vm) => new InputBinding(vm.Command, (KeyGesture)new KeyGestureConverter().ConvertFromString(vm.Shortcut));
+        private Func<IEnumerable<ICommandItem>> subItems = null;
+
+        public IEnumerable<InputBinding> InputBindings 
+        {
+            get
+            {
+                var inputBindings = new List<InputBinding>();
+                
+                if (string.IsNullOrEmpty(shortcut) == false)
+                {
+                    inputBindings.Add(new InputBinding(
+                        Command,
+                        (KeyGesture)new KeyGestureConverter().ConvertFromString(shortcut)                        
+                    ));
+                }
+                
+                if(subItems != null)
+                {
+                    inputBindings.AddRange(subItems().SelectMany(subItem => subItem.InputBindings));
+                }
+
+                return inputBindings.AsReadOnly();
+            }                
+        }
 
         public string Name
         {
@@ -19,10 +42,14 @@ namespace Mmfm
             private set;
         }
 
+        private string shortcut;
         public string Shortcut
         {
-            get;
-            private set;
+            get => shortcut ?? (subItems?.Invoke().Count() > 0 ? "\U0001f782" : "");
+            private set
+            {
+                shortcut = value;                
+            }
         }
 
         public ICommand Command
@@ -36,6 +63,25 @@ namespace Mmfm
             Name = name;
             Shortcut = shortcut;
             Command = command;
+        }
+
+        public CommandItemViewModel(string name, IEnumerable<ICommandItem> subItems, string shortCut = null) 
+            : this(name, new Func<IEnumerable<ICommandItem>>(() => subItems), shortCut)
+        {
+
+        }
+
+        public CommandItemViewModel(string name, Func<IEnumerable<ICommandItem>> subItems, string shortCut = null)
+        {
+            Name = name;
+            Shortcut = shortCut;
+            Command = new RelayCommand(() =>
+            {
+                var content = new CommandPaletteViewModel(subItems());
+                Messenger.Default.Send(new OverlayViewModel(content));
+            },
+            () => subItems?.Invoke().Count() > 0);
+            this.subItems = subItems;
         }
     }
 }
