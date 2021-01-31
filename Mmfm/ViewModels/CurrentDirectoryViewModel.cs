@@ -25,7 +25,7 @@ namespace Mmfm
         public event EventHandler CurrentChanged;
 
         private Stack<FileViewModel> selectionStack = new Stack<FileViewModel>();
-        private FileViewModel[] roots;
+        private FolderShortcutViewModel[] roots;
         private ObservableCollection<FileViewModel> subDirectories = new ObservableCollection<FileViewModel>();
         private FileViewModel selectedItem;
 
@@ -59,7 +59,7 @@ namespace Mmfm
 
         public string FullPath => selectionStack.Count == 0 ? "" : selectionStack.Peek().Path;
 
-        public FileViewModel[] Roots
+        public FolderShortcutViewModel[] Roots
         {
             get => roots;
             set
@@ -159,12 +159,12 @@ namespace Mmfm
 
             var subDirectories = new List<FileViewModel>();
             
-            subDirectories.Add(FileViewModel.CreateAlias(directoryName, "..", FullPath));
+            subDirectories.Add(FileViewModel.CreateAlias(directoryName, ".."));
             try
             {
                 foreach (var path in Directory.GetDirectories(directoryName))
                 {
-                    subDirectories.Add(new FileViewModel(path, FullPath));
+                    subDirectories.Add(new FileViewModel(path));
                 }
             }
             catch (UnauthorizedAccessException)
@@ -182,7 +182,7 @@ namespace Mmfm
                 item.PropertyChanged -= SubDirectory_PropertyChanged;
             }
 
-            SubDirectories = new ObservableCollection<FileViewModel>(selectionStack.Count == 0 ? roots : ExtractDirectory(Current.Path));
+            SubDirectories = new ObservableCollection<FileViewModel>(selectionStack.Count == 0 ? roots.Select(r => (FileViewModel)r) : ExtractDirectory(Current.Path));
 
             foreach (var item in SubDirectories)
             {

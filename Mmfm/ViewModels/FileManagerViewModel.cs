@@ -24,17 +24,18 @@ namespace Mmfm
 
         private bool isActive;
 
-        private static IEnumerable<FileViewModel> PCEntries()
+        private static IEnumerable<FolderShortcutViewModel> PCEntries()
         {
-            var entries = new FileViewModel[] {
-                FileViewModel.CreatePC(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Desktop" , IconExtractor.Extract("shell32.dll", 34, true) ),
-                FileViewModel.CreatePC(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Documents", IconExtractor.Extract("shell32.dll", 1, true) ),
-                FileViewModel.CreatePC(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "My Pictures", IconExtractor.Extract("shell32.dll", 325, true) )
+            var itemGroup = "\U0001f4bb PC";
+            var entries = new FolderShortcutViewModel[] {
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Desktop" , itemGroup, IconExtractor.Extract("shell32.dll", 34, true) ),
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Documents", itemGroup, IconExtractor.Extract("shell32.dll", 1, true) ),
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "My Pictures", itemGroup, IconExtractor.Extract("shell32.dll", 325, true) )
              }.ToList();
 
             foreach (var di in DriveInfo.GetDrives())
             {
-                entries.Add(FileViewModel.CreatePC(di.Name, $"{di.Name.Trim(Path.DirectorySeparatorChar)} {DriveDescription(di)}", DriveIcon(di)));
+                entries.Add(new FolderShortcutViewModel(di.Name, $"{di.Name.Trim(Path.DirectorySeparatorChar)} {DriveDescription(di)}", itemGroup, DriveIcon(di)));
             }
 
             return entries;
@@ -85,8 +86,8 @@ namespace Mmfm
 
         public FilesViewModel Files { get; } = new FilesViewModel();
 
-        private ObservableCollection<FileViewModel> favorites;
-        public ObservableCollection<FileViewModel> Favorites
+        private ObservableCollection<FolderShortcutViewModel> favorites;
+        public ObservableCollection<FolderShortcutViewModel> Favorites
         {
             get => favorites;
             set
@@ -419,12 +420,8 @@ namespace Mmfm
             CurrentDirectory.RaiseCurrentChanged();
         }
 
-        public void JumpTo(FileViewModel aFolder)
-        {
-            if(aFolder.IsFolder == false)
-            {
-                throw new ArgumentException("aFolder");
-            }
+        public void JumpTo(FolderShortcutViewModel aFolder)
+        {          
             CurrentDirectory.Current = aFolder;
         }
 
@@ -457,7 +454,7 @@ namespace Mmfm
                 {
                     foreach (var path in Directory.GetFiles(CurrentDirectory.FullPath))
                     {
-                        var item = new FileViewModel(path, "");
+                        var item = new FileViewModel(path);
                         item.PropertyChanged += File_PropertyChanged;
                         files.Add(item);
                     }

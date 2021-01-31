@@ -7,6 +7,8 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Collections.Specialized;
+using System.Configuration;
+using System.Text.Json;
 
 namespace Mmfm
 {
@@ -32,7 +34,7 @@ namespace Mmfm
             return DualFileManager.ActiveFileManager.CurrentDirectory.FullPath.Length > 0;
         }
 
-        private ObservableCollection<FileViewModel> favorites = new ObservableCollection<FileViewModel>();
+        private ObservableCollection<FolderShortcutViewModel> favorites = new ObservableCollection<FolderShortcutViewModel>();
 
         private void Favorite()
         {
@@ -43,7 +45,12 @@ namespace Mmfm
             Messenger.Default.Send(dialog);
             if (dialog.Result == true)
             {
-                var favorite = FileViewModel.CreateFavorite(path, content.FavoriteName, IconExtractor.Extract(path));
+                var favorite = new FolderShortcutViewModel(
+                    content.FullPath, 
+                    content.FavoriteName, 
+                    "\U0001f496 Favorite", 
+                    IconExtractor.Extract(content.FullPath)
+                );
                 favorites.Add(favorite);
             }
         }
@@ -52,7 +59,7 @@ namespace Mmfm
         {
             var path = DualFileManager.ActiveFileManager.CurrentDirectory.FullPath;
 
-            FileViewModel favorite = null;
+            FolderShortcutViewModel favorite = null;
             if((favorite = favorites.SingleOrDefault(f => f.Path == path)) == null){
                 Messenger.Default.Send(new MessageBoxViewModel
                 {
@@ -79,7 +86,7 @@ namespace Mmfm
             }
         }
 
-        private ICommandItem CreateJumptoFavoriteCommand(IList<FileViewModel> favorites)
+        private ICommandItem CreateJumptoFavoriteCommand(IList<FolderShortcutViewModel> favorites)
         {
             var itemsFactory = new Func<IEnumerable<ICommandItem>>(() =>
             {
@@ -112,8 +119,31 @@ namespace Mmfm
             
             commandPallete = new CommandItemViewModel("", commands, "Ctrl+Shift+P");
 
-            favorites.CollectionChanged += (s, e) => OnPropertyChanged("InputBindings");
             DualFileManager.First.Favorites = DualFileManager.Second.Favorites = favorites;
-        } 
+            favorites.CollectionChanged += (s, e) => { OnPropertyChanged("InputBindings"); SaveFavorites(); };
+            LoadFavorites();
+        }
+
+        private void LoadFavorites()
+        {
+            if (Properties.Settings.Default.Favorites != null)
+            {
+                foreach (var favorite in Properties.Settings.Default.Favorites)
+                {
+                    favorites.Add(JsonSerializer.Deserialize<FolderShortcutViewModel>(favorite));
+                }
+            }
+        }
+        
+        private void SaveFavorites()
+        {
+            var stringCollection = new StringCollection();
+            foreach(var favorite in favorites)
+            {
+                stringCollection.Add(JsonSerializer.Serialize(favorite));
+            }
+            Properties.Settings.Default.Favorites = stringCollection;
+            Properties.Settings.Default.Save();
+        }
     }
 }

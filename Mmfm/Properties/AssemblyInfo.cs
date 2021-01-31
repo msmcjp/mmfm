@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("Mmfm")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("LG")]
-[assembly: AssemblyProduct("Mmfm")]
-[assembly: AssemblyCopyright("Copyright © LG 2020")]
+[assembly: AssemblyCompany("Marshmallow Machine Inc.")]
+[assembly: AssemblyProduct("mmfm")]
+[assembly: AssemblyCopyright("Copyright © Marshmallow Machine 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

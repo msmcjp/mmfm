@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -26,7 +27,7 @@ namespace Mmfm
 
         private bool isSelected;
         private string path;
-        private BitmapSource iconImage;
+        private Icon icon;
         private string name;
         private string extension;
         private DateTime modifiedAt;
@@ -34,38 +35,27 @@ namespace Mmfm
         private bool isAlias;
         private string itemGroup;
 
-        public static FileViewModel CreateAlias(string path, string aliasName, string itemGroup)
+        public static FileViewModel CreateAlias(string path, string aliasName, string itemGroup = null, Icon icon = null)
         {
-            return new FileViewModel(path, aliasName, null, itemGroup);
+            return new FileViewModel(path, aliasName, itemGroup, icon);
         }
 
-        public static FileViewModel CreatePC(string path, string name, Icon icon)
-        {
-            return new FileViewModel(path, name, icon, "\U0001f4bb PC");
-        }
-
-        public static FileViewModel CreateFavorite(string path, string name, Icon icon)
-        {
-            return new FileViewModel(path, name, icon, "\U0001f496 Favorite");
-        }
-
-        private FileViewModel(string path, string aliasName, Icon icon, string itemGroup)
+        private FileViewModel(string path, string aliasName, string itemGroup, Icon icon)
         {
             Path = path;
             Name = aliasName;
             isAlias = true;
+            Icon = icon;
             ItemGroup = itemGroup;
-            if (icon != null)
-            {
-                iconImage = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            }
         }
 
-        public FileViewModel(string path, string itemGroup)
+        public FileViewModel(string path, string itemGroup = null)
         {
             Path = path;
-            ItemGroup = itemGroup;
             Name = System.IO.Path.GetFileNameWithoutExtension(path);
+            isAlias = false;
+            Icon = IconExtractor.Extract(Path, true);
+            ItemGroup = itemGroup;
             Extension = System.IO.Path.GetExtension(path);
 
             var fi = new FileInfo(path);
@@ -86,15 +76,6 @@ namespace Mmfm
             }
         }
 
-        public string ItemGroup
-        {
-            get => itemGroup;
-            private set
-            {
-                itemGroup = value;
-            }
-        }
-
         public bool IsSelected
         {
             get => isSelected;
@@ -105,19 +86,26 @@ namespace Mmfm
             }
         }
 
+        public Icon Icon
+        {
+            get => icon;
+            private set
+            {
+                icon = value;
+                OnPropertyChanged("Icon");
+            }
+        }
+
         public BitmapSource IconImage
         {
             get
             {
-                if (iconImage == null && isAlias == false)
+                if (Icon != null)
                 {
-                    var icon = IconExtractor.Extract(Path, true);
-                    if (icon != null)
-                    {
-                        iconImage = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    }
+                    return Imaging.CreateBitmapSourceFromHIcon(Icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()); ;
                 }
-                return iconImage;
+
+                return null;
             }
         }
 
@@ -141,6 +129,16 @@ namespace Mmfm
             }
         }
 
+        public string ItemGroup
+        {
+            get => itemGroup;
+            private set
+            {
+                itemGroup = value;
+                OnPropertyChanged("ItemGroup");
+            }
+        }
+
         public bool IsNotAlias => !isAlias;
 
         public bool IsFolder => Directory.Exists(path);
@@ -156,12 +154,12 @@ namespace Mmfm
                 return false;
             }
 
-            return Path == ((FileViewModel)obj).Path;
+            return Path == ((FileViewModel)obj).Path && isAlias == ((FileViewModel)obj).isAlias;
         }
 
         public override int GetHashCode()
         {
-            return Path.GetHashCode();
+            return Path.GetHashCode() ^ isAlias.GetHashCode();
         }
     }
 }
