@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Msmc.Patterns.Messenger;
 
-namespace Mmfm.Plugin
+namespace Mmfm.Plugins
 {
     public interface IPluggable<T>
     {

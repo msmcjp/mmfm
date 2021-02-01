@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 
-namespace Mmfm.Plugin
+namespace Mmfm.Plugins
 {
     public class File : IPluggable<DualFileManagerViewModel>
     {

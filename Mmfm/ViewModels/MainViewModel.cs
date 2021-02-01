@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Text.Json;
 using System.Reflection;
 using System.Dynamic;
+using Mmfm.Plugins;
 
 namespace Mmfm
 {
@@ -36,8 +37,8 @@ namespace Mmfm
         private IEnumerable<ICommandItem> LoadPlugins()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var types = assembly.GetTypes().Where(t => typeof(Plugin.IPluggable<DualFileManagerViewModel>).IsAssignableFrom(t));
-            var plugins = types.Select(type => (Plugin.IPluggable<DualFileManagerViewModel>)Activator.CreateInstance(type)).ToArray();
+            var types = assembly.GetTypes().Where(t => typeof(IPluggable<DualFileManagerViewModel>).IsAssignableFrom(t));
+            var plugins = types.Select(type => (IPluggable<DualFileManagerViewModel>)Activator.CreateInstance(type)).ToArray();
 
             settings = new ExpandoObject();
 

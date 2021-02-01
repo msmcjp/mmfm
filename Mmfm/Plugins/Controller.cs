@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace Mmfm.Plugin
+namespace Mmfm.Plugins
 {
     public class Controller : IPluggable<DualFileManagerViewModel>
     {

@@ -11,7 +11,7 @@ using Mmfm;
 using Mmfm.Commands;
 using Msmc.Patterns.Messenger;
 
-namespace Mmfm.Plugin
+namespace Mmfm.Plugins
 {
     public class Favorite : IPluggable<DualFileManagerViewModel>
     {
