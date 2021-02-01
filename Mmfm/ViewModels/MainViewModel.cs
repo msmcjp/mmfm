@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Text.Json;
+using System.Reflection;
 
 namespace Mmfm
 {
@@ -29,121 +30,34 @@ namespace Mmfm
 
         private ICommandItem commandPallete;
 
-        private bool CanExecute()
+        private IEnumerable<ICommandItem> Plug(Plugin.IPluggable<DualFileManagerViewModel> plugin)
         {
-            return DualFileManager.ActiveFileManager.CurrentDirectory.FullPath.Length > 0;
+            plugin.Host = DualFileManager;
+            plugin.Messenger = Messenger.Default;
+            plugin.RequestInputBindingsUpdate += RaiseInputBindingsChanged;
+            plugin.Plugged();
+
+            return plugin.Commands;
         }
 
-        private ObservableCollection<FolderShortcutViewModel> favorites = new ObservableCollection<FolderShortcutViewModel>();
-
-        private void Favorite()
+        private IEnumerable<ICommandItem> LoadPlugins()
         {
-            var path = DualFileManager.ActiveFileManager.CurrentDirectory.FullPath;
-            var content = new FavoriteRegisterViewModel(path);
-            var dialog = new DialogViewModel { Content = content };
-            
-            Messenger.Default.Send(dialog);
-            if (dialog.Result == true)
-            {
-                var favorite = new FolderShortcutViewModel(
-                    content.FullPath, 
-                    content.FavoriteName, 
-                    "\U0001f496 Favorite", 
-                    IconExtractor.Extract(content.FullPath)
-                );
-                favorites.Add(favorite);
-            }
-        }
+            var assembly = Assembly.GetExecutingAssembly();
+            var types = assembly.GetTypes().Where(t => typeof(Plugin.IPluggable<DualFileManagerViewModel>).IsAssignableFrom(t));
+            var commands = new List<ICommandItem>();
+            var plugins = types.Select(type => (Plugin.IPluggable<DualFileManagerViewModel>)Activator.CreateInstance(type));
 
-        private void Unfavorite()
-        {
-            var path = DualFileManager.ActiveFileManager.CurrentDirectory.FullPath;
-
-            FolderShortcutViewModel favorite = null;
-            if((favorite = favorites.SingleOrDefault(f => f.Path == path)) == null){
-                Messenger.Default.Send(new MessageBoxViewModel
-                {
-                    Caption = "Error",
-                    Text = $"{path} is not registered to favorite.",
-                    Icon = System.Windows.MessageBoxImage.Error,
-                    Button = System.Windows.MessageBoxButton.OK
-                });
-                return;
-            }
-
-            var message = new MessageBoxViewModel
-            {
-                Caption = "Confirm",
-                Text = $"Remove {path} from favorite?",
-                Icon = System.Windows.MessageBoxImage.Question,
-                Button = System.Windows.MessageBoxButton.YesNo
-            };
-
-            Messenger.Default.Send(message);
-            if (message.Result == System.Windows.MessageBoxResult.Yes)
-            {
-                favorites.Remove(favorite);
-            }
-        }
-
-        private ICommandItem CreateJumptoFavoriteCommand(IList<FolderShortcutViewModel> favorites)
-        {
-            var itemsFactory = new Func<IEnumerable<ICommandItem>>(() =>
-            {
-                return favorites.Select((f, i) => new CommandItemViewModel(
-                    f.Name,
-                    $"Shift+F{i + 1}",
-                    new RelayCommand(() =>
-                    {
-                        DualFileManager.ActiveFileManager.JumpTo(f);
-                    })
-                ));
-            });
-            return new CommandItemViewModel("Jump to", itemsFactory);
+            return plugins.SelectMany(plugin => Plug(plugin)).ToList().AsReadOnly();
         }
 
         public MainViewModel()
         {
-            var commands = new List<ICommandItem>();
-            commands.Add(new CommandItemViewModel("Back to parent", "Backspace", new RelayCommand(() => DualFileManager.ActiveFileManager.BackToParent(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Copy", "Ctrl+C", new RelayCommand(() => DualFileManager.ActiveFileManager.CopyToClipboard(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Paste", "Ctrl+V", new RelayCommand(() => DualFileManager.ActiveFileManager.CopyFiles(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Move to Recycle Bin", "Delete", new RelayCommand(() => DualFileManager.ActiveFileManager.DeleteFiles(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Delete", "Shift+Delete", new RelayCommand(() => DualFileManager.ActiveFileManager.DeleteFiles(false), CanExecute)));
-            commands.Add(new CommandItemViewModel("Select All", "Alt+U", new RelayCommand(() => DualFileManager.ActiveFileManager.SelectAll(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Deselect All", "Shift+Alt+U", new RelayCommand(() => DualFileManager.ActiveFileManager.DeselectAll(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Rename", "F2", new RelayCommand(() => DualFileManager.ActiveFileManager.RenameFiles(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Favorite", "Alt+F", new RelayCommand(() => Favorite(), CanExecute)));
-            commands.Add(new CommandItemViewModel("Unfavorite", "Shift+Alt+F", new RelayCommand(() => Unfavorite(), CanExecute)));           
-            commands.Add(CreateJumptoFavoriteCommand(favorites));
-            
-            commandPallete = new CommandItemViewModel("", commands, "Ctrl+Shift+P");
-
-            DualFileManager.First.Favorites = DualFileManager.Second.Favorites = favorites;
-            favorites.CollectionChanged += (s, e) => { OnPropertyChanged("InputBindings"); SaveFavorites(); };
-            LoadFavorites();
+            commandPallete = new CommandItemViewModel("Shows Command Pallette", LoadPlugins(), "Ctrl+Shift+P");
         }
 
-        private void LoadFavorites()
+        private void RaiseInputBindingsChanged(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.Favorites != null)
-            {
-                foreach (var favorite in Properties.Settings.Default.Favorites)
-                {
-                    favorites.Add(JsonSerializer.Deserialize<FolderShortcutViewModel>(favorite));
-                }
-            }
-        }
-        
-        private void SaveFavorites()
-        {
-            var stringCollection = new StringCollection();
-            foreach(var favorite in favorites)
-            {
-                stringCollection.Add(JsonSerializer.Serialize(favorite));
-            }
-            Properties.Settings.Default.Favorites = stringCollection;
-            Properties.Settings.Default.Save();
+            OnPropertyChanged("InputBindings");
         }
     }
 }
