@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -16,7 +17,29 @@ namespace Mmfm.Plugin
     {
         public string Name => "Favorite";
 
+        private CurrentDirectoryViewModel CurrentDirectory => Host.ActiveFileManager.CurrentDirectory;
+
         private ObservableCollection<FolderShortcutViewModel> favorites;
+        private ObservableCollection<FolderShortcutViewModel> Favorites
+        {
+            get => favorites;
+            set
+            {
+                if (favorites != null)
+                {
+                    favorites.CollectionChanged -= Favorites_CollectionChanged;
+                }
+                
+                favorites = value;
+               
+                if (favorites != null)
+                {
+                    favorites.CollectionChanged += Favorites_CollectionChanged;
+                }
+                
+                Host.First.Favorites = Host.Second.Favorites = value;
+            }
+        }
 
         public event EventHandler RequestInputBindingsUpdate;
 
@@ -38,15 +61,21 @@ namespace Mmfm.Plugin
             get; 
             set; 
         }
+ 
+        public dynamic Settings
+        {
+            get;
+            set;
+        }
 
-        private CurrentDirectoryViewModel CurrentDirectory => Host.ActiveFileManager.CurrentDirectory;
+        public void ResetToDefault()
+        {
+            Settings.Favorites = Favorites = new ObservableCollection<FolderShortcutViewModel>();
+        }
 
         public void Plugged()
         {
-            favorites = new ObservableCollection<FolderShortcutViewModel>();
-            Host.First.Favorites = Host.Second.Favorites = favorites;
-            favorites.CollectionChanged += Favorites_CollectionChanged;
-            LoadFavorites();
+            Favorites = (ObservableCollection<FolderShortcutViewModel>)Settings.Favorites;
         }
 
         private bool CanAddFavorite()
@@ -69,7 +98,7 @@ namespace Mmfm.Plugin
                     "\U0001f496 Favorite",
                     IconExtractor.Extract(content.FullPath)
                 );
-                favorites.Add(favorite);
+                Favorites.Add(favorite);
             }
         }
 
@@ -83,7 +112,7 @@ namespace Mmfm.Plugin
             var path = CurrentDirectory.FullPath;
 
             FolderShortcutViewModel favorite = null;
-            if ((favorite = favorites.SingleOrDefault(f => f.Path == path)) == null)
+            if ((favorite = Favorites.SingleOrDefault(f => f.Path == path)) == null)
             {
                 Messenger?.Send(new MessageBoxViewModel
                 {
@@ -106,7 +135,7 @@ namespace Mmfm.Plugin
             Messenger?.Send(message);
             if (message.Result == System.Windows.MessageBoxResult.Yes)
             {
-                favorites.Remove(favorite);
+                Favorites.Remove(favorite);
             }
         }
 
@@ -114,7 +143,7 @@ namespace Mmfm.Plugin
         {
             var itemsFactory = new Func<IEnumerable<ICommandItem>>(() =>
             {
-                return favorites.Select((f, i) => new CommandItemViewModel(
+                return Favorites.Select((f, i) => new CommandItemViewModel(
                     f.Name,
                     $"Shift+F{i + 1}",
                     new RelayCommand(() =>
@@ -126,31 +155,8 @@ namespace Mmfm.Plugin
             return new CommandItemViewModel("Jump to", itemsFactory);
         }
 
-        private void LoadFavorites()
-        {
-            if (Properties.Settings.Default.Favorites != null)
-            {
-                foreach (var favorite in Properties.Settings.Default.Favorites)
-                {
-                    favorites.Add(JsonSerializer.Deserialize<FolderShortcutViewModel>(favorite));
-                }
-            }
-        }
-
-        private void SaveFavorites()
-        {
-            var stringCollection = new StringCollection();
-            foreach (var favorite in favorites)
-            {
-                stringCollection.Add(JsonSerializer.Serialize(favorite));
-            }
-            Properties.Settings.Default.Favorites = stringCollection;
-            Properties.Settings.Default.Save();
-        }
-
         private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            SaveFavorites();
             RequestInputBindingsUpdate?.Invoke(this, EventArgs.Empty);
         }
     }

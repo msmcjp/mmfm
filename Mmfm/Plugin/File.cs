@@ -11,12 +11,16 @@ namespace Mmfm.Plugin
     public class File : IPluggable<DualFileManagerViewModel>
     {
         public string Name => "File";
-        
+ 
+        private CurrentDirectoryViewModel CurrentDirectory => Host.ActiveFileManager.CurrentDirectory;
+
+        private string[] SelectedPaths => Host.ActiveFileManager.SelectedPaths;
+
         private bool CanExecute()
         {
             return CurrentDirectory.FullPath.Length > 0;
         }
-        
+
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
         {
             new CommandItemViewModel("Copy", "Ctrl+C", new RelayCommand(() => CopyToClipboard(), CanExecute)),
@@ -38,6 +42,12 @@ namespace Mmfm.Plugin
             set;
         }
 
+        public dynamic Settings
+        {
+            get;
+            set;
+        }
+
         public event EventHandler RequestInputBindingsUpdate;
 
         private void OnRequestInputBIndingsUpdate()
@@ -45,13 +55,14 @@ namespace Mmfm.Plugin
             RequestInputBindingsUpdate?.Invoke(this, EventArgs.Empty);
         }
 
+        public void ResetToDefault()
+        {
+
+        }
+
         public void Plugged()
         {
         }
-
-        private CurrentDirectoryViewModel CurrentDirectory => Host.ActiveFileManager.CurrentDirectory;
-
-        private string[] SelectedPaths => Host.ActiveFileManager.SelectedPaths;
 
         private FileConflictAction ConfirmFileConflictAction(string source, ref string destination)
         {
@@ -280,6 +291,6 @@ namespace Mmfm.Plugin
             }
 
             CurrentDirectory.RaiseCurrentChanged();
-        }
+        }        
     }
 }

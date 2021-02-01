@@ -36,11 +36,22 @@ namespace Mmfm.Plugin
             set;
         }
 
+        public dynamic Settings
+        {
+            get;
+            set;
+        }
+
         public event EventHandler RequestInputBindingsUpdate;
 
         private void OnRequestInputBIndingsUpdate()
         {
             RequestInputBindingsUpdate?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ResetToDefault()
+        {
+
         }
 
         public void Plugged()

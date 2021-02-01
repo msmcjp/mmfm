@@ -30,6 +30,16 @@ namespace Mmfm.Plugin
         T Host { set; }
 
         /// <summary>
+        /// Settings object
+        /// </summary>
+        dynamic Settings { set; }
+
+        /// <summary>
+        /// Reset Settings to default
+        /// </summary>
+        void ResetToDefault();
+
+        /// <summary>
         /// Call this method when a host plugged a plug-in
         /// </summary>
         void Plugged();

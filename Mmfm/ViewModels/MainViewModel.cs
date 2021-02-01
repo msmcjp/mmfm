@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Text.Json;
 using System.Reflection;
+using System.Dynamic;
 
 namespace Mmfm
 {
@@ -30,24 +31,45 @@ namespace Mmfm
 
         private ICommandItem commandPallete;
 
-        private IEnumerable<ICommandItem> Plug(Plugin.IPluggable<DualFileManagerViewModel> plugin)
-        {
-            plugin.Host = DualFileManager;
-            plugin.Messenger = Messenger.Default;
-            plugin.RequestInputBindingsUpdate += RaiseInputBindingsChanged;
-            plugin.Plugged();
-
-            return plugin.Commands;
-        }
+        private dynamic settings;
 
         private IEnumerable<ICommandItem> LoadPlugins()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes().Where(t => typeof(Plugin.IPluggable<DualFileManagerViewModel>).IsAssignableFrom(t));
-            var commands = new List<ICommandItem>();
-            var plugins = types.Select(type => (Plugin.IPluggable<DualFileManagerViewModel>)Activator.CreateInstance(type));
+            var plugins = types.Select(type => (Plugin.IPluggable<DualFileManagerViewModel>)Activator.CreateInstance(type)).ToArray();
 
-            return plugins.SelectMany(plugin => Plug(plugin)).ToList().AsReadOnly();
+            settings = new ExpandoObject();
+
+            foreach (var plugin in plugins) 
+            {            
+                plugin.Host = DualFileManager;
+                plugin.Messenger = Messenger.Default;
+                plugin.RequestInputBindingsUpdate += (s, e) => OnPropertyChanged("InputBindings");
+                plugin.Settings = settings;
+                plugin.ResetToDefault();
+            }
+
+            var json = Properties.Settings.Default.Settings_json;
+            if(string.IsNullOrEmpty(json) == false)
+            {
+                settings = JsonSerializer.Deserialize<ExpandoObject>(
+                    json, 
+                    new JsonSerializerOptions { 
+                        Converters = { 
+                            new TemplateObjectConverter(settings) 
+                        }
+                    }  
+                );
+            }
+
+            foreach(var plugin in plugins) 
+            {
+                plugin.Settings = settings;
+                plugin.Plugged();
+            }
+
+            return plugins.SelectMany(plugin => plugin.Commands).ToList().AsReadOnly();
         }
 
         public MainViewModel()
@@ -55,9 +77,10 @@ namespace Mmfm
             commandPallete = new CommandItemViewModel("Shows Command Pallette", LoadPlugins(), "Ctrl+Shift+P");
         }
 
-        private void RaiseInputBindingsChanged(object sender, EventArgs e)
+        public ICommand SaveSettingsCommand => new RelayCommand(() =>
         {
-            OnPropertyChanged("InputBindings");
-        }
+            Properties.Settings.Default.Settings_json = JsonSerializer.Serialize<ExpandoObject>(settings);
+            Properties.Settings.Default.Save();
+        });
     }
 }

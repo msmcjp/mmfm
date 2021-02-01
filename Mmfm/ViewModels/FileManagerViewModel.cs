@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Collections.Specialized;
 
 namespace Mmfm
 {
@@ -102,6 +103,10 @@ namespace Mmfm
                 if (favorites != null)
                 {
                     favorites.CollectionChanged += Favorites_CollectionChanged;
+                    Favorites_CollectionChanged(
+                        this, 
+                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
+                    );
                 }
 
                 OnPropertyChanged("Favorites");
@@ -171,7 +176,7 @@ namespace Mmfm
             CurrentDirectory.Roots = PCEntries().ToArray();
         }
 
-        private void Favorites_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             CurrentDirectory.Roots = PCEntries().Concat(Favorites).ToArray();
         }

@@ -25,12 +25,13 @@ namespace Mmfm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection Favorites {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Settings_json {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["Favorites"]));
+                return ((string)(this["Settings_json"]));
             }
             set {
-                this["Favorites"] = value;
+                this["Settings_json"] = value;
             }
         }
     }
