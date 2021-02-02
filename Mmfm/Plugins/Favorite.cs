@@ -80,7 +80,8 @@ namespace Mmfm.Plugins
 
         private bool CanAddFavorite()
         {
-            return Host.ActiveFileManager.CurrentDirectory.FullPath.Length > 0;
+            return CurrentDirectory.FullPath.Length > 0 && 
+                Favorites.Where(item => item.Path == CurrentDirectory.FullPath).Count() == 0;
         }
 
         private void AddFavorite()
@@ -104,7 +105,7 @@ namespace Mmfm.Plugins
 
         private bool CanRemovefavorite()
         {
-            return Host.ActiveFileManager.CurrentDirectory.FullPath.Length > 0;
+            return Favorites.Where(item => item.Path == CurrentDirectory.FullPath).Count() != 0;
         }
 
         private void Removefavorite()
