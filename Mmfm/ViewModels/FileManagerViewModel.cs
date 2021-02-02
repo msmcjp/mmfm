@@ -65,16 +65,18 @@ namespace Mmfm
             } 
         }
 
-        public string[] SelectedPaths
+        public IList<string> SelectedPaths => Array.AsReadOnly(SelectedItems.Select(item => item.Path).ToArray());
+
+        public IList<FileViewModel> SelectedItems
         {
             get
             {
-                var targets = CurrentDirectory.SelectedItems.Concat(Files.SelectedItems).Select(i => i.Path).ToArray();
+                var targets = CurrentDirectory.SelectedItems.Concat(Files.SelectedItems).ToArray();
                 if (targets.Count() == 0 && SelectedItem != null && SelectedItem.IsNotAlias)
                 {
-                    targets = new string[1] { SelectedItem.Path };
+                    targets = new FileViewModel[] { SelectedItem };
                 }
-                return targets;
+                return Array.AsReadOnly(targets);
             }
         }
 

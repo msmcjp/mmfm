@@ -14,11 +14,11 @@ namespace Mmfm.Plugins
  
         private CurrentDirectoryViewModel CurrentDirectory => Host.ActiveFileManager.CurrentDirectory;
 
-        private string[] SelectedPaths => Host.ActiveFileManager.SelectedPaths;
+        private IList<string> SelectedPaths => Host.ActiveFileManager.SelectedPaths;
 
         private bool CanExecute()
         {
-            return CurrentDirectory.FullPath.Length > 0;
+            return CurrentDirectory.FullPath.Length > 0 && Host.ActiveFileManager.SelectedPaths.Count() > 0;
         }
 
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
@@ -119,7 +119,7 @@ namespace Mmfm.Plugins
  
         private void CopyToClipboard()
         {
-            if (SelectedPaths.Length == 0)
+            if (SelectedPaths.Count == 0)
             {
                 return;
             }
