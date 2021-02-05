@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 
 namespace Mmfm
 {
-    public class FileViewModel : INotifyPropertyChanged
+    public class FileViewModel : INotifyPropertyChanged, IHasIsSelected
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -34,6 +34,7 @@ namespace Mmfm
         private long fileSize;
         private bool isAlias;
         private string itemGroup;
+        private bool isCut;
 
         public static FileViewModel CreateAlias(string path, string aliasName, string itemGroup = null, Icon icon = null)
         {
@@ -136,6 +137,16 @@ namespace Mmfm
             {
                 itemGroup = value;
                 OnPropertyChanged("ItemGroup");
+            }
+        }
+
+        public bool IsCut
+        {
+            get => isCut;
+            set
+            {
+                isCut = value;
+                OnPropertyChanged("IsCut");
             }
         }
 

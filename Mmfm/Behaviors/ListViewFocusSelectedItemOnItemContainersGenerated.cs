@@ -28,7 +28,7 @@ namespace Mmfm.Behaviors
 
         private void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
         {
-            if (AssociatedObject.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+            if (AssociatedObject.IsFocused && AssociatedObject.ItemContainerGenerator.Status == System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
             {
                 // https://stackoverflow.com/questions/7366961/listbox-scrollintoview-when-using-collectionviewsource-with-groupdescriptions-i
                 Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Msmc.Patterns.Messenger;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Mmfm
@@ -32,6 +34,20 @@ namespace Mmfm
         {
             First.PropertyChanged += FileManager_PropertyChanged;
             Second.PropertyChanged += FileManager_PropertyChanged;
+
+            Messenger.Default.Register<ClipboardManager.Notification>(this, (n) =>
+            {                
+                foreach (var item in First.Navigation.Items.Concat(Second.Navigation.Items))
+                {
+                    item.IsCut = n.Move && n.Paths.Contains(item.Path);
+                }
+            });
+        }
+
+        public void Refresh()
+        {
+            First.Navigation.Refresh();
+            Second.Navigation.Refresh();
         }
 
         private void FileManager_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

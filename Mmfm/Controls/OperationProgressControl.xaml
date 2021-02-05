@@ -16,9 +16,9 @@
     </i:Interaction.Triggers>
     
     <StackPanel Orientation="Vertical" Width="400">
-        <Label Content="{Binding Title}" VerticalAlignment="Bottom" Margin="5" FontSize="14"/>
-        <ProgressBar Height="20" Margin="10,0,10,0" Minimum="0" Maximum="{Binding Maximum, Mode=OneWay}" Value="{Binding Value, Mode=OneWay}"/>
+        <Label Content="{Binding Caption}" VerticalAlignment="Bottom" Margin="5" FontSize="14"/>
+        <ProgressBar Height="20" Margin="10,0,10,0" Minimum="0" Maximum="{Binding Count, Mode=OneWay}" Value="{Binding Value, Mode=OneWay}"/>
         <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Current}" Margin="10,4,10,10" />
-        <Button x:Name="Cancel" Content="Cancel" Width="80" Margin="10" HorizontalAlignment="Right" IsCancel="True"/>
+        <Button x:Name="Cancel" Content="Cancel" Width="80" Margin="10" HorizontalAlignment="Right" Command="{Binding CancelCommand}"/>
     </StackPanel>
 </UserControl>

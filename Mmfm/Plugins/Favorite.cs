@@ -17,7 +17,7 @@ namespace Mmfm.Plugins
     {
         public string Name => "Favorite";
 
-        private CurrentDirectoryViewModel CurrentDirectory => Host.ActiveFileManager.CurrentDirectory;
+        private NavigationViewModel Navigation => Host.ActiveFileManager.Navigation;
 
         private ObservableCollection<FolderShortcutViewModel> favorites;
         private ObservableCollection<FolderShortcutViewModel> Favorites
@@ -80,13 +80,13 @@ namespace Mmfm.Plugins
 
         private bool CanAddFavorite()
         {
-            return CurrentDirectory.FullPath.Length > 0 && 
-                Favorites.Where(item => item.Path == CurrentDirectory.FullPath).Count() == 0;
+            return Navigation.FullPath.Length > 0 && 
+                Favorites.Where(item => item.Path == Navigation.FullPath).Count() == 0;
         }
 
         private void AddFavorite()
         {
-            var path = CurrentDirectory.FullPath;
+            var path = Navigation.FullPath;
             var content = new FavoriteRegisterViewModel(path);
             var dialog = new DialogViewModel { Content = content };
 
@@ -105,12 +105,12 @@ namespace Mmfm.Plugins
 
         private bool CanRemovefavorite()
         {
-            return Favorites.Where(item => item.Path == CurrentDirectory.FullPath).Count() != 0;
+            return Favorites.Where(item => item.Path == Navigation.FullPath).Count() != 0;
         }
 
         private void Removefavorite()
         {
-            var path = CurrentDirectory.FullPath;
+            var path = Navigation.FullPath;
 
             FolderShortcutViewModel favorite = null;
             if ((favorite = Favorites.SingleOrDefault(f => f.Path == path)) == null)
@@ -149,7 +149,7 @@ namespace Mmfm.Plugins
                     $"Shift+F{i + 1}",
                     new RelayCommand(() =>
                     {
-                        CurrentDirectory.Current = f;
+                        Navigation.Current = f;
                     })
                 ));
             });

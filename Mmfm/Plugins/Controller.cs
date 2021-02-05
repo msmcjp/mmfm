@@ -12,7 +12,7 @@ namespace Mmfm.Plugins
        
         private bool CanExecute()
         {
-            return CurrentDirectory.FullPath.Length > 0;
+            return Navigation.FullPath.Length > 0;
         }
 
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
@@ -58,21 +58,13 @@ namespace Mmfm.Plugins
         {
         }
 
-        private FilesViewModel Files => Host.ActiveFileManager.Files;
+        private FilesViewModel Files => Host.ActiveFileManager.Navigation.Files;
         
-        private CurrentDirectoryViewModel CurrentDirectory => Host.ActiveFileManager.CurrentDirectory;
+        private NavigationViewModel Navigation => Host.ActiveFileManager.Navigation;
         
         private void SelectAll()
         {
-            foreach (var item in Files.Items)
-            {
-                if (item.IsNotAlias)
-                {
-                    item.IsSelected = true;
-                }
-            }
-
-            foreach (var item in CurrentDirectory.SubDirectories)
+            foreach (var item in Navigation.Items)
             {
                 if (item.IsNotAlias)
                 {
@@ -83,12 +75,7 @@ namespace Mmfm.Plugins
 
         private void DeselectAll()
         {
-            foreach (var item in Files.Items)
-            {
-                item.IsSelected = false;
-            }
-
-            foreach (var item in CurrentDirectory.SubDirectories)
+            foreach (var item in Navigation.Items)
             {
                 item.IsSelected = false;
             }
@@ -96,12 +83,12 @@ namespace Mmfm.Plugins
 
         private void GotoTop()
         {
-            CurrentDirectory.Current = null;
+            Navigation.Current = null;
         }
 
         private void BackToParent()
         {
-            CurrentDirectory.BackToParent();
+            Navigation.BackToParent();
         }
     }
 }

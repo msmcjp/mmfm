@@ -25,9 +25,7 @@ namespace Mmfm
 
         private bool isActive;
 
-        public CurrentDirectoryViewModel CurrentDirectory { get; } = new CurrentDirectoryViewModel();
-
-        public FilesViewModel Files { get; } = new FilesViewModel();
+        public NavigationViewModel Navigation { get; } = new NavigationViewModel();
 
         private ObservableCollection<FolderShortcutViewModel> favorites;
         public ObservableCollection<FolderShortcutViewModel> Favorites
@@ -67,28 +65,16 @@ namespace Mmfm
 
         public IList<string> SelectedPaths => Array.AsReadOnly(SelectedItems.Select(item => item.Path).ToArray());
 
-        public IList<FileViewModel> SelectedItems
-        {
-            get
-            {
-                var targets = CurrentDirectory.SelectedItems.Concat(Files.SelectedItems).ToArray();
-                if (targets.Count() == 0 && SelectedItem != null && SelectedItem.IsNotAlias)
-                {
-                    targets = new FileViewModel[] { SelectedItem };
-                }
-                return Array.AsReadOnly(targets);
-            }
-        }
+        public IList<FileViewModel> SelectedItems => Navigation.SelectedItems;
 
-        private FileViewModel lastSelectedItem = null;
-        public FileViewModel SelectedItem => lastSelectedItem;
+        public FileViewModel SelectedItem => Navigation.SelectedItem;
 
         public string SelectionStatusText
         {
             get
             {
-                var fc = Files.SelectedItems.Count();
-                var dc = CurrentDirectory.SelectedItems.Count();
+                var fc = Navigation.Files.SelectedItems.Count();
+                var dc = Navigation.Folders.SelectedItems.Count();
 
                 if (fc + dc == 0 && SelectedItem != null)
                 {
@@ -114,75 +100,29 @@ namespace Mmfm
       
         public FileManagerViewModel()
         {
-            CurrentDirectory.CurrentChanged += CurrentDirectory_CurrentChanged;
-            CurrentDirectory.PropertyChanged += CurrentDirectory_PropertyChanged;
-            Files.PropertyChanged += Files_PropertyChanged;
-            CurrentDirectory.Roots = DefaultFolderShortcuts.PC();
+            Navigation.Roots = DefaultFolderShortcuts.PC();
+            Navigation.PropertyChanged += Navigation_PropertyChanged;
+        }
+
+        private void Navigation_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == "SelectedItems")
+            {
+                OnPropertyChanged("SelectedItems");
+                OnPropertyChanged("SelectedPaths");
+                OnPropertyChanged("SelectionStatusText");
+            }
+
+            if (e.PropertyName == "SelectedItem")
+            {
+                OnPropertyChanged("SelectedItem");
+                OnPropertyChanged("SelectionStatusText");
+            }
         }
 
         private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            CurrentDirectory.Roots = DefaultFolderShortcuts.PC().Concat(Favorites).ToArray();
-        }
-
-        private void CurrentDirectory_CurrentChanged(object sender, EventArgs e)
-        {
-            lastSelectedItem = null;
-
-            foreach(var item in Files.Items)
-            {
-                item.PropertyChanged -= File_PropertyChanged;
-            }
-
-            var files = new ObservableCollection<FileViewModel>();
-            if (Directory.Exists(CurrentDirectory.FullPath) == true)
-            {
-                try
-                {
-                    foreach (var path in Directory.GetFiles(CurrentDirectory.FullPath))
-                    {
-                        var item = new FileViewModel(path);
-                        item.PropertyChanged += File_PropertyChanged;
-                        files.Add(item);
-                    }
-                }
-                catch (UnauthorizedAccessException)
-                {
-
-                }
-            }
-
-            Files.Items = files;
-
-            OnPropertyChanged("SelectionStatusText");
-            OnPropertyChanged("SelectedPaths");
-        }
-
-        private void File_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            OnPropertyChanged("Files");
-            OnPropertyChanged("SelectionStatusText");
-            OnPropertyChanged("SelectedPaths");
-        }
-
-        private void Files_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "SelectedItem" && Files.SelectedItem != null)
-            {
-                lastSelectedItem = Files.SelectedItem;
-            }
-            OnPropertyChanged("SelectionStatusText");
-            OnPropertyChanged("SelectedPaths");
-        }
-
-        private void CurrentDirectory_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "SelectedItem" && CurrentDirectory.SelectedItem != null)
-            {
-                lastSelectedItem = CurrentDirectory.SelectedItem;
-            }
-            OnPropertyChanged("SelectionStatusText");
-            OnPropertyChanged("SelectedPaths");
+            Navigation.Roots = DefaultFolderShortcuts.PC().Concat(Favorites).ToArray();
         }
     }
 }

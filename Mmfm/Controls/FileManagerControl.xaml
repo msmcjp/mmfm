@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
         <commands:FocusCommand x:Key="FocusCommand"/>
-        <CollectionViewSource x:Key="CurrentDirectorySource" Source="{Binding CurrentDirectory.SubDirectories}">
+        <CollectionViewSource x:Key="NavigationSource" Source="{Binding Navigation.Folders.Items}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="ItemGroup" />
             </CollectionViewSource.GroupDescriptions>
@@ -35,7 +35,7 @@
     </UserControl.Style>
 
     <i:Interaction.Triggers>
-        <i:PropertyChangedTrigger Binding="{Binding CurrentDirectory.FullPath}">
+        <i:PropertyChangedTrigger Binding="{Binding Navigation.FullPath}">
             <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{x:Reference Name=DirectoryList}"/>
         </i:PropertyChangedTrigger>
     </i:Interaction.Triggers>
@@ -54,7 +54,20 @@
             </DataTemplate>
             <DataTemplate x:Key="NameCell">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="{Binding IconImage}" Width="20" Height="20"/>
+                    <Image Source="{Binding IconImage}" Width="20" Height="20">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCut}" Value="True">
+                                        <Setter Property="Opacity" Value="0.3"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsCut}" Value="False">
+                                        <Setter Property="Opacity" Value="1.0"/>
+                                    </DataTrigger>
+                                </Style.Triggers> 
+                            </Style>
+                        </Image.Style>
+                    </Image>
                     <TextBlock Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </DataTemplate>
@@ -67,12 +80,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{Binding CurrentDirectory.Title}" FontSize="14" FontWeight="Bold" Margin="5" Visibility="{Binding CurrentDirectory.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
+        <TextBlock Grid.Row="0" Text="{Binding Navigation.Title}" FontSize="14" FontWeight="Bold" Margin="5" Visibility="{Binding Navigation.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
 
         <ListView x:Name="DirectoryList"
                   Grid.Row="1" 
-                  ItemsSource="{Binding Source={StaticResource CurrentDirectorySource}}"
-                  SelectedItem="{Binding CurrentDirectory.SelectedItem}" 
+                  ItemsSource="{Binding Source={StaticResource NavigationSource}}"
+                  SelectedItem="{Binding Navigation.Folders.SelectedItem}" 
                   DisplayMemberPath="Value" 
                   TextSearch.TextPath="Name"
                   IsTextSearchEnabled="True" 
@@ -92,7 +105,7 @@
                     <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding CurrentDirectory.LaunchCommand}"/>
+                    <i:InvokeCommandAction Command="{Binding Navigation.Folders.LaunchCommand}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
@@ -116,7 +129,7 @@
                                                        Margin="5"
                                                        HorizontalAlignment="Left" 
                                                        VerticalAlignment="Center"                                               
-                                                       Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.CurrentDirectory.IsRoot, Converter={StaticResource BoolVisibilityConverter}}"/>
+                                                       Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.Navigation.IsRoot, Converter={StaticResource BoolVisibilityConverter}}"/>
                                             <ItemsPresenter Grid.Row="1"/>
                                         </Grid>
                                     </ControlTemplate>
@@ -128,8 +141,8 @@
             </ListView.GroupStyle>
             
             <ListView.InputBindings>
-                <KeyBinding Gesture="Space" Command="{Binding CurrentDirectory.SelectCommand}"/>
-                <KeyBinding Gesture="Enter" Command="{Binding CurrentDirectory.LaunchCommand}"/>
+                <KeyBinding Gesture="Space" Command="{Binding Navigation.Folders.SelectCommand}"/>
+                <KeyBinding Gesture="Enter" Command="{Binding Navigation.Folders.LaunchCommand}" Key="Return"/>
             </ListView.InputBindings>
 
             <ListView.View>
@@ -137,7 +150,7 @@
                     <GridView.ColumnHeaderContainerStyle>
                         <Style TargetType="{x:Type GridViewColumnHeader}">
                             <Setter Property="Visibility"
-                                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.CurrentDirectory.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
+                                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.Navigation.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
                         </Style>
                     </GridView.ColumnHeaderContainerStyle>
                     <GridViewColumn CellTemplate="{StaticResource CheckCell}"  Width="30" />
@@ -153,8 +166,8 @@
                   Grid.Row="3" 
                   TextSearch.TextPath="Name" 
                   IsTextSearchEnabled="True" 
-                  ItemsSource="{Binding Files.Items}"
-                  SelectedItem="{Binding Files.SelectedItem}"
+                  ItemsSource="{Binding Navigation.Files.Items}"
+                  SelectedItem="{Binding Navigation.Files.SelectedItem}"
                   FontFamily="Segoe UI" 
                   SelectionMode="Single" 
                   IsTabStop="False">
@@ -170,13 +183,13 @@
                     <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding Files.LaunchCommand}"/>
+                    <i:InvokeCommandAction Command="{Binding Navigation.Files.LaunchCommand}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
             <ListView.InputBindings>
-                <KeyBinding Gesture="Space" Command="{Binding Files.SelectCommand}"/>
-                <KeyBinding Gesture="Enter" Command="{Binding Files.LaunchCommand}"/>
+                <KeyBinding Gesture="Space" Command="{Binding Navigation.Files.SelectCommand}"/>
+                <KeyBinding Gesture="Enter" Command="{Binding Navigation.Files.LaunchCommand}"/>
             </ListView.InputBindings>
 
             <ListView.View>

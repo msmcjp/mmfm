@@ -22,22 +22,33 @@ namespace Mmfm
         }
         #endregion
 
-        public OperationProgressViewModel(IOperationProvider operationProvider)
+        public OperationProgressViewModel(IEnumerable<IOperationProvider> operationProviders)
         {
-            OperationProvider = operationProvider;
-            OperationProvider.OperationProgressed += ProgressProvider_OperationProgressed;
+            OperationProviders = operationProviders;
+            foreach(var operationProvider in OperationProviders)
+            {
+                operationProvider.TokenSource = tokenSource;
+                operationProvider.OperationProgressed += OperationProvider_OperationProgressed;
+            }
         }
 
         ~OperationProgressViewModel()
         {
-            OperationProvider.OperationProgressed -= ProgressProvider_OperationProgressed;
+            foreach (var operationProvider in OperationProviders)
+            {
+                operationProvider.TokenSource = new CancellationTokenSource();
+                operationProvider.OperationProgressed -= OperationProvider_OperationProgressed;
+            }
         }
 
-        public IOperationProvider OperationProvider
+        public IEnumerable<IOperationProvider> OperationProviders
         {
             get;
             private set;
         }
+
+        private CancellationTokenSource tokenSource = new CancellationTokenSource();
+        private int _value = 0;
 
         private ICommand startOperationCommand;
         public ICommand StartOperationCommand
@@ -48,9 +59,18 @@ namespace Mmfm
                 {
                     startOperationCommand = new RelayCommand(async () =>
                     {
-                        Maximum = OperationProvider.MaxValue;
-                        Value = 0;
-                        await Task.Run(OperationProvider.Operation);                                                                     
+                        Count = OperationProviders.Sum(p => p.Count);
+                        value = 0;
+                        foreach(var op in OperationProviders)
+                        {
+                            _value = 0;
+                            await Task.Run(op.Operation, tokenSource.Token);
+                            if (tokenSource.IsCancellationRequested)
+                            {
+                                break;
+                            }
+                            value += op.Count;
+                        }
                         OperationFinished = true;
                     });
                 }
@@ -58,14 +78,14 @@ namespace Mmfm
             }
         }
 
-        private string title;
-        public string Title
+        private string caption;
+        public string Caption
         {
-            get => title;
+            get => caption;
             set
             {
-                title = value;
-                OnPropertyChanged("Title");
+                caption = value;
+                OnPropertyChanged("Caption");
             }
         }
 
@@ -91,32 +111,40 @@ namespace Mmfm
             }
         }
 
-        private int maximum;
-        public int Maximum
+        public bool IsCancellationRequested => tokenSource.IsCancellationRequested;
+
+        private int count;
+        public int Count
         {
-            get => maximum;
+            get => count;
             private set
             {
-                maximum = value;
-                OnPropertyChanged("Maximum");
+                count = value;
+                OnPropertyChanged("Count");
             }
         }
 
         private int value;
-        public int Value
+        public int Value => value + _value;   
+
+        private ICommand cancelCommand;
+        public ICommand CancelCommand
         {
-            get => value;
-            private set
+            get
             {
-                this.value = value;
-                OnPropertyChanged("Value");
+                if(cancelCommand == null)
+                {
+                    cancelCommand = new RelayCommand(() => tokenSource.Cancel());
+                }
+                return cancelCommand;
             }
         }
 
-        private void ProgressProvider_OperationProgressed(object sender, OperationProgressedEventArgs e)
+        private void OperationProvider_OperationProgressed(object sender, OperationProgressedEventArgs e)
         {
-            Value = e.Value;
+            _value = e.Value;
             Current = e.Current;
+            OnPropertyChanged("Value");
         }
     }
 }
