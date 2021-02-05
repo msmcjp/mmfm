@@ -35,6 +35,7 @@ namespace Mmfm
         private bool isAlias;
         private string itemGroup;
         private bool isCut;
+        private bool isHidden;
 
         public static FileViewModel CreateAlias(string path, string aliasName, string itemGroup = null, Icon icon = null)
         {
@@ -54,12 +55,23 @@ namespace Mmfm
         {
             Path = path;
             Name = System.IO.Path.GetFileNameWithoutExtension(path);
+
+            if (string.IsNullOrEmpty(Name))
+            {
+                Name = System.IO.Path.GetFileName(path);
+            }
+            else
+            {
+                Extension = System.IO.Path.GetExtension(path);
+            }
+
             isAlias = false;
             Icon = IconExtractor.Extract(Path, true);
             ItemGroup = itemGroup;
-            Extension = System.IO.Path.GetExtension(path);
 
             var fi = new FileInfo(path);
+
+            isHidden = fi.Attributes.HasFlag(FileAttributes.Hidden);
             modifiedAt = fi.LastWriteTime;
 
             if (fi.Attributes.HasFlag(FileAttributes.Directory) == false)
@@ -140,6 +152,8 @@ namespace Mmfm
             }
         }
 
+        public bool IsHidden => isHidden;
+
         public bool IsCut
         {
             get => isCut;
@@ -147,8 +161,11 @@ namespace Mmfm
             {
                 isCut = value;
                 OnPropertyChanged("IsCut");
+                OnPropertyChanged("IconOpacity");
             }
         }
+
+        public double IconOpacity => IsHidden || IsCut ? 0.4 : 1.0; 
 
         public bool IsNotAlias => !isAlias;
 

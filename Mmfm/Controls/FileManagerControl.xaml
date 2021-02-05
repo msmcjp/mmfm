@@ -54,20 +54,7 @@
             </DataTemplate>
             <DataTemplate x:Key="NameCell">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="{Binding IconImage}" Width="20" Height="20">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsCut}" Value="True">
-                                        <Setter Property="Opacity" Value="0.3"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsCut}" Value="False">
-                                        <Setter Property="Opacity" Value="1.0"/>
-                                    </DataTrigger>
-                                </Style.Triggers> 
-                            </Style>
-                        </Image.Style>
-                    </Image>
+                    <Image Source="{Binding IconImage}" Width="20" Height="20" Opacity="{Binding IconOpacity}"/>
                     <TextBlock Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </DataTemplate>
