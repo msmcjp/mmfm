@@ -9,6 +9,7 @@ namespace Mmfm
     public class TemplateObjectConverter : JsonConverter<ExpandoObject>
     {
         private IDictionary<string, object> template;
+
         public TemplateObjectConverter(ExpandoObject template)
         {
             this.template = template;
@@ -27,6 +28,15 @@ namespace Mmfm
                         var type = template[propertyName].GetType();
                         deserialized[propertyName] = JsonSerializer.Deserialize(ref reader, type, options) ?? template[propertyName];
                     }
+                    else
+                    {
+                        reader.Skip();
+                    }
+                }
+
+                if(reader.TokenType == JsonTokenType.EndObject)
+                {
+                    break;
                 }
             }
 
@@ -35,7 +45,7 @@ namespace Mmfm
 
         public override void Write(Utf8JsonWriter writer, ExpandoObject value, JsonSerializerOptions options)
         {
-            JsonSerializer.Serialize<ExpandoObject>(writer, value, options);
+            JsonSerializer.Serialize<ExpandoObject>(writer, value, new JsonSerializerOptions { WriteIndented = true });
         }
     }
 }
