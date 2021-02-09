@@ -54,14 +54,14 @@ namespace HotKey
         /// <param name="window">ウィンドウ</param>
         /// <param name="modifierKey">修飾キー</param>
         /// <param name="key">キー</param>
-        public HotKey(System.Windows.Window window, ModifierKeys modifierKey, Key key)
+        public HotKey(System.Windows.Window window, KeyGesture keyGesture)
         {
             var handle = new WindowInteropHelper(window).Handle;
-            Contract.Requires(modifierKey != ModifierKeys.None || key != Key.None);
+            Contract.Requires(keyGesture.Modifiers != ModifierKeys.None || keyGesture.Key != Key.None);
             Contract.Requires(handle != IntPtr.Zero);
 
-            this.Key = key;
-            this.ModifierKey = modifierKey;
+            this.Key = keyGesture.Key;
+            this.ModifierKey = keyGesture.Modifiers;
             this.id = ++count;
             this.handle = handle;
 
