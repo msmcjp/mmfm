@@ -73,15 +73,20 @@ namespace Mmfm
             get => settings; 
             set 
             {
-                settings = value;
-                OnSettingsChanged();
-            }
-        }
+                if(settings != null)
+                {
+                    settings.PropertyChanged -= Settings_PropertyChanged;
+                }
 
-        private void OnSettingsChanged() 
-        {
-            Navigation.Goto(Settings.Current);
-            Navigation.ShowHiddenFiles = Settings.ShowHiddenFiles;
+                settings = value;
+
+                if(settings != null)
+                {
+                    settings.PropertyChanged += Settings_PropertyChanged;
+                }
+                OnPropertyChanged(nameof(Settings));
+                Settings_PropertyChanged(this);
+            }
         }
 
         public FileManagerViewModel()
@@ -89,6 +94,19 @@ namespace Mmfm
             Navigation.Roots = DefaultFolderShortcuts.PC();
             Navigation.PropertyChanged += Navigation_PropertyChanged;
             Settings = new Settings.FileManager();
+        }
+
+        private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e = null)
+        {
+            if (e == null || e.PropertyName == nameof(Settings.Current))
+            {
+                Navigation.Goto(Settings.Current);
+            }
+
+            if (e == null || e.PropertyName == nameof(Settings.ShowHiddenFiles))
+            {
+                Navigation.ShowHiddenFiles = Settings.ShowHiddenFiles;
+            }
         }
 
         private void Navigation_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -103,17 +121,6 @@ namespace Mmfm
             if (e.PropertyName == nameof(SelectedItem))
             {
                 OnPropertyChanged(nameof(SelectedItem));
-                OnPropertyChanged(nameof(SelectionStatusText));
-            }
-
-            if(e.PropertyName == nameof(Navigation.FullPath))
-            {
-                Settings.Current = Navigation.FullPath;
-            }
-
-            if(e.PropertyName == nameof(Navigation.ShowHiddenFiles))
-            {
-                Settings.ShowHiddenFiles = Navigation.ShowHiddenFiles;
             }
         }
     }
