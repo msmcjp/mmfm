@@ -34,7 +34,7 @@ namespace Mmfm
             set
             {
                 inputText = value;
-                OnPropertyChanged("InputText");
+                OnPropertyChanged(nameof(InputText));
                 OnInputTextChanged();
             }
         }
@@ -46,7 +46,7 @@ namespace Mmfm
             set
             {
                 selectedItem = value;
-                OnPropertyChanged("SelectedItem");
+                OnPropertyChanged(nameof(SelectedItem));
             }
         }
 
@@ -57,7 +57,7 @@ namespace Mmfm
             private set
             {
                 allCommandItems = value;
-                OnPropertyChanged("AllCommandItems");
+                OnPropertyChanged(nameof(AllCommandItems));
             }
         }
 
@@ -68,7 +68,7 @@ namespace Mmfm
             private set
             {
                 items = value;
-                OnPropertyChanged("Items");
+                OnPropertyChanged(nameof(Items));
             }
         }
 
@@ -81,7 +81,7 @@ namespace Mmfm
         {
             Items = new List<ICommandItem>(allCommandItems.Where(c => c.Name.Contains(InputText, StringComparison.CurrentCultureIgnoreCase)).OrderBy(c => c.Name));
             SelectedItem = Items.FirstOrDefault();
-            OnPropertyChanged("IsInputTextNullOrEmpty");
+            OnPropertyChanged(nameof(IsInputTextNullOrEmpty));
         }
     }
 }

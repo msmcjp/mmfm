@@ -76,7 +76,7 @@ namespace Mmfm
             if(e.PropertyName == "IsActive" && ((FileManagerViewModel)sender).IsActive)
             {
                 ActiveFileManager = (FileManagerViewModel)sender;
-                OnPropertyChanged("ActiveFileManager");
+                OnPropertyChanged(nameof(ActiveFileManager));
             }
         }
     }

@@ -38,7 +38,7 @@ namespace Mmfm
             set
             {
                 favoriteName = value;
-                OnPropertyChanged("FavoriteName");
+                OnPropertyChanged(nameof(FavoriteName));
             }
         }
     }

@@ -61,7 +61,7 @@ namespace Mmfm
             private set
             {
                 name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -71,7 +71,7 @@ namespace Mmfm
             private set
             {
                 itemGroup = value;
-                OnPropertyChanged("ItemGroup");
+                OnPropertyChanged(nameof(ItemGroup));
             }
         }
               
@@ -82,7 +82,7 @@ namespace Mmfm
             private set
             {
                 icon = value;
-                OnPropertyChanged("Icon");
+                OnPropertyChanged(nameof(Icon));
             }
         }
     }

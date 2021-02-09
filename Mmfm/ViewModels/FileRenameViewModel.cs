@@ -36,7 +36,7 @@ namespace Mmfm
             private set
             {
                 current = value;
-                OnPropertyChanged("Current");
+                OnPropertyChanged(nameof(Current));
                 FileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(current);
                 FileExtension = System.IO.Path.GetExtension(current).TrimStart("."[0]);
             }
@@ -48,7 +48,7 @@ namespace Mmfm
             set
             {
                 fileNameWithoutExtension = value;
-                OnPropertyChanged("FileNameWithoutExtension");
+                OnPropertyChanged(nameof(FileNameWithoutExtension));
             }
         }
 
@@ -58,7 +58,7 @@ namespace Mmfm
             set
             {
                 fileExtension = value;
-                OnPropertyChanged("FileExtension");
+                OnPropertyChanged(nameof(FileExtension));
             }
         }
 

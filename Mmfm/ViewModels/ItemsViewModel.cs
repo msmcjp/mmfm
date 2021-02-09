@@ -37,7 +37,7 @@ namespace Mmfm
                 {
                     item.PropertyChanged += Item_PropertyChanged;
                 }
-                OnPropertyChanged("Items");
+                OnPropertyChanged(nameof(Items));
                 SelectedItem = selectedItem;
             }
         }
@@ -49,7 +49,7 @@ namespace Mmfm
             set
             {
                 selectedItem = value;
-                OnPropertyChanged("SelectedItem");
+                OnPropertyChanged(nameof(SelectedItem));
             }
         }
 
@@ -92,7 +92,7 @@ namespace Mmfm
         {
             if(e.PropertyName == "IsSelected")
             {
-                OnPropertyChanged("SelectedItems");
+                OnPropertyChanged(nameof(SelectedItems));
             }
         }
     }

@@ -49,7 +49,7 @@ namespace Mmfm
                 plugin.Host = DualFileManager;
                 plugin.ResetToDefault();
                 plugin.Messenger = Messenger.Default;
-                plugin.RequestInputBindingsUpdate += (s, e) => OnPropertyChanged("InputBindings");
+                plugin.RequestInputBindingsUpdate += (s, e) => OnPropertyChanged(nameof(InputBindings));
             }
             return plugins;
         }

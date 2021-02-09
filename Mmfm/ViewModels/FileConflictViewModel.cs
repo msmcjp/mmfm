@@ -45,7 +45,7 @@ namespace Mmfm
             set
             {
                 overwrite = value;
-                OnPropertyChanged("Overwrite");
+                OnPropertyChanged(nameof(Overwrite));
             }
         }
 
@@ -56,7 +56,7 @@ namespace Mmfm
             set
             {
                 skip = value;
-                OnPropertyChanged("Skip");
+                OnPropertyChanged(nameof(Skip));
             }
         }
 
@@ -67,7 +67,7 @@ namespace Mmfm
             set
             {
                 newer = value;
-                OnPropertyChanged("Newer");
+                OnPropertyChanged(nameof(Newer));
             }
         }
 
@@ -78,7 +78,7 @@ namespace Mmfm
             set
             {
                 applyToAll = value;
-                OnPropertyChanged("ApplyToAll");
+                OnPropertyChanged(nameof(ApplyToAll));
             }
         }
 

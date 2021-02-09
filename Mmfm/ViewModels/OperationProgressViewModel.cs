@@ -85,7 +85,7 @@ namespace Mmfm
             set
             {
                 caption = value;
-                OnPropertyChanged("Caption");
+                OnPropertyChanged(nameof(Caption));
             }
         }
 
@@ -96,7 +96,7 @@ namespace Mmfm
             private set
             {
                 current = value;
-                OnPropertyChanged("Current");
+                OnPropertyChanged(nameof(Current));
             }
         }
 
@@ -107,7 +107,7 @@ namespace Mmfm
             private set
             {
                 operationFinished = value;
-                OnPropertyChanged("OperationFinished");
+                OnPropertyChanged(nameof(OperationFinished));
             }
         }
 
@@ -120,7 +120,7 @@ namespace Mmfm
             private set
             {
                 count = value;
-                OnPropertyChanged("Count");
+                OnPropertyChanged(nameof(Count));
             }
         }
 
@@ -144,7 +144,7 @@ namespace Mmfm
         {
             _value = e.Value;
             Current = e.Current;
-            OnPropertyChanged("Value");
+            OnPropertyChanged(nameof(Value));
         }
     }
 }

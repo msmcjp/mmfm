@@ -95,7 +95,7 @@ namespace Mmfm
             set
             {
                 isSelected = value;
-                OnPropertyChanged("IsSelected");
+                OnPropertyChanged(nameof(IsSelected));
             }
         }
 
@@ -105,7 +105,7 @@ namespace Mmfm
             private set
             {
                 icon = value;
-                OnPropertyChanged("Icon");
+                OnPropertyChanged(nameof(Icon));
             }
         }
 
@@ -128,7 +128,7 @@ namespace Mmfm
             private set
             {
                 name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -138,7 +138,7 @@ namespace Mmfm
             private set
             {
                 extension = value;
-                OnPropertyChanged("Extension");
+                OnPropertyChanged(nameof(Extension));
             }
         }
 
@@ -148,7 +148,7 @@ namespace Mmfm
             private set
             {
                 itemGroup = value;
-                OnPropertyChanged("ItemGroup");
+                OnPropertyChanged(nameof(ItemGroup));
             }
         }
 
@@ -160,8 +160,8 @@ namespace Mmfm
             set
             {
                 isCut = value;
-                OnPropertyChanged("IsCut");
-                OnPropertyChanged("IconOpacity");
+                OnPropertyChanged(nameof(IsCut));
+                OnPropertyChanged(nameof(IconOpacity));
             }
         }
 
