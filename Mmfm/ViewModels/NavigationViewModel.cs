@@ -211,9 +211,10 @@ namespace Mmfm
             if (e.PropertyName == nameof(SelectedItem))
             {
                 SelectedItem = (sender as ItemsViewModel<FileViewModel>).SelectedItem;
+                OnPropertyChanged(nameof(SelectedItems));
             }
 
-            if(e.PropertyName == nameof(SelectedItems))
+            if (e.PropertyName == nameof(SelectedItems))
             {
                 OnPropertyChanged(nameof(SelectedItems));
             }
