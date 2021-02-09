@@ -27,6 +27,7 @@ namespace Mmfm
             get => items;
             set
             {
+                var selectedItem = SelectedItem;
                 foreach (var item in Items)
                 {
                     item.PropertyChanged -= Item_PropertyChanged;
@@ -37,6 +38,7 @@ namespace Mmfm
                     item.PropertyChanged += Item_PropertyChanged;
                 }
                 OnPropertyChanged("Items");
+                SelectedItem = selectedItem;
             }
         }
 
