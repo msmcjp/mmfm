@@ -50,7 +50,7 @@ namespace Mmfm.Plugins
             set;
         }
 
-        public dynamic Settings
+        public object Settings
         {
             get;
             set;
@@ -66,10 +66,6 @@ namespace Mmfm.Plugins
         public void ResetToDefault()
         {
 
-        }
-
-        public void Plugged()
-        {
         }
 
         private FileConflictAction ConfirmFileConflictAction(string source, ref string destination)

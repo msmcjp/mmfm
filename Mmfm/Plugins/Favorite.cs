@@ -18,29 +18,7 @@ namespace Mmfm.Plugins
         public string Name => "Favorite";
 
         private NavigationViewModel Navigation => Host.ActiveFileManager.Navigation;
-
-        private ObservableCollection<FolderShortcutViewModel> favorites;
-        private ObservableCollection<FolderShortcutViewModel> Favorites
-        {
-            get => favorites;
-            set
-            {
-                if (favorites != null)
-                {
-                    favorites.CollectionChanged -= Favorites_CollectionChanged;
-                }
-                
-                favorites = value;
-               
-                if (favorites != null)
-                {
-                    favorites.CollectionChanged += Favorites_CollectionChanged;
-                }
-                
-                Host.First.Favorites = Host.Second.Favorites = value;
-            }
-        }
-
+     
         public event EventHandler RequestInputBindingsUpdate;
 
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
@@ -61,27 +39,46 @@ namespace Mmfm.Plugins
             get; 
             set; 
         }
- 
-        public dynamic Settings
+
+        public object Settings
         {
-            get;
-            set;
+            get => Favorites;
+            set => Favorites = value as ObservableCollection<FolderShortcutViewModel>;
+        }
+
+        private ObservableCollection<FolderShortcutViewModel> favorites;
+        public ObservableCollection<FolderShortcutViewModel> Favorites
+        {
+            get => favorites;
+            set
+            {
+                if (favorites != null)
+                {
+                    favorites.CollectionChanged -= Favorites_CollectionChanged;
+                }
+
+                favorites = value;
+
+                if (favorites != null)
+                {
+                    favorites.CollectionChanged += Favorites_CollectionChanged;
+                    Favorites_CollectionChanged(
+                        this,
+                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
+                    );
+                }
+            }
         }
 
         public void ResetToDefault()
         {
-            Settings.Favorites = Favorites = new ObservableCollection<FolderShortcutViewModel>();
-        }
-
-        public void Plugged()
-        {
-            Favorites = (ObservableCollection<FolderShortcutViewModel>)Settings.Favorites;
+            Favorites = new ObservableCollection<FolderShortcutViewModel>();
         }
 
         private bool CanAddFavorite()
         {
             return Navigation.FullPath.Length > 0 && 
-                Favorites.Where(item => item.Path == Navigation.FullPath).Count() == 0;
+                Favorites?.Where(item => item.Path == Navigation.FullPath).Count() == 0;
         }
 
         private void AddFavorite()
@@ -99,13 +96,13 @@ namespace Mmfm.Plugins
                     "\U0001f496 Favorite",
                     IconExtractor.Extract(content.FullPath)
                 );
-                Favorites.Add(favorite);
+                Favorites?.Add(favorite);
             }
         }
 
         private bool CanRemovefavorite()
         {
-            return Favorites.Where(item => item.Path == Navigation.FullPath).Count() != 0;
+            return Favorites?.Where(item => item.Path == Navigation.FullPath).Count() != 0;
         }
 
         private void Removefavorite()
@@ -113,7 +110,7 @@ namespace Mmfm.Plugins
             var path = Navigation.FullPath;
 
             FolderShortcutViewModel favorite = null;
-            if ((favorite = Favorites.SingleOrDefault(f => f.Path == path)) == null)
+            if ((favorite = Favorites?.SingleOrDefault(f => f.Path == path)) == null)
             {
                 Messenger?.Send(new MessageBoxViewModel
                 {
@@ -136,7 +133,7 @@ namespace Mmfm.Plugins
             Messenger?.Send(message);
             if (message.Result == System.Windows.MessageBoxResult.Yes)
             {
-                Favorites.Remove(favorite);
+                Favorites?.Remove(favorite);
             }
         }
 
@@ -144,12 +141,12 @@ namespace Mmfm.Plugins
         {
             var itemsFactory = new Func<IEnumerable<ICommandItem>>(() =>
             {
-                return Favorites.Select((f, i) => new CommandItemViewModel(
+                return Favorites?.Select((f, i) => new CommandItemViewModel(
                     f.Name,
                     $"Shift+F{i + 1}",
                     new RelayCommand(() =>
                     {
-                        Navigation.Current = f;
+                        Navigation.Goto(f.Path);
                     })
                 ));
             });
@@ -158,6 +155,7 @@ namespace Mmfm.Plugins
 
         private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            Host.Roots = DefaultFolderShortcuts.PC().Concat(Favorites).ToArray();
             RequestInputBindingsUpdate?.Invoke(this, EventArgs.Empty);
         }
     }

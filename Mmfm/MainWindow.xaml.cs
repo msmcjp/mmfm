@@ -28,12 +28,22 @@ namespace Mmfm
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainViewModel();          
+            var viewModel = new MainViewModel();
+            DataContext = viewModel;
 
             try
             {
-                hotKey = new HotKey.HotKey(this, ModifierKeys.Control, HotKeyConverter.ConvertFromString(";"));
-                hotKey.Pressed += HotKey_Pressed;
+                var keyGesture = (KeyGesture)new KeyGestureConverter().ConvertFromString(viewModel.Settings.HotKey);
+                hotKey = new HotKey.HotKey(this, keyGesture);
+                hotKey.Pressed += HotKey_Pressed;          
+            }
+            catch (NotSupportedException)
+            {
+                MessageBox.Show("Hot-key is not supported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show("Invalid Hot-key definition.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch
             {

@@ -27,39 +27,13 @@ namespace Mmfm
 
         public NavigationViewModel Navigation { get; } = new NavigationViewModel();
 
-        private ObservableCollection<FolderShortcutViewModel> favorites;
-        public ObservableCollection<FolderShortcutViewModel> Favorites
-        {
-            get => favorites;
-            set
-            {
-                if (favorites != null)
-                {
-                    favorites.CollectionChanged -= Favorites_CollectionChanged;
-                }
-
-                favorites = value;
-
-                if (favorites != null)
-                {
-                    favorites.CollectionChanged += Favorites_CollectionChanged;
-                    Favorites_CollectionChanged(
-                        this, 
-                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
-                    );
-                }
-
-                OnPropertyChanged("Favorites");
-            }
-        }
-
         public bool IsActive 
         { 
             get => isActive; 
             set
             {
                 isActive = value; 
-                OnPropertyChanged("IsActive"); 
+                OnPropertyChanged(nameof(IsActive)); 
             } 
         }
 
@@ -73,13 +47,8 @@ namespace Mmfm
         {
             get
             {
-                var fc = Navigation.Files.SelectedItems.Count();
-                var dc = Navigation.Folders.SelectedItems.Count();
-
-                if (fc + dc == 0 && SelectedItem != null)
-                {
-                    _ = SelectedItem.IsFolder ? dc++ : fc++;
-                }
+                var fc = Navigation.SelectedItems.Where(item => item.IsFolder == false).Count();
+                var dc = Navigation.SelectedItems.Where(item => item.IsFolder == true).Count();
 
                 if (fc + dc == 0) { return ""; }
 
@@ -97,32 +66,55 @@ namespace Mmfm
                 return $"{text} {(fc + dc > 1 ? "are" : "is")} selected.";
             }
         }
-      
+
+        private Settings.FileManager settings;
+        public Settings.FileManager Settings 
+        { 
+            get => settings; 
+            set 
+            {
+                settings = value;
+                OnSettingsChanged();
+            }
+        }
+
+        private void OnSettingsChanged() 
+        {
+            Navigation.Goto(Settings.Current);
+            Navigation.ShowHiddenFiles = Settings.ShowHiddenFiles;
+        }
+
         public FileManagerViewModel()
         {
             Navigation.Roots = DefaultFolderShortcuts.PC();
             Navigation.PropertyChanged += Navigation_PropertyChanged;
+            Settings = new Settings.FileManager();
         }
 
         private void Navigation_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == "SelectedItems")
+            if(e.PropertyName == nameof(SelectedItems))
             {
-                OnPropertyChanged("SelectedItems");
-                OnPropertyChanged("SelectedPaths");
-                OnPropertyChanged("SelectionStatusText");
+                OnPropertyChanged(nameof(SelectedItems));
+                OnPropertyChanged(nameof(SelectedPaths));
+                OnPropertyChanged(nameof(SelectionStatusText));
             }
 
-            if (e.PropertyName == "SelectedItem")
+            if (e.PropertyName == nameof(SelectedItem))
             {
-                OnPropertyChanged("SelectedItem");
-                OnPropertyChanged("SelectionStatusText");
+                OnPropertyChanged(nameof(SelectedItem));
+                OnPropertyChanged(nameof(SelectionStatusText));
             }
-        }
 
-        private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            Navigation.Roots = DefaultFolderShortcuts.PC().Concat(Favorites).ToArray();
+            if(e.PropertyName == nameof(Navigation.FullPath))
+            {
+                Settings.Current = Navigation.FullPath;
+            }
+
+            if(e.PropertyName == nameof(Navigation.ShowHiddenFiles))
+            {
+                Settings.ShowHiddenFiles = Navigation.ShowHiddenFiles;
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Mmfm
                 }
                 else
                 {
-                    Current = item;
+                    Goto(item.Path);
                 }
             });
             Folders.PropertyChanged += Items_PropertyChanged;
@@ -45,24 +45,8 @@ namespace Mmfm
             Files.PropertyChanged += Items_PropertyChanged;
         }
 
-        public FileViewModel Current
-        {
-            get => navigationStack.Count == 0 ? null : navigationStack.Peek();
-            set
-            {
-                if (value != null)
-                {
-                    navigationStack.Push(value);
-                    OnCurrentChanged();
-                }
-                else
-                {
-                    navigationStack.Clear();
-                    OnCurrentChanged();
-                }
-            }
-        }
-
+        public FileViewModel Current => navigationStack.Count == 0 ? null : navigationStack.Peek();
+ 
         private FileViewModel selectedItem;
         public FileViewModel SelectedItem
         {
@@ -70,7 +54,7 @@ namespace Mmfm
             private set
             {
                 selectedItem = value;
-                OnPropertyChanged("SelectedItem");
+                OnPropertyChanged(nameof(SelectedItem));
             }
         }
 
@@ -88,7 +72,7 @@ namespace Mmfm
             set
             {
                 roots = value;
-                OnPropertyChanged("Roots");
+                OnPropertyChanged(nameof(Roots));
                 if (IsRoot)
                 {
                     OnCurrentChanged();
@@ -105,7 +89,7 @@ namespace Mmfm
             get
             {
                 var selectedItems = Folders.SelectedItems.Concat(Files.SelectedItems);
-                if(selectedItems.Count() == 0)
+                if (selectedItems.Count() == 0 && SelectedItem?.IsNotAlias == true)
                 {
                     selectedItems = new FileViewModel[] { SelectedItem };
                 }
@@ -113,26 +97,67 @@ namespace Mmfm
             }
         }
 
-        public IList<FileViewModel> Items => Array.AsReadOnly(Folders.Items.Concat(Files.Items).ToArray());    
+        public IList<FileViewModel> Items => Array.AsReadOnly(Folders.Items.Concat(Files.Items).ToArray());
 
-        public void BackToParent()
-        {
-            if (navigationStack.Count > 0)
+        public bool Goto(string path)
+        {            
+            if (Directory.Exists(path) == false)
             {
-                OnCurrentChanged(navigationStack.Pop());
+                return false;
+            }
+
+            navigationStack.Push(new FileViewModel(path));
+            OnCurrentChanged();
+
+            return true;
+        }
+
+        public void GotoTop()
+        {
+            navigationStack.Clear();
+            OnCurrentChanged();
+        }
+
+        public bool BackToParent()
+        {
+            if (navigationStack.Count == 0)
+            {
+                return false;
+            }
+            OnCurrentChanged(navigationStack.Pop());
+            return true;
+        }
+
+        private bool showHiddenFiles;
+        public bool ShowHiddenFiles
+        {
+            get => showHiddenFiles;
+            set
+            {
+                showHiddenFiles = value;
+                OnPropertyChanged(nameof(ShowHiddenFiles));
+                Refresh();
             }
         }
 
+        private Func<FileViewModel, bool> Predicate => (x => ShowHiddenFiles || !x.IsHidden);
+
         public void Refresh()
         {
-            Folders.Items = new ObservableCollection<FileViewModel>(navigationStack.Count == 0 ? roots.Select(r => (FileViewModel)r) : ExtractDirectory(Current.Path));
-            if (Current != null)
+            if (IsRoot)
             {
-                Files.Items = new ObservableCollection<FileViewModel>(Directory.GetFiles(Current.Path).Select(p => new FileViewModel(p)));
+                Folders.Items = new ObservableCollection<FileViewModel>(roots.Select(r => (FileViewModel)r));
+                Files.Items = new ObservableCollection<FileViewModel>();
             }
             else
             {
-                Files.Items = new ObservableCollection<FileViewModel>();
+                var folders = ExtractDirectory(Current.Path).Where(Predicate);
+                Folders.Items = new ObservableCollection<FileViewModel>(folders);
+
+                var files = Directory.GetFiles(Current.Path)
+                    .Select(p => new FileViewModel(p))
+                    .Where(Predicate);
+                Files.Items = new ObservableCollection<FileViewModel>(files);
             }
         }
 
@@ -173,24 +198,24 @@ namespace Mmfm
                 Folders.SelectedItem = Folders.Items.First();
             }
    
-            OnPropertyChanged("Title");
-            OnPropertyChanged("FullPath");
-            OnPropertyChanged("IsRoot");
-            OnPropertyChanged("IsNotRoot");
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(FullPath));
+            OnPropertyChanged(nameof(IsRoot));
+            OnPropertyChanged(nameof(IsNotRoot));
             
             CurrentChanged?.Invoke(this, new EventArgs());
         }
 
         private void Items_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "SelectedItem")
+            if (e.PropertyName == nameof(SelectedItem))
             {
                 SelectedItem = (sender as ItemsViewModel<FileViewModel>).SelectedItem;
             }
 
-            if(e.PropertyName == "SelectedItems")
+            if(e.PropertyName == nameof(SelectedItems))
             {
-                OnPropertyChanged("SelectedItems");
+                OnPropertyChanged(nameof(SelectedItems));
             }
         }
     }
