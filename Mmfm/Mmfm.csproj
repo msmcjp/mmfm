@@ -11,6 +11,7 @@
     <Compile Remove="Behaviors\ListViewFocusOnSelectItemBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\External\AutoSizedGridView.cs" Link="AutoSizedGridView.cs" />
     <Compile Include="..\External\FileOperationAPIWrapper.cs" Link="FileOperationAPIWrapper.cs" />
     <Compile Include="..\External\HotKey.cs" Link="HotKey.cs" />
     <Compile Include="..\External\IconExtractor.cs" Link="IconExtractor.cs" />

@@ -7,6 +7,7 @@
              xmlns:behaviors="clr-namespace:Mmfm.Behaviors"
              xmlns:commands="clr-namespace:Mmfm.Commands"
              xmlns:converters="clr-namespace:Mmfm.Converters"
+             xmlns:local="clr-namespace:Mmfm"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     
@@ -85,12 +86,6 @@
             </i:Interaction.Behaviors>
 
             <i:Interaction.Triggers>
-                <!--<b:EventTrigger EventName="PreviewMouseRightButtonUp">
-                    <b:InvokeCommandAction Command="{Binding ShowContextCommand}" CommandParameter="{Binding SelectedPaths}"/>
-                </b:EventTrigger>-->
-                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                    <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
-                </i:EventTrigger>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding Navigation.Folders.LaunchCommand}"/>
                 </i:EventTrigger>
@@ -133,17 +128,17 @@
             </ListView.InputBindings>
 
             <ListView.View>
-                <GridView>
+                <local:AutoSizedGridView >
                     <GridView.ColumnHeaderContainerStyle>
                         <Style TargetType="{x:Type GridViewColumnHeader}">
                             <Setter Property="Visibility"
                                     Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.Navigation.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
                         </Style>
                     </GridView.ColumnHeaderContainerStyle>
-                    <GridViewColumn CellTemplate="{StaticResource CheckCell}"  Width="30" />
+                    <GridViewColumn CellTemplate="{StaticResource CheckCell}" Width="30" />
                     <GridViewColumn Header="Name" CellTemplate="{StaticResource NameCell}" />
-                    <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding ModifiedAt}" Width="150"/>
-                </GridView>
+                    <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding ModifiedAt}" />
+                </local:AutoSizedGridView>
             </ListView.View>
         </ListView>
 
@@ -160,15 +155,10 @@
                   IsTabStop="False">
             <i:Interaction.Behaviors>
                 <behaviors:ListViewFocusNextItemOnSpaceKeyBehavior />
+                <behaviors:ListViewFocusSelectedItemOnItemContainersGenerated/>
             </i:Interaction.Behaviors>
 
             <i:Interaction.Triggers>
-                <!--<b:EventTrigger EventName="PreviewMouseRightButtonUp">
-                    <b:InvokeCommandAction Command="{Binding ShowContextCommand}" CommandParameter="{Binding SelectedPaths}"/>
-                </b:EventTrigger>-->
-                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                    <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
-                </i:EventTrigger>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding Navigation.Files.LaunchCommand}"/>
                 </i:EventTrigger>
@@ -180,13 +170,13 @@
             </ListView.InputBindings>
 
             <ListView.View>
-                <GridView>
+                <local:AutoSizedGridView>
                     <GridViewColumn CellTemplate="{StaticResource CheckCell}" Width="30"/>
-                    <GridViewColumn Header="Name" CellTemplate="{StaticResource NameCell}" Width="Auto"/>
-                    <GridViewColumn Header="Extension" DisplayMemberBinding="{Binding Extension}" Width="Auto"/>
-                    <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding ModifiedAt}" Width="150"/>
-                    <GridViewColumn Header="Size" DisplayMemberBinding="{Binding FileSize}" Width="75"/>
-                </GridView>
+                    <GridViewColumn Header="Name" CellTemplate="{StaticResource NameCell}"/>
+                    <GridViewColumn Header="Extension" DisplayMemberBinding="{Binding Extension}"/>
+                    <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding ModifiedAt}" />
+                    <GridViewColumn Header="Size" DisplayMemberBinding="{Binding FileSize}" />
+                </local:AutoSizedGridView>
             </ListView.View>
         </ListView>
     </Grid>
