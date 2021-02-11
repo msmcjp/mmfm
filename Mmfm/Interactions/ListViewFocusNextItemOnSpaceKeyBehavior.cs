@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace Mmfm.Behaviors
+namespace Mmfm
 {
     public class ListViewFocusNextItemOnSpaceKeyBehavior : Behavior<ListView>
     {       

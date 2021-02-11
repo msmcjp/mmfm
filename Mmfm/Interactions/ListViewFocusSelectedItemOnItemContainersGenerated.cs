@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace Mmfm.Behaviors
+namespace Mmfm
 {
     public class ListViewFocusSelectedItemOnItemContainersGenerated : Behavior<ListView>
     {

@@ -8,14 +8,14 @@
     <Authors>Atsushi Kataoka</Authors>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Behaviors\ListViewFocusOnSelectItemBehavior.cs" />
+    <Compile Remove="Interactions\ListViewFocusOnSelectItemBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\External\AutoSizedGridView.cs" Link="AutoSizedGridView.cs" />
+    <Compile Include="..\External\AutoSizedGridView.cs" Link="Controls\AutoSizedGridView.cs" />
     <Compile Include="..\External\FileOperationAPIWrapper.cs" Link="FileOperationAPIWrapper.cs" />
     <Compile Include="..\External\HotKey.cs" Link="HotKey.cs" />
     <Compile Include="..\External\IconExtractor.cs" Link="IconExtractor.cs" />
-    <Compile Include="..\External\InputBindingsSourceAttachedProperty.cs" Link="InputBindingsSourceAttachedProperty.cs" />
+    <Compile Include="..\External\InputBindingsSourceAttachedProperty.cs" Link="Interactions\InputBindingsSourceAttachedProperty.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

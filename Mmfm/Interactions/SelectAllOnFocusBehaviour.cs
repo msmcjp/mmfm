@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace Mmfm.Behaviors
+namespace Mmfm
 {
     /// <summary>
     ///  https://www.codeproject.com/Tips/1249276/WPF-Select-All-Focus-Behavior

@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"        
-             xmlns:behaviors="clr-namespace:Mmfm.Behaviors"
              xmlns:commands="clr-namespace:Mmfm.Commands"
              xmlns:converters="clr-namespace:Mmfm.Converters"
              xmlns:local="clr-namespace:Mmfm"
@@ -80,17 +79,30 @@
                   SelectionMode="Single"
                   IsTabStop="False" 
                   FontFamily="Segoe UI">
+            
             <i:Interaction.Behaviors>
-                <behaviors:ListViewFocusNextItemOnSpaceKeyBehavior />
-                <behaviors:ListViewFocusSelectedItemOnItemContainersGenerated/>
+                <local:ListViewFocusNextItemOnSpaceKeyBehavior />
+                <local:ListViewFocusSelectedItemOnItemContainersGenerated/>
             </i:Interaction.Behaviors>
 
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding Navigation.Folders.LaunchCommand}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="local:InteractivityItems.Template">
+                        <Setter.Value>
+                            <local:InteractivityTemplate>
+                                <local:InteractivityItems>
+                                    <local:InteractivityItems.Triggers>
+                                        <i:EventTrigger EventName="MouseDoubleClick">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=DataContext.Navigation.Folders.LaunchCommand}"/>
+                                        </i:EventTrigger>
+                                    </local:InteractivityItems.Triggers>
+                                </local:InteractivityItems>
+                            </local:InteractivityTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+           
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>
@@ -128,7 +140,7 @@
             </ListView.InputBindings>
 
             <ListView.View>
-                <local:AutoSizedGridView >
+                <local:AutoSizedGridView>
                     <GridView.ColumnHeaderContainerStyle>
                         <Style TargetType="{x:Type GridViewColumnHeader}">
                             <Setter Property="Visibility"
@@ -154,15 +166,27 @@
                   SelectionMode="Single" 
                   IsTabStop="False">
             <i:Interaction.Behaviors>
-                <behaviors:ListViewFocusNextItemOnSpaceKeyBehavior />
-                <behaviors:ListViewFocusSelectedItemOnItemContainersGenerated/>
+                <local:ListViewFocusNextItemOnSpaceKeyBehavior />
+                <local:ListViewFocusSelectedItemOnItemContainersGenerated/>
             </i:Interaction.Behaviors>
 
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding Navigation.Files.LaunchCommand}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="local:InteractivityItems.Template">
+                        <Setter.Value>
+                            <local:InteractivityTemplate>
+                                <local:InteractivityItems>
+                                    <local:InteractivityItems.Triggers>
+                                        <i:EventTrigger EventName="MouseDoubleClick">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=DataContext.Navigation.Files.LaunchCommand}"/>
+                                        </i:EventTrigger>
+                                    </local:InteractivityItems.Triggers>
+                                </local:InteractivityItems>
+                            </local:InteractivityTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
 
             <ListView.InputBindings>
                 <KeyBinding Gesture="Space" Command="{Binding Navigation.Files.SelectCommand}"/>
