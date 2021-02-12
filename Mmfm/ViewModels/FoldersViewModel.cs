@@ -1,5 +1,7 @@
 ﻿using Mmfm.Commands;
 using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.Windows.Input;
 
 namespace Mmfm
@@ -12,7 +14,13 @@ namespace Mmfm
             set;
         }
 
-        public FoldersViewModel(Action<FileViewModel> action)
+        private static IDictionary<string, ISortDescription<FileViewModel>> sortDescriptions = new Dictionary<string, ISortDescription<FileViewModel>>
+        {
+            { "Name" , new SortDescriptionViewModel<FileViewModel>("Name", x => x.Name) },
+            { "Modified" ,new SortDescriptionViewModel<FileViewModel>("Modified at", x => x.ModifiedAt) },
+        };
+
+        public FoldersViewModel(Action<FileViewModel> action) : base(sortDescriptions)
         {
             LaunchAction = action;
         }
@@ -22,30 +30,10 @@ namespace Mmfm
             LaunchAction?.Invoke(SelectedItem);
         }
 
-        public object SortDescriptions { get; } = new
-        {
-            Name = new SortDescription<FileViewModel>("Name", x => x.Name),
-            Modified = new SortDescription<FileViewModel>("Modified at", x => x.ModifiedAt),
-        };
-
-        public SortDescription<FileViewModel> IsNotAlias { get; } = new SortDescription<FileViewModel>("IsNotAlias", x => x.IsNotAlias);
-
-        private ICommand sortCommand;
-        public override ICommand SortCommand 
-        {
-            get
-            {
-                if(sortCommand == null)
-                {
-                    sortCommand = new RelayCommand<SortDescription<FileViewModel>>(
-                        (desc) => {
-                            desc.IsDescending = !desc.IsDescending;
-                            OrderBy = new SortDescription<FileViewModel>[] { IsNotAlias, desc };
-                        }
-                    );
-                }
-                return sortCommand;
-            }
+        protected override IEnumerable<ISortDescription<FileViewModel>> OrderBy(ISortDescription<FileViewModel> current)
+        {   
+            var isNotAlias = new SortDescriptionViewModel<FileViewModel>("IsNotAlias", x => x.IsNotAlias);
+            return new ISortDescription<FileViewModel>[] { isNotAlias, current };            
         }
     }
 }

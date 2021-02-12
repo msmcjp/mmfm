@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Mmfm
 {
-    public class SortDescription<T> : ISortDescription<T>, INotifyPropertyChanged
+    public class SortDescriptionViewModel<T> : ISortDescription<T>, INotifyPropertyChanged
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -23,22 +23,32 @@ namespace Mmfm
         
         public Expression<Func<T, object>> SortExpression { get; }
 
-        private bool isDescending;
-        public bool IsDescending
+        public string HeaderText
+        {
+            get
+            {
+                if(IsDescending == null) { return DisplayName; }
+                return $"{DisplayName} {((IsDescending == true) ? '\U000025bc' : '\U000025b2')}";
+            }
+        }
+        
+        private bool? isDescending;
+        public bool? IsDescending
         {
             get => isDescending;
             set
             {
                 isDescending = value;
                 OnPropertyChanged(nameof(IsDescending));
+                OnPropertyChanged(nameof(HeaderText));
             }
         }
         
-        public SortDescription(string displayName, Expression<Func<T, object>> sortExpression)
+        public SortDescriptionViewModel(string displayName, Expression<Func<T, object>> sortExpression)
         {
             DisplayName = displayName;
             SortExpression = sortExpression;
-            IsDescending = false;
+            IsDescending = null;
         }
     }
 }

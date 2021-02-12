@@ -1,6 +1,8 @@
 ﻿using Mmfm.Commands;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Windows.Input;
 
 namespace Mmfm
@@ -20,30 +22,17 @@ namespace Mmfm
             }
         }
 
-        public object SortDescriptions { get; } = new
+        private static IDictionary<string, ISortDescription<FileViewModel>> sortDescriptions = new Dictionary<string, ISortDescription<FileViewModel>>()
         {
-            Name = new SortDescription<FileViewModel>("Name", x => x.Name),
-            Extension = new SortDescription<FileViewModel>("Extension", x => x.Extension),
-            Modified = new SortDescription<FileViewModel>("Modified at", x => x.ModifiedAt),
-            Size = new SortDescription<FileViewModel>("Size", x => x.FileSize),
+            { "Name" , new SortDescriptionViewModel<FileViewModel>("Name", x => x.Name) },
+            { "Extension", new SortDescriptionViewModel<FileViewModel>("Extension", x => x.Extension) },
+            { "Modified" , new SortDescriptionViewModel<FileViewModel>("Modified at", x => x.ModifiedAt) },
+            { "Size" ,new SortDescriptionViewModel<FileViewModel>("Size", x => x.FileSize) },
         };
 
-        private ICommand sortCommand;
-        public override ICommand SortCommand
+        public FilesViewModel() : base(sortDescriptions)
         {
-            get
-            {
-                if (sortCommand == null)
-                {
-                    sortCommand = new RelayCommand<SortDescription<FileViewModel>>(
-                        (desc) => {
-                            desc.IsDescending = !desc.IsDescending;
-                            OrderBy = new SortDescription<FileViewModel>[] { desc };
-                        }
-                    );
-                }
-                return sortCommand;
-            }
+          
         }
     }
 }

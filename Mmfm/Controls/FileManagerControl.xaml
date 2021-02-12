@@ -110,10 +110,10 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
+         
             <Style x:Key="GridViewColumnHeaderStyle" TargetType="GridViewColumnHeader">
-                <Setter Property="Visibility"
-                                    Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.Navigation.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
+                <Setter Property="Visibility"                                   
+                        Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.Navigation.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
                 <Setter Property="local:InteractivityItems.Template">
                     <Setter.Value>
                         <local:InteractivityTemplate>
@@ -156,7 +156,7 @@
             </ListView.GroupStyle>
             
             <ListView.InputBindings>
-                <KeyBinding Gesture="Space" Command="{Binding SelectCommand}"/>
+                <KeyBinding Gesture="Space" Command="{Binding ToggleIsSelectedCommand}"/>
                 <KeyBinding Gesture="Enter" Command="{Binding LaunchCommand}" Key="Return"/>
             </ListView.InputBindings>
 
@@ -164,11 +164,11 @@
                 <local:AutoSizedGridView ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle}">
                     <GridViewColumn CellTemplate="{StaticResource CheckCell}" Width="30" />
                     <GridViewColumn CellTemplate="{StaticResource NameCell}">
-                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.DisplayName}" 
+                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Name}"/>
                     </GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding ModifiedAt}">
-                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.DisplayName}" 
+                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Modified}"/>
                     </GridViewColumn>
                 </local:AutoSizedGridView>
@@ -189,7 +189,7 @@
             </i:Interaction.Behaviors>
 
             <ListView.InputBindings>
-                <KeyBinding Gesture="Space" Command="{Binding SelectCommand}"/>
+                <KeyBinding Gesture="Space" Command="{Binding ToggleIsSelectedCommand}"/>
                 <KeyBinding Gesture="Enter" Command="{Binding LaunchCommand}"/>
             </ListView.InputBindings>
 
@@ -197,19 +197,19 @@
                 <local:AutoSizedGridView ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle}">
                     <GridViewColumn CellTemplate="{StaticResource CheckCell}" Width="30"/>
                     <GridViewColumn CellTemplate="{StaticResource NameCell}">
-                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.DisplayName}" 
+                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Name}"/>
                     </GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Extension}">
-                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.DisplayName}" 
+                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Extension}"/>
                     </GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding ModifiedAt}">
-                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.DisplayName}" 
+                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Modified}"/>
                     </GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding FileSizeText}">
-                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.DisplayName}" 
+                        <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Size}"/>
                     </GridViewColumn>
                 </local:AutoSizedGridView>

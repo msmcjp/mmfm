@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace Mmfm
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        #endregion
+        #endregion      
 
         private ObservableCollection<T> items = new ObservableCollection<T>();
         public ObservableCollection<T> Items
@@ -59,7 +60,7 @@ namespace Mmfm
             get => Items.Where(item => item.IsSelected).ToArray();
         }
 
-        public ICommand SelectCommand
+        public ICommand ToggleIsSelectedCommand
         {
             get
             {
@@ -73,35 +74,15 @@ namespace Mmfm
             }
         }
 
-        private IEnumerable<ISortDescription<T>> orderBy;
-        public IEnumerable<ISortDescription<T>> OrderBy
-        {
-            get => orderBy;
-            set
-            {
-                orderBy = value;
-                OnPropertyChanged(nameof(SortDescription));
-                OnPropertyChanged(nameof(OrderedItems));
-            }
-        }
-       
-        public ObservableCollection<T> OrderedItems
-        {
-            get 
-            {
-                if (OrderBy?.Count() > 0)
-                {
-                    var orderedItems = OrderBy.Aggregate(
-                        (IOrderedQueryable<T>)Items.AsQueryable<T>(),
-                        (queryable, desc) => OrderBy.First() == desc ? desc.OrderBy(queryable) : desc.ThenBy(queryable)
-                    );
-                    return new ObservableCollection<T>(orderedItems);
-                }
-                return Items;
-            }
-        }
-
         protected abstract void Launch(T item);
+
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SelectedItem.IsSelected))
+            {
+                OnPropertyChanged(nameof(SelectedItems));
+            }
+        }
 
         public ICommand LaunchCommand
         {
@@ -117,14 +98,87 @@ namespace Mmfm
             }
         }
 
-        public abstract ICommand SortCommand { get; }
+        #region "Sorting"
+        private IDictionary<string, ISortDescription<T>> sortDescriptions;
+        public dynamic SortDescriptions { get; } = new ExpandoObject();
 
-        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected ItemsViewModel(IDictionary<string, ISortDescription<T>> sortDescriptions)
         {
-            if(e.PropertyName == nameof(SelectedItem.IsSelected))
+            this.sortDescriptions = sortDescriptions;
+            var dict = (IDictionary<string, object>)SortDescriptions;
+            foreach (var item in sortDescriptions)
             {
-                OnPropertyChanged(nameof(SelectedItems));
+                dict[item.Key] = item.Value;
             }
         }
+
+        public ObservableCollection<T> OrderedItems
+        {
+            get
+            {
+                if(SortDescription != null)
+                {
+                    var orderBy = OrderBy(SortDescription);
+                    if (orderBy?.Count() > 0)
+                    {
+                        var items = orderBy.Aggregate(
+                            (IOrderedQueryable<T>)Items.AsQueryable<T>(),
+                            (source, desc) => orderBy.First() == desc ? desc.OrderBy(source) : desc.ThenBy(source)
+                        );
+                        return new ObservableCollection<T>(items);
+                    }
+                }                
+                return Items;
+            }
+        }
+
+        private ISortDescription<T> SortDescription
+        {
+            get
+            {
+                foreach (var sortDescription in sortDescriptions.Values)
+                {
+                    if (sortDescription.IsDescending != null)
+                    {
+                        return sortDescription;
+                    }
+                }
+                return null;
+            }
+            set
+            {
+                foreach (var sortDescription in sortDescriptions.Values)
+                {
+                    if (sortDescription == value)
+                    {
+                        sortDescription.IsDescending = !sortDescription?.IsDescending ?? true;
+                    }
+                    else
+                    {
+                        sortDescription.IsDescending = null;
+                    }
+                }
+                OnPropertyChanged(nameof(OrderedItems));
+            }
+        }
+
+        protected virtual IEnumerable<ISortDescription<T>> OrderBy(ISortDescription<T> current)
+        {
+            return new ISortDescription<T>[] { current };
+        }
+
+        private ICommand sortCommand;
+        public ICommand SortCommand
+        {
+            get
+            {
+                if (sortCommand == null)
+                {
+                    sortCommand = new RelayCommand<ISortDescription<T>>((desc) => SortDescription = desc);
+                }
+                return sortCommand;
+            }
+        }
+        #endregion
     }
 }

@@ -9,18 +9,16 @@ namespace Mmfm
 {
     public interface ISortDescription<T>
     {
-        string DisplayName { get; }
-
         Expression<Func<T, object>> SortExpression { get; }
 
-        bool IsDescending { get; }
+        bool? IsDescending { get; set; }
     }
 
     public static class ISortDescriptionExtension
     {
         public static IOrderedQueryable<T> OrderBy<T>(this ISortDescription<T> desc, IQueryable<T> source)
         {
-            if (desc.IsDescending)
+            if (desc.IsDescending == true)
             {
                 return source.OrderByDescending(desc.SortExpression);
             }
@@ -32,7 +30,7 @@ namespace Mmfm
 
         public static IOrderedQueryable<T> ThenBy<T>(this ISortDescription<T> desc, IOrderedQueryable<T> source)
         {
-            if (desc.IsDescending)
+            if (desc.IsDescending == true)
             {
                 return source.ThenByDescending(desc.SortExpression);
             }
