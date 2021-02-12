@@ -29,11 +29,11 @@
         </Style>
     </UserControl.Style>
 
-    <i:Interaction.Triggers>
+    <!--<i:Interaction.Triggers>
         <i:PropertyChangedTrigger Binding="{Binding Navigation.FullPath}">
             <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{x:Reference Name=DirectoryList}"/>
         </i:PropertyChangedTrigger>
-    </i:Interaction.Triggers>
+    </i:Interaction.Triggers>-->
 
     <Grid>
         <Grid.InputBindings>
@@ -210,7 +210,7 @@
                         <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.DisplayName}" 
                                               Tag="{Binding SortDescriptions.Modified}"/>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding FileSize}">
+                    <GridViewColumn DisplayMemberBinding="{Binding FileSizeText}">
                         <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.DisplayName}" 
                                               Tag="{Binding SortDescriptions.Size}"/>
                     </GridViewColumn>

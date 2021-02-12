@@ -173,7 +173,9 @@ namespace Mmfm
 
         public string ModifiedAt => isAlias ? "" : modifiedAt.ToString("yyyy/MM/dd HH:mm");
 
-        public string FileSize => isAlias ? "" : fileSize.ToFileSize();
+        public string FileSizeText => isAlias ? "" : fileSize.ToFileSize();
+
+        public long FileSize => fileSize;
       
         public override bool Equals(object obj)
         {
