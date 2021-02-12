@@ -61,7 +61,7 @@
                 </CollectionViewSource.GroupDescriptions>
             </CollectionViewSource>
 
-            <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
+             <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
                 <Setter Property="local:InteractivityItems.Template">
                     <Setter.Value>
                         <local:InteractivityTemplate>
@@ -75,6 +75,15 @@
                         </local:InteractivityTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+            
+            <Style x:Key="ListViewStyle" TargetType="ListView">
+                <Setter Property="IsTextSearchEnabled" Value="True"/>
+                <Setter Property="SelectionMode" Value="Single"/>
+                <Setter Property="IsTabStop" Value="False"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItemStyle}"/>
+                <Setter Property="TextSearch.TextPath" Value="Name"/>
             </Style>
 
             <Style x:Key="GroupItemStyle" TargetType="GroupItem">
@@ -135,14 +144,8 @@
                   Grid.Row="1" 
                   DataContext="{Binding Navigation.Folders}"
                   ItemsSource="{Binding Source={StaticResource NavigationSource}}"
-                  SelectedItem="{Binding SelectedItem}" 
-                  DisplayMemberPath="Value" 
-                  TextSearch.TextPath="Name"
-                  IsTextSearchEnabled="True" 
-                  SelectionMode="Single"
-                  IsTabStop="False" 
-                  FontFamily="Segoe UI"                  
-                  ItemContainerStyle="{StaticResource ListViewItemStyle}">
+                  SelectedItem="{Binding SelectedItem}"                   
+                  Style="{StaticResource ListViewStyle}">
             <i:Interaction.Behaviors>
                 <local:ListViewFocusNextItemOnSpaceKeyBehavior />
                 <local:ListViewFocusSelectedItemOnItemContainersGenerated/>
@@ -177,14 +180,9 @@
         <ListView x:Name="FileList" 
                   Grid.Row="3" 
                   DataContext="{Binding Navigation.Files}"
-                  TextSearch.TextPath="Name" 
-                  IsTextSearchEnabled="True" 
                   ItemsSource="{Binding OrderedItems}"
                   SelectedItem="{Binding SelectedItem}"
-                  FontFamily="Segoe UI" 
-                  SelectionMode="Single" 
-                  IsTabStop="False"
-                  ItemContainerStyle="{StaticResource ListViewItemStyle}">
+                  Style="{StaticResource ListViewStyle}">
             <i:Interaction.Behaviors>
                 <local:ListViewFocusNextItemOnSpaceKeyBehavior />
                 <local:ListViewFocusSelectedItemOnItemContainersGenerated/>
