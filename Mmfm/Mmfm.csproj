@@ -16,6 +16,8 @@
     <Compile Include="..\External\HotKey.cs" Link="HotKey.cs" />
     <Compile Include="..\External\IconExtractor.cs" Link="IconExtractor.cs" />
     <Compile Include="..\External\InputBindingsSourceAttachedProperty.cs" Link="Interactions\InputBindingsSourceAttachedProperty.cs" />
+    <Compile Include="..\External\InteractivityTemplate.cs" Link="Interactions\InteractivityTemplate.cs" />
+    <Compile Include="..\External\RoutedEventTrigger.cs" Link="Interactions\RoutedEventTrigger.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
