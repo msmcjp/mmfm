@@ -38,6 +38,7 @@ namespace Mmfm
                     item.PropertyChanged += Item_PropertyChanged;
                 }
                 OnPropertyChanged(nameof(Items));
+                OnPropertyChanged(nameof(OrderedItems));
                 SelectedItem = selectedItem;
             }
         }
@@ -72,6 +73,34 @@ namespace Mmfm
             }
         }
 
+        private IEnumerable<ISortDescription<T>> orderBy;
+        public IEnumerable<ISortDescription<T>> OrderBy
+        {
+            get => orderBy;
+            set
+            {
+                orderBy = value;
+                OnPropertyChanged(nameof(SortDescription));
+                OnPropertyChanged(nameof(OrderedItems));
+            }
+        }
+       
+        public ObservableCollection<T> OrderedItems
+        {
+            get 
+            {
+                if (OrderBy?.Count() > 0)
+                {
+                    var orderedItems = OrderBy.Aggregate(
+                        (IOrderedQueryable<T>)Items.AsQueryable<T>(),
+                        (queryable, desc) => OrderBy.First() == desc ? desc.OrderBy(queryable) : desc.ThenBy(queryable)
+                    );
+                    return new ObservableCollection<T>(orderedItems);
+                }
+                return Items;
+            }
+        }
+
         protected abstract void Launch(T item);
 
         public ICommand LaunchCommand
@@ -88,9 +117,11 @@ namespace Mmfm
             }
         }
 
+        public abstract ICommand SortCommand { get; }
+
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == "IsSelected")
+            if(e.PropertyName == nameof(SelectedItem.IsSelected))
             {
                 OnPropertyChanged(nameof(SelectedItems));
             }
