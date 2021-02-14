@@ -22,15 +22,13 @@ namespace Mmfm
             }
         }
 
-        private static IDictionary<string, ISortDescription<FileViewModel>> sortDescriptions = new Dictionary<string, ISortDescription<FileViewModel>>()
+        public FilesViewModel() : base(new Dictionary<string, ISortDescription<FileViewModel>>()
         {
             { "Name" , new SortDescriptionViewModel<FileViewModel>("Name", x => x.Name) },
             { "Extension", new SortDescriptionViewModel<FileViewModel>("Extension", x => x.Extension) },
             { "Modified" , new SortDescriptionViewModel<FileViewModel>("Modified at", x => x.ModifiedAt) },
             { "Size" ,new SortDescriptionViewModel<FileViewModel>("Size", x => x.FileSize) },
-        };
-
-        public FilesViewModel() : base(sortDescriptions)
+        })
         {
           
         }
