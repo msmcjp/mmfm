@@ -1,17 +1,13 @@
-﻿using Msmc.Patterns.Messenger;
-using Mmfm.Commands;
+﻿using Mmfm.Commands;
+using Mmfm.Plugins;
+using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Text.Json;
-using System.Reflection;
 using System.Dynamic;
-using Mmfm.Plugins;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Input;
 
 namespace Mmfm
 {
@@ -38,6 +34,8 @@ namespace Mmfm
             private set;
         }
 
+        private (Func<Settings> Pack, Action<Settings> Unpack) packager;
+
         private IEnumerable<IPluggable<DualFileManagerViewModel>> LoadPlugins()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -51,28 +49,8 @@ namespace Mmfm
                 plugin.Messenger = Messenger.Default;
                 plugin.RequestInputBindingsUpdate += (s, e) => OnPropertyChanged(nameof(InputBindings));
             }
+
             return plugins;
-        }
-
-        private Settings LoadSettings(ExpandoObject defaults)
-        {
-            var json = Properties.Settings.Default.Settings_json;
-            if (string.IsNullOrEmpty(json) == true)
-            {
-                return new Settings { 
-                    FileManagers = DualFileManager.Settings,
-                    Plugins = defaults 
-                };
-            }
-
-            return JsonSerializer.Deserialize<Settings>(
-                json,
-                new JsonSerializerOptions {
-                    Converters = {
-                        new TemplateObjectConverter(defaults)
-                    }
-                }
-            );
         }
 
         private CommandItemViewModel CreateCommandPallete(IEnumerable<IPluggable<DualFileManagerViewModel>> plugins)
@@ -84,34 +62,42 @@ namespace Mmfm
         public MainViewModel()
         {
             var plugins = LoadPlugins();
-            Settings = LoadSettings(plugins.Aggregate(new ExpandoObject(), (o, p) => 
-            {
-                if(p.Settings != null)
+
+            packager = (
+                Pack: () => new Settings()
+                {                    
+                    FileManagers = DualFileManager.Settings,
+                    Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
+                    {
+                        if (p.Settings != null)
+                        {
+                            ((IDictionary<string, object>)o)[p.Name] = p.Settings;
+                        }
+                        return o;
+                    })
+                },
+                Unpack: (settings) =>
                 {
-                    ((IDictionary<string, object>)o)[p.Name] = p.Settings;
+                    DualFileManager.Settings = settings.FileManagers;
+                    settings.Plugins.Join(
+                        plugins,
+                        s => s.Key,
+                        p => p.Name,
+                        (s, p) => p.Settings = s.Value
+                    ).ToArray();
                 }
-                return o; 
-            }));
+            );
 
-            DualFileManager.Settings = Settings.FileManagers;
-            Settings.Plugins.Join(
-                plugins, 
-                s => s.Key, 
-                p => p.Name, 
-                (s, p) => p.Settings = s.Value
-            ).ToArray();
-
+            var json = Properties.Settings.Default.Settings_json;
+            var defaults = packager.Pack();
+            packager.Unpack(Settings = Settings.LoadFromJsonOrDefaults(json, defaults));
+   
             commandPallete = CreateCommandPallete(plugins);
         }
 
         public ICommand SaveSettingsCommand => new RelayCommand(() =>
         {
-            Properties.Settings.Default.Settings_json = JsonSerializer.Serialize<Settings>(
-                Settings, 
-                new JsonSerializerOptions { 
-                    WriteIndented = true,
-                }
-            );
+            Properties.Settings.Default.Settings_json = packager.Pack().Json;
             Properties.Settings.Default.Save();
         });
     }
