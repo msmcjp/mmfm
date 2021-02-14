@@ -19,7 +19,7 @@ namespace Mmfm
         }
         #endregion
 
-        public string DisplayName { get; }
+        public string Name { get; }
         
         public Expression<Func<T, object>> SortExpression { get; }
 
@@ -27,8 +27,8 @@ namespace Mmfm
         {
             get
             {
-                if(IsDescending == null) { return DisplayName; }
-                return $"{DisplayName} {((IsDescending == true) ? '\U000025bc' : '\U000025b2')}";
+                if(IsDescending == null) { return Name; }
+                return $"{Name} {((IsDescending == true) ? '\U000025bc' : '\U000025b2')}";
             }
         }
         
@@ -44,9 +44,9 @@ namespace Mmfm
             }
         }
         
-        public SortDescriptionViewModel(string displayName, Expression<Func<T, object>> sortExpression)
+        public SortDescriptionViewModel(string name, Expression<Func<T, object>> sortExpression)
         {
-            DisplayName = displayName;
+            Name = name;
             SortExpression = sortExpression;
             IsDescending = null;
         }

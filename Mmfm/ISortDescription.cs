@@ -9,6 +9,8 @@ namespace Mmfm
 {
     public interface ISortDescription<T>
     {
+        string Name { get; }
+
         Expression<Func<T, object>> SortExpression { get; }
 
         bool? IsDescending { get; set; }
@@ -16,6 +18,11 @@ namespace Mmfm
 
     public static class ISortDescriptionExtension
     {
+        public static void ToggleIsDescending<T>(this ISortDescription<T> desc)
+        {
+            desc.IsDescending = !desc.IsDescending ?? true;
+        }
+
         public static IOrderedQueryable<T> OrderBy<T>(this ISortDescription<T> desc, IQueryable<T> source)
         {
             if (desc.IsDescending == true)
