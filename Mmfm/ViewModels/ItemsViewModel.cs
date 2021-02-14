@@ -99,16 +99,39 @@ namespace Mmfm
         }
 
         #region "Sorting"
-        private IDictionary<string, ISortDescription<T>> sortDescriptions;
-        public dynamic SortDescriptions { get; } = new ExpandoObject();
-
         protected ItemsViewModel(IDictionary<string, ISortDescription<T>> sortDescriptions)
         {
-            this.sortDescriptions = sortDescriptions;
-            var dict = (IDictionary<string, object>)SortDescriptions;
-            foreach (var item in sortDescriptions)
+            var dict = (IDictionary<string, object>)this.sortDescriptions;
+            foreach (var desc in sortDescriptions)
             {
-                dict[item.Key] = item.Value;
+                dict.Add(desc.Key, desc.Value);
+            }
+        }
+
+        private ExpandoObject sortDescriptions = new ExpandoObject();
+
+        public dynamic SortDescriptions => sortDescriptions;
+
+        public IDictionary<string, ISortDescription<T>> SortDescriptionsDictionary
+        {
+            get
+            {
+                return ((IDictionary<string, object>)sortDescriptions).ToDictionary(
+                    x => x.Key,
+                    x => x.Value as ISortDescription<T>
+                );
+            }
+        }
+
+        private bool canSort = true;
+        public bool CanSort
+        {
+            get => canSort;
+            set
+            {
+                canSort = value;
+                OnPropertyChanged(nameof(CanSort));
+                OnPropertyChanged(nameof(OrderedItems));
             }
         }
 
@@ -116,7 +139,7 @@ namespace Mmfm
         {
             get
             {
-                if(SortDescription != null)
+                if(CanSort && SortDescription != null)
                 {
                     var orderBy = OrderBy(SortDescription);
                     if (orderBy?.Count() > 0)
@@ -132,32 +155,24 @@ namespace Mmfm
             }
         }
 
-        private ISortDescription<T> SortDescription
+        private ISortDescription<T> sortDescription;
+        public ISortDescription<T> SortDescription
         {
-            get
-            {
-                foreach (var sortDescription in sortDescriptions.Values)
-                {
-                    if (sortDescription.IsDescending != null)
-                    {
-                        return sortDescription;
-                    }
-                }
-                return null;
-            }
+            get => sortDescription;          
             set
             {
-                foreach (var sortDescription in sortDescriptions.Values)
+                sortDescription = value;
+
+                // Other description's IsDescending property must be null 
+                foreach (var aSortDescription in ((IDictionary<string, object>)sortDescriptions).Values)
                 {
-                    if (sortDescription == value)
-                    {
-                        sortDescription.IsDescending = !sortDescription?.IsDescending ?? true;
-                    }
-                    else
-                    {
-                        sortDescription.IsDescending = null;
+                    if (aSortDescription != value)
+                    { 
+                        (aSortDescription as ISortDescription<T>).IsDescending = null;
                     }
                 }
+
+                OnPropertyChanged(nameof(SortDescription));
                 OnPropertyChanged(nameof(OrderedItems));
             }
         }
@@ -174,7 +189,10 @@ namespace Mmfm
             {
                 if (sortCommand == null)
                 {
-                    sortCommand = new RelayCommand<ISortDescription<T>>((desc) => SortDescription = desc);
+                    sortCommand = new RelayCommand<ISortDescription<T>>((desc) => {
+                        desc.ToggleIsDescending();
+                        SortDescription = desc;
+                    });
                 }
                 return sortCommand;
             }

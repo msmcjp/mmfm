@@ -22,8 +22,6 @@ namespace Mmfm
         }
         #endregion
 
-        public event EventHandler CurrentChanged;
-
         private Stack<FileViewModel> navigationStack = new Stack<FileViewModel>();
         private FolderShortcutViewModel[] roots;
 
@@ -159,6 +157,7 @@ namespace Mmfm
                     .Where(Predicate);
                 Files.Items = new ObservableCollection<FileViewModel>(files);
             }
+            Folders.CanSort = IsNotRoot;
         }
 
         private FileViewModel[] ExtractDirectory(string directoryName)
@@ -202,8 +201,7 @@ namespace Mmfm
             OnPropertyChanged(nameof(FullPath));
             OnPropertyChanged(nameof(IsRoot));
             OnPropertyChanged(nameof(IsNotRoot));
-            
-            CurrentChanged?.Invoke(this, new EventArgs());
+            OnPropertyChanged(nameof(Current));
         }
 
         private void Items_PropertyChanged(object sender, PropertyChangedEventArgs e)
