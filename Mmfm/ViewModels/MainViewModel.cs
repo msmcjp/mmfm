@@ -34,7 +34,7 @@ namespace Mmfm
             private set;
         }
 
-        private (Func<Settings> Pack, Action<Settings> Unpack) packager;
+        private (Func<Settings, Settings> Pack, Action<Settings> Unpack) packager;
 
         private IEnumerable<IPluggable<DualFileManagerViewModel>> LoadPlugins()
         {
@@ -64,17 +64,18 @@ namespace Mmfm
             var plugins = LoadPlugins();
 
             packager = (
-                Pack: () => new Settings()
-                {                    
-                    FileManagers = DualFileManager.Settings,
-                    Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
+                Pack: (settings) => 
+                {
+                    settings.FileManagers = DualFileManager.Settings;
+                    settings.Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
                     {
                         if (p.Settings != null)
                         {
                             ((IDictionary<string, object>)o)[p.Name] = p.Settings;
                         }
                         return o;
-                    })
+                    });
+                    return settings;
                 },
                 Unpack: (settings) =>
                 {
@@ -89,7 +90,7 @@ namespace Mmfm
             );
 
             var json = Properties.Settings.Default.Settings_json;
-            var defaults = packager.Pack();
+            var defaults = packager.Pack(new Settings());
             packager.Unpack(Settings = Settings.LoadFromJsonOrDefaults(json, defaults));
    
             commandPallete = CreateCommandPallete(plugins);
@@ -97,7 +98,7 @@ namespace Mmfm
 
         public ICommand SaveSettingsCommand => new RelayCommand(() =>
         {
-            Properties.Settings.Default.Settings_json = packager.Pack().Json;
+            Properties.Settings.Default.Settings_json = packager.Pack(Settings).Json;
             Properties.Settings.Default.Save();
         });
     }
