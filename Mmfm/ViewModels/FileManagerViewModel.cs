@@ -122,6 +122,14 @@ namespace Mmfm
             {
                 OnPropertyChanged(nameof(SelectedItem));
             }
+
+            if(e.PropertyName == nameof(Navigation.FullPath))
+            {
+                if(Settings.Current != Navigation.FullPath)
+                {
+                    Settings.Current = Navigation.FullPath;
+                }
+            }
         }
     }
 }
