@@ -34,9 +34,19 @@ namespace Mmfm
                     }
                 }
 
-                if(reader.TokenType == JsonTokenType.EndObject)
+                if (reader.TokenType == JsonTokenType.EndObject)
                 {
+                    reader.Read();
                     break;
+                }
+            }
+
+            // in case of deserialized object does not have template member
+            foreach(var key in template.Keys)
+            {
+                if (deserialized.ContainsKey(key) == false)
+                {
+                    deserialized.Add(key, template[key]);
                 }
             }
 
