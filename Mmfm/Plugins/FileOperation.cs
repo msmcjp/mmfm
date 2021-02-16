@@ -159,6 +159,12 @@ namespace Mmfm.Plugins
             {
                 var dest = to + path.Substring(Path.GetDirectoryName(from).Length);
 
+                // Do nothing in case of source and destination is same
+                if(path == dest)
+                {
+                    return false;
+                }
+
                 if (new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
                 {
                     try
