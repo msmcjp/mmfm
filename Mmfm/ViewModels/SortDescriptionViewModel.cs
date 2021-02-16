@@ -21,14 +21,16 @@ namespace Mmfm
 
         public string Name { get; }
         
+        public string DisplayName { get; }
+
         public Expression<Func<T, object>> SortExpression { get; }
 
         public string HeaderText
         {
             get
             {
-                if(IsDescending == null) { return Name; }
-                return $"{Name} {((IsDescending == true) ? '\U000025bc' : '\U000025b2')}";
+                if(IsDescending == null) { return DisplayName; }
+                return $"{DisplayName} {((IsDescending == true) ? '\U000025bc' : '\U000025b2')}";
             }
         }
         
@@ -44,9 +46,10 @@ namespace Mmfm
             }
         }
         
-        public SortDescriptionViewModel(string name, Expression<Func<T, object>> sortExpression)
+        public SortDescriptionViewModel(string name, Expression<Func<T, object>> sortExpression, string displayName = null)
         {
             Name = name;
+            DisplayName = displayName ?? name;
             SortExpression = sortExpression;
             IsDescending = null;
         }
