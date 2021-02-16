@@ -74,6 +74,86 @@ namespace Mmfm
                 overlayWindow.Top = this.Top + SystemParameters.WindowCaptionHeight;
                 overlayWindow.Left = this.Left + this.Width / 2 - overlayWindow.Width / 2;
             });
+
+            RestoreWindow();            
+        }
+
+        private void SaveWindow()
+        {
+            var defaults = Properties.Settings.Default;
+            defaults.WindowLocation = new System.Drawing.Point((int)Left, (int)Top);
+            defaults.WindowSize = new System.Drawing.Size((int)Width, (int)Height);
+            defaults.GridSize1 = new System.Drawing.Size(
+                (int)Grid.ColumnDefinitions[0].ActualWidth,
+                (int)First.Grid.RowDefinitions[1].ActualHeight
+            );
+            defaults.GridSize2 = new System.Drawing.Size(
+                (int)Grid.ColumnDefinitions[2].ActualWidth,
+                (int)Second.Grid.RowDefinitions[1].ActualHeight
+            );
+            defaults.Save();
+        }
+
+        private void RestoreGrid()
+        {
+            var defaults = Properties.Settings.Default;
+
+            var gridPosition1 = defaults.GridSize1;
+            if (gridPosition1.Width > 0)
+            {
+                Grid.ColumnDefinitions[0].Width = new GridLength(
+                    gridPosition1.Width,
+                    GridUnitType.Star
+                );
+            }
+            if (gridPosition1.Height > 0)
+            {
+                First.Grid.RowDefinitions[1].Height = new GridLength(
+                    gridPosition1.Height,
+                    GridUnitType.Star
+                );
+
+                First.Grid.RowDefinitions[3].Height = new GridLength(
+                    First.Grid.RowDefinitions.Take(3).Sum(x => x.ActualHeight),
+                    GridUnitType.Star
+                );
+            }
+
+            var gridPosition2 = defaults.GridSize2;
+            if (gridPosition2.Width > 0)
+            {
+                Grid.ColumnDefinitions[2].Width = new GridLength(
+                    gridPosition2.Width,
+                    GridUnitType.Star
+                );
+            }
+            if (gridPosition2.Height > 0)
+            {
+                Second.Grid.RowDefinitions[1].Height = new GridLength(
+                    gridPosition2.Height,
+                    GridUnitType.Star
+                );
+
+                Second.Grid.RowDefinitions[3].Height = new GridLength(
+                    Second.Grid.RowDefinitions.Take(3).Sum(x => x.ActualHeight),
+                    GridUnitType.Star
+                );
+            }
+        }
+
+        private void RestoreWindow()
+        {
+            var defaults = Properties.Settings.Default;
+            var location = defaults.WindowLocation;
+            var size = defaults.WindowSize;
+            if(location.X >= 0 && location.Y >= 0)
+            {
+                Left = location.X;
+                Top = location.Y;
+                Width = size.Width;
+                Height = size.Height;
+
+            }
         }
 
         private void HotKey_Pressed(HotKey.HotKey obj)
@@ -92,11 +172,13 @@ namespace Mmfm
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             overlayWindow.Close();
+            SaveWindow();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             First.DirectoryList.Focus();
+            RestoreGrid();
         }
     }
 }

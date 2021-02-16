@@ -35,7 +35,7 @@
         </i:PropertyChangedTrigger>
     </i:Interaction.Triggers>-->
 
-    <Grid>
+    <Grid x:Name="Grid">
         <Grid.InputBindings>
             <KeyBinding Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=DirectoryList}" Gesture="Oem2" Key="OemQuestion"/>
             <KeyBinding Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=FileList}" Gesture="OemPeriod"/>

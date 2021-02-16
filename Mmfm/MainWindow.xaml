@@ -6,8 +6,10 @@
         xmlns:local="clr-namespace:Mmfm"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"  
-        Height="800" 
-        Width="900" 
+        Width="600"
+        Height="600"
+        MinWidth="600"
+        MinHeight="600"
         WindowStartupLocation="CenterScreen" 
         Title="mmfm"
         local:InputBindingsSourceAttachedProperty.InputBindingsSource="{Binding InputBindings}"
@@ -29,11 +31,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1">
+        <Grid x:Name="Grid" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="10"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <local:FileManagerControl x:Name="First" Grid.Column="0" DataContext="{Binding DualFileManager.First}" IsActive="{Binding IsActive, Mode=OneWayToSource}" />
             <GridSplitter HorizontalAlignment="Stretch" Grid.Column="1" IsTabStop="False"/>
