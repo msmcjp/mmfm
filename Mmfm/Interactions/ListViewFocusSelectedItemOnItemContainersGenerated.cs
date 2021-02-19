@@ -32,7 +32,10 @@ namespace Mmfm
 
         private void AssociatedObject_IsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            lastFocusedListView = AssociatedObject;
+            if((bool)e.NewValue == true)
+            {
+                lastFocusedListView = AssociatedObject;
+            }
         }
 
         private void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
