@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
@@ -26,15 +27,33 @@ namespace Mmfm
 
         public IEnumerable<InputBinding> InputBindings => commandPallete.InputBindings;
 
-        private ICommandItem commandPallete;
+        private readonly FileSystemWatcher settingsWatcher;
 
+        private readonly ICommandItem commandPallete;
+
+        private Settings settings;
         public Settings Settings
         {
-            get;
-            private set;
+            get => settings;
+            private set
+            {
+                if (settings != null)
+                {
+                    settings.PropertyChanged -= Settings_PropertyChanged;
+                }
+
+                settings = value;
+                settingsOp.Apply(settings);
+
+                if (settings != null)
+                {
+                    settings.PropertyChanged += Settings_PropertyChanged;
+                }
+                OnPropertyChanged(nameof(Settings));
+            }
         }
 
-        private (Func<Settings, Settings> Pack, Action<Settings> Unpack) packager;
+        private readonly (Func<Settings> Defaults, Action<Settings> Apply) settingsOp;
 
         private IEnumerable<IPluggable<DualFileManagerViewModel>> LoadPlugins()
         {
@@ -42,7 +61,7 @@ namespace Mmfm
             var types = assembly.GetTypes().Where(t => typeof(IPluggable<DualFileManagerViewModel>).IsAssignableFrom(t));
             var plugins = types.Select(type => (IPluggable<DualFileManagerViewModel>)Activator.CreateInstance(type)).ToArray();
 
-            foreach(var plugin in plugins)
+            foreach (var plugin in plugins)
             {
                 plugin.Host = DualFileManager;
                 plugin.ResetToDefault();
@@ -59,25 +78,41 @@ namespace Mmfm
             return new CommandItemViewModel("Show Commands", commands, "Ctrl+Shift+P");
         }
 
+        private FileSystemWatcher CreateSettingsFileWatcher()
+        {
+            var watcher = new FileSystemWatcher(Path.GetDirectoryName(App.SettingsPath))
+            {
+                Filter = Path.GetFileName(App.SettingsPath),
+                EnableRaisingEvents = true
+            };
+            watcher.Changed += SettingsWatcher_Changed;
+            return watcher;
+        }
+
         public MainViewModel()
         {
             var plugins = LoadPlugins();
 
-            packager = (
-                Pack: (settings) => 
+            settingsOp = (
+                Defaults: () => 
                 {
-                    settings.FileManagers = DualFileManager.Settings;
-                    settings.Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
+                    return new Settings()
                     {
-                        if (p.Settings != null)
+                        FileManagers = new Settings.FileManager[] {
+                            new Settings.FileManager(),
+                            new Settings.FileManager()
+                        },
+                        Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
                         {
-                            ((IDictionary<string, object>)o)[p.Name] = p.Settings;
-                        }
-                        return o;
-                    });
-                    return settings;
+                            if (p.Settings != null)
+                            {
+                                ((IDictionary<string, object>)o)[p.Name] = p.Settings;
+                            }
+                            return o;
+                        }),
+                    };
                 },
-                Unpack: (settings) =>
+                Apply: (settings) =>
                 {
                     DualFileManager.Settings = settings.FileManagers;
                     settings.Plugins.Join(
@@ -88,18 +123,45 @@ namespace Mmfm
                     ).ToArray();
                 }
             );
+            settingsOp.Apply(settingsOp.Defaults());
 
-            var json = Properties.Settings.Default.Settings_json;
-            var defaults = packager.Pack(new Settings());
-            packager.Unpack(Settings = Settings.LoadFromJsonOrDefaults(json, defaults));
-   
             commandPallete = CreateCommandPallete(plugins);
+            settingsWatcher = CreateSettingsFileWatcher();
         }
 
-        public ICommand SaveSettingsCommand => new RelayCommand(() =>
+        private void SettingsWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            Properties.Settings.Default.Settings_json = packager.Pack(Settings).Json;
-            Properties.Settings.Default.Save();
-        });
+            if(e.ChangeType != WatcherChangeTypes.Changed)
+            {
+                return;
+            }
+            LoadSettings();
+        }
+
+        private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            File.WriteAllText(App.SettingsPath, Settings.Json);
+        }
+
+        private void LoadSettings()
+        {
+            Settings = Settings.LoadFromFileOrDefaults(
+                App.SettingsPath,
+                settingsOp.Defaults()
+            );
+        }
+
+        private ICommand loadSettingsCommand;
+        public ICommand LoadSettingsCommand
+        {
+            get
+            {
+                if (loadSettingsCommand == null)
+                {
+                    loadSettingsCommand = new RelayCommand(() => LoadSettings());
+                }
+                return loadSettingsCommand;
+            }
+        }        
     }
 }

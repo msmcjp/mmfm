@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Mmfm"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:c="clr-namespace:Mmfm.Commands"
         mc:Ignorable="d"  
         Width="600"
         Height="600"
@@ -15,10 +16,31 @@
         local:InputBindingsSourceAttachedProperty.InputBindingsSource="{Binding InputBindings}"
         Loaded="Window_Loaded"
         Closing="Window_Closing" >
+
+    <Window.Resources>
+        <c:FocusCommand x:Key="FocusCommand"/>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+    
     <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Closed" >
-            <i:InvokeCommandAction Command="{Binding SaveSettingsCommand}"/>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadSettingsCommand}" />
+            <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
+                                MethodName="RestoreGrid"/>
         </i:EventTrigger>
+
+        <i:EventTrigger EventName="Closing" >
+            <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
+                                MethodName="SaveWindow"/>
+        </i:EventTrigger>
+
+        <i:PropertyChangedTrigger Binding="{Binding Settings.HotKey}">
+            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=RegisterHotKeyCommand}" 
+                                   CommandParameter="{Binding Settings.HotKey}"/>
+        </i:PropertyChangedTrigger>
     </i:Interaction.Triggers>
     <Grid>
         <Grid.InputBindings>

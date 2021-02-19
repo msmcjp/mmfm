@@ -1,4 +1,5 @@
-﻿using Mmfm.Converters;
+﻿using Mmfm.Commands;
+using Mmfm.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,27 +29,6 @@ namespace Mmfm
         public MainWindow()
         {
             InitializeComponent();
-            var viewModel = new MainViewModel();
-            DataContext = viewModel;
-
-            try
-            {
-                var keyGesture = (KeyGesture)new KeyGestureConverter().ConvertFromString(viewModel.Settings.HotKey);
-                hotKey = new HotKey.HotKey(this, keyGesture);
-                hotKey.Pressed += HotKey_Pressed;          
-            }
-            catch (NotSupportedException)
-            {
-                MessageBox.Show("Hot-key is not supported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (ArgumentException)
-            {
-                MessageBox.Show("Invalid Hot-key definition.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch
-            {
-                MessageBox.Show("Hot-key is already in use. Please use another key.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
 
             Msmc.Patterns.Messenger.Messenger.Default.Register<MessageBoxViewModel>(this, (vm) =>
             {
@@ -75,10 +55,10 @@ namespace Mmfm
                 overlayWindow.Left = this.Left + this.Width / 2 - overlayWindow.Width / 2;
             });
 
-            RestoreWindow();            
+            RestoreWindow();
         }
 
-        private void SaveWindow()
+        public void SaveWindow()
         {
             var defaults = Properties.Settings.Default;
             defaults.WindowLocation = new System.Drawing.Point((int)Left, (int)Top);
@@ -94,7 +74,7 @@ namespace Mmfm
             defaults.Save();
         }
 
-        private void RestoreGrid()
+        public void RestoreGrid()
         {
             var defaults = Properties.Settings.Default;
 
@@ -152,33 +132,64 @@ namespace Mmfm
                 Top = location.Y;
                 Width = size.Width;
                 Height = size.Height;
-
             }
         }
 
-        private void HotKey_Pressed(HotKey.HotKey obj)
+        private ICommand registerHotKeyCommand;
+        public ICommand RegisterHotKeyCommand
         {
-            if (IsVisible)
+            get
             {
-                Hide();
+                if(registerHotKeyCommand == null)
+                {
+                    registerHotKeyCommand = new RelayCommand<string>((keyDefinition) =>
+                    {
+                        Show();
+                        Activate();
+                        hotKey?.Dispose();
+                        try
+                        {
+                            var keyGesture = (KeyGesture)new ExKeyGestureConverter().ConvertFromString(keyDefinition);
+                            hotKey = new HotKey.HotKey(this, keyGesture);
+                            hotKey.Pressed += (o) =>
+                            {
+                                if (IsActive)
+                                {
+                                    Hide();
+                                }
+                                else
+                                {
+                                    Show();
+                                    Activate();
+                                }
+                            };
+                        }
+                        catch (NotSupportedException)
+                        {
+                            MessageBox.Show("Hot-key is not supported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        catch (ArgumentException)
+                        {
+                            MessageBox.Show("Invalid Hot-key definition.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Hot-key is already in use. Please use another key.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                    });
+                }
+                return registerHotKeyCommand;
             }
-            else
-            {
-                Show();
-                Activate();
-            }
-        }
+        }    
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             overlayWindow.Close();
-            SaveWindow();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             First.DirectoryList.Focus();
-            RestoreGrid();
         }
     }
 }

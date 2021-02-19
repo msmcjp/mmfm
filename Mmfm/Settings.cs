@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
 using System.IO;
+using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -38,7 +41,16 @@ namespace Mmfm
 
         public static Settings LoadFromFileOrDefaults(string path, Settings defaults)
         {
-            return LoadFromJsonOrDefaults(File.ReadAllText(path), defaults);
+            if(File.Exists(path) == false)
+            {
+                return defaults;
+            }
+
+            var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using (var reader = new StreamReader(stream))
+            {
+                return LoadFromJsonOrDefaults(reader.ReadToEnd(), defaults);
+            }
         }
 
         [JsonIgnore]
@@ -46,6 +58,7 @@ namespace Mmfm
             this,
             new JsonSerializerOptions
             {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 WriteIndented = true,
             }
         );
@@ -95,13 +108,27 @@ namespace Mmfm
             }
         }
 
+        private PropertyChangedEventHandler BubbleUpEventHandler
+        {
+            get => (s, e) => PropertyChanged?.Invoke(s, e);
+        }
+
         private IEnumerable<FileManager> fileManagers;
         public IEnumerable<FileManager> FileManagers
         {
             get => fileManagers;
             set
             {
+                fileManagers?.ForEach(s => {
+                    s.PropertyChanged -= BubbleUpEventHandler;
+                });
+
                 fileManagers = value;
+
+                fileManagers?.ForEach(s => {
+                    s.PropertyChanged += BubbleUpEventHandler;               
+                });
+
                 OnPropertyChanged(nameof(FileManagers));
             }
         }
@@ -112,14 +139,31 @@ namespace Mmfm
             get => plugins;
             set
             {
+                plugins?.ForEach(x =>
+                {
+                    if (x.Value is INotifyPropertyChanged)
+                    {
+                        (x.Value as INotifyPropertyChanged).PropertyChanged -= BubbleUpEventHandler;
+                    }
+                });
+
                 plugins = value;
+                
+                plugins?.ForEach(x =>
+                {
+                    if(x.Value is INotifyPropertyChanged)
+                    {
+                        (x.Value as INotifyPropertyChanged).PropertyChanged += BubbleUpEventHandler;
+                    }
+                });
+
                 OnPropertyChanged(nameof(Plugins));
             }
         }
 
         public Settings()
         {
-            HotKey = "Ctrl+OemSemicolon";
+            HotKey = "Ctrl+;";
         }
     }
 }
