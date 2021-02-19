@@ -16,14 +16,5 @@ namespace Mmfm
                 block(x);
             }
         }
-
-        public static void ForEach(this ExpandoObject expando, Action<KeyValuePair<string, object>> block)
-        {
-            foreach(var x in expando)
-            {
-                block(x);
-            }
-        }
-
     }
 }
