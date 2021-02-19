@@ -34,7 +34,7 @@ namespace Mmfm
         private string itemGroup;
 
         [JsonConstructor]
-        public FolderShortcutViewModel(string path, string name, string itemGroup) : this(path, name, itemGroup, IconExtractor.Extract(path)) 
+        public FolderShortcutViewModel(string path, string name) : this(path, name, null, IconExtractor.Extract(path)) 
         { 
         }
 
@@ -65,6 +65,7 @@ namespace Mmfm
             }
         }
 
+        [JsonIgnore]
         public string ItemGroup
         {
             get => itemGroup;
