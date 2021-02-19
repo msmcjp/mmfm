@@ -25,18 +25,6 @@ namespace Mmfm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Settings_json {
-            get {
-                return ((string)(this["Settings_json"]));
-            }
-            set {
-                this["Settings_json"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1, -1")]
         public global::System.Drawing.Point WindowLocation {
             get {
