@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Dynamic;
 using System.IO;
@@ -138,28 +139,11 @@ namespace Mmfm
         {
             get => plugins;
             set
-            {
-                plugins?.ForEach(x =>
-                {
-                    if (x.Value is INotifyPropertyChanged)
-                    {
-                        (x.Value as INotifyPropertyChanged).PropertyChanged -= BubbleUpEventHandler;
-                    }
-                });
-
+            {               
                 plugins = value;
-                
-                plugins?.ForEach(x =>
-                {
-                    if(x.Value is INotifyPropertyChanged)
-                    {
-                        (x.Value as INotifyPropertyChanged).PropertyChanged += BubbleUpEventHandler;
-                    }
-                });
-
                 OnPropertyChanged(nameof(Plugins));
             }
-        }
+        }    
 
         public Settings()
         {

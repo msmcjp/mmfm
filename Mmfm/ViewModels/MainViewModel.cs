@@ -43,17 +43,18 @@ namespace Mmfm
                 }
 
                 settings = value;
-                settingsOp.Apply(settings);
+                settingsFactory.Apply(settings);
 
                 if (settings != null)
                 {
                     settings.PropertyChanged += Settings_PropertyChanged;
                 }
                 OnPropertyChanged(nameof(Settings));
+                OnPropertyChanged(nameof(InputBindings));
             }
         }
 
-        private readonly (Func<Settings> Defaults, Action<Settings> Apply) settingsOp;
+        private readonly (Func<Settings> Defaults, Action<Settings> Apply) settingsFactory;
 
         private IEnumerable<IPluggable<DualFileManagerViewModel>> LoadPlugins()
         {
@@ -66,7 +67,7 @@ namespace Mmfm
                 plugin.Host = DualFileManager;
                 plugin.ResetToDefault();
                 plugin.Messenger = Messenger.Default;
-                plugin.RequestInputBindingsUpdate += (s, e) => OnPropertyChanged(nameof(InputBindings));
+                plugin.SettingsChanged += Plugin_SettingsChanged;               
             }
 
             return plugins;
@@ -89,11 +90,32 @@ namespace Mmfm
             return watcher;
         }
 
+        private void LoadSettings()
+        {
+            Settings = Settings.LoadFromFileOrDefaults(
+                App.SettingsPath,
+                settingsFactory.Defaults()
+            );
+        }
+
+        private ICommand loadSettingsCommand;
+        public ICommand LoadSettingsCommand
+        {
+            get
+            {
+                if (loadSettingsCommand == null)
+                {
+                    loadSettingsCommand = new RelayCommand(() => LoadSettings());
+                }
+                return loadSettingsCommand;
+            }
+        }
         public MainViewModel()
         {
             var plugins = LoadPlugins();
+            OnPropertyChanged(nameof(InputBindings));
 
-            settingsOp = (
+            settingsFactory = (
                 Defaults: () => 
                 {
                     return new Settings()
@@ -123,7 +145,7 @@ namespace Mmfm
                     ).ToArray();
                 }
             );
-            settingsOp.Apply(settingsOp.Defaults());
+            settingsFactory.Apply(settingsFactory.Defaults());
 
             commandPallete = CreateCommandPallete(plugins);
             settingsWatcher = CreateSettingsFileWatcher();
@@ -138,30 +160,22 @@ namespace Mmfm
             LoadSettings();
         }
 
+        private void Plugin_SettingsChanged(object sender, EventArgs e)
+        {
+            if(Settings == null)
+            {
+                return;
+            }
+            var plugin = sender as IPluggable<DualFileManagerViewModel>;
+            var pi_settings = (IDictionary<string, object>)Settings.Plugins;
+
+            pi_settings[plugin.Name] = plugin.Settings;            
+            Settings_PropertyChanged(this, new PropertyChangedEventArgs(nameof(Plugins)));
+        }
+
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             File.WriteAllText(App.SettingsPath, Settings.Json);
         }
-
-        private void LoadSettings()
-        {
-            Settings = Settings.LoadFromFileOrDefaults(
-                App.SettingsPath,
-                settingsOp.Defaults()
-            );
-        }
-
-        private ICommand loadSettingsCommand;
-        public ICommand LoadSettingsCommand
-        {
-            get
-            {
-                if (loadSettingsCommand == null)
-                {
-                    loadSettingsCommand = new RelayCommand(() => LoadSettings());
-                }
-                return loadSettingsCommand;
-            }
-        }        
     }
 }

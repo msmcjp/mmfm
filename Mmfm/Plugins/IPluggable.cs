@@ -40,8 +40,8 @@ namespace Mmfm.Plugins
         void ResetToDefault();
 
         /// <summary>
-        /// Request to update InpugBindings
+        /// Notify host of Settings is changed
         /// </summary>
-        event EventHandler RequestInputBindingsUpdate;
+        event EventHandler SettingsChanged;
     }
 }

@@ -17,9 +17,11 @@ namespace Mmfm.Plugins
     {
         public string Name => "Favorite";
 
+        private readonly string FavoriteItemGroup = "\U0001f496 Favorite";
+
         private NavigationViewModel Navigation => Host.ActiveFileManager.Navigation;
      
-        public event EventHandler RequestInputBindingsUpdate;
+        public event EventHandler SettingsChanged;
 
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
         {
@@ -57,16 +59,17 @@ namespace Mmfm.Plugins
                     favorites.CollectionChanged -= Favorites_CollectionChanged;
                 }
 
-                favorites = value;
+                favorites = new ObservableCollection<FolderShortcutViewModel>(
+                    value.Select(f => new FolderShortcutViewModel(f.Path, f.Name, FavoriteItemGroup, f.Icon)));
 
                 if (favorites != null)
                 {
                     favorites.CollectionChanged += Favorites_CollectionChanged;
-                    Favorites_CollectionChanged(
-                        this,
-                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
-                    );
                 }
+                Favorites_CollectionChanged(
+                    favorites,
+                    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
+                );
             }
         }
 
@@ -93,7 +96,7 @@ namespace Mmfm.Plugins
                 var favorite = new FolderShortcutViewModel(
                     content.FullPath,
                     content.FavoriteName,
-                    "\U0001f496 Favorite",
+                    FavoriteItemGroup,
                     IconExtractor.Extract(content.FullPath)
                 );
                 Favorites?.Add(favorite);
@@ -155,8 +158,13 @@ namespace Mmfm.Plugins
 
         private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Host.Roots = DefaultFolderShortcuts.PC().Concat(Favorites).ToArray();
-            RequestInputBindingsUpdate?.Invoke(this, EventArgs.Empty);
+            var favorites = sender as IEnumerable<FolderShortcutViewModel> ?? Enumerable.Empty<FolderShortcutViewModel>();
+            
+            Host.Roots = DefaultFolderShortcuts.PC().Concat(favorites).ToArray();
+            if(e.Action != NotifyCollectionChangedAction.Reset)
+            {
+                SettingsChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

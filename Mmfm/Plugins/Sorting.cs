@@ -55,7 +55,7 @@ namespace Mmfm.Plugins
                 new CommandItemViewModel("Descending", null, new RelayCommand(() => {
                     desc.IsDescending = true;
                     itemsVieModel.SortDescription = desc;
-                })),
+               })),
             }));
 
             var none = new CommandItemViewModel("Clear", "", new RelayCommand(() => itemsVieModel.SortDescription = null));
@@ -70,10 +70,30 @@ namespace Mmfm.Plugins
             set;
         }
 
+        private DualFileManagerViewModel host;
         public DualFileManagerViewModel Host
         {
-            get;
-            set;
+            get => host;
+            set
+            {
+                if (host != null)
+                {
+                    host.First.Navigation.Folders.PropertyChanged -= Items_PropertyChanged;
+                    host.First.Navigation.Files.PropertyChanged -= Items_PropertyChanged;
+                    host.Second.Navigation.Folders.PropertyChanged -= Items_PropertyChanged;
+                    host.Second.Navigation.Files.PropertyChanged -= Items_PropertyChanged;
+                }
+
+                host = value;
+
+                if(host != null)
+                {
+                    host.First.Navigation.Folders.PropertyChanged += Items_PropertyChanged;
+                    host.First.Navigation.Files.PropertyChanged += Items_PropertyChanged;
+                    host.Second.Navigation.Folders.PropertyChanged += Items_PropertyChanged;
+                    host.Second.Navigation.Files.PropertyChanged += Items_PropertyChanged;
+                }
+            }
         }
 
         private IDictionary<string, bool> GetSortContexts()
@@ -136,16 +156,25 @@ namespace Mmfm.Plugins
             set => SetSortContexts(value as IDictionary<string, bool>);
         }
 
-        public event EventHandler RequestInputBindingsUpdate;
+        public event EventHandler SettingsChanged;
 
-        private void OnRequestInputBIndingsUpdate()
+        private void OnSettingsChanged()
         {
-            RequestInputBindingsUpdate?.Invoke(this, EventArgs.Empty);
+            SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void ResetToDefault()
         {
             ClearSortContexts();
+        }
+
+        private void Items_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var items = sender as ItemsViewModel<FileViewModel>;
+            if(e.PropertyName == nameof(items.SortDescription))
+            {
+                OnSettingsChanged();
+            }
         }
     }
 }

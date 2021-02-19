@@ -46,11 +46,11 @@ namespace Mmfm.Plugins
             set;
         }
 
-        public event EventHandler RequestInputBindingsUpdate;
+        public event EventHandler SettingsChanged;
 
-        private void OnRequestInputBIndingsUpdate()
+        private void OnSettingsChanged()
         {
-            RequestInputBindingsUpdate?.Invoke(this, EventArgs.Empty);
+            SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void ResetToDefault()
