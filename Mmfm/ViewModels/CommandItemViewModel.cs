@@ -6,24 +6,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Text.RegularExpressions;
 
 namespace Mmfm
 {
     public class CommandItemViewModel : ICommandItem
     {
-        private Func<IEnumerable<ICommandItem>> subItems = null;
+        private Func<IEnumerable<ICommandItem>> subItems = null;   
 
         public IEnumerable<InputBinding> InputBindings 
         {
             get
             {
-                var inputBindings = new List<InputBinding>();
+                var inputBindings = new List<InputBinding>();           
                 
                 if (string.IsNullOrEmpty(shortcut) == false)
                 {
+                    
                     inputBindings.Add(new InputBinding(
                         Command,
-                        (KeyGesture)new KeyGestureConverter().ConvertFromString(shortcut)                        
+                        (KeyGesture)new ExKeyGestureConverter().ConvertFromString(shortcut)                        
                     ));
                 }
                 
