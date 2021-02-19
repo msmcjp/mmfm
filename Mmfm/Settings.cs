@@ -40,20 +40,6 @@ namespace Mmfm
             );
         }
 
-        public static Settings LoadFromFileOrDefaults(string path, Settings defaults)
-        {
-            if(File.Exists(path) == false)
-            {
-                return defaults;
-            }
-
-            var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using (var reader = new StreamReader(stream))
-            {
-                return LoadFromJsonOrDefaults(reader.ReadToEnd(), defaults);
-            }
-        }
-
         [JsonIgnore]
         public string Json => JsonSerializer.Serialize<Settings>(
             this,

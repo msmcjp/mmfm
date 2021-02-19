@@ -14,7 +14,7 @@ namespace Mmfm
     /// </summary>
     public partial class App : Application
     {
-        public static string SettingsPath
+        public static string SettingsJsonPath
         {
             get
             {

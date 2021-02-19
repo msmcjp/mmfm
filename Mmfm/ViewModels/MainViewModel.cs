@@ -81,19 +81,39 @@ namespace Mmfm
 
         private FileSystemWatcher CreateSettingsFileWatcher()
         {
-            var watcher = new FileSystemWatcher(Path.GetDirectoryName(App.SettingsPath))
+            var watcher = new FileSystemWatcher(Path.GetDirectoryName(App.SettingsJsonPath))
             {
-                Filter = Path.GetFileName(App.SettingsPath),
+                Filter = Path.GetFileName(App.SettingsJsonPath),
                 EnableRaisingEvents = true
             };
             watcher.Changed += SettingsWatcher_Changed;
             return watcher;
         }
 
+        private string ReadSettingsJson()
+        {
+            if (File.Exists(App.SettingsJsonPath))
+            {
+                var path = App.SettingsJsonPath;
+                var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+            return "";
+        }
+
         private void LoadSettings()
         {
-            Settings = Settings.LoadFromFileOrDefaults(
-                App.SettingsPath,
+            // load only externally edited or at initial
+            var jsonText = ReadSettingsJson();
+            if (Settings?.Json == jsonText)
+            {
+                return;
+            }            
+            Settings = Settings.LoadFromJsonOrDefaults(
+                jsonText,
                 settingsFactory.Defaults()
             );
         }
@@ -110,6 +130,7 @@ namespace Mmfm
                 return loadSettingsCommand;
             }
         }
+
         public MainViewModel()
         {
             var plugins = LoadPlugins();
@@ -175,7 +196,7 @@ namespace Mmfm
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            File.WriteAllText(App.SettingsPath, Settings.Json);
+            File.WriteAllText(App.SettingsJsonPath, Settings.Json);
         }
     }
 }
