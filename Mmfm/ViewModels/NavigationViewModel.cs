@@ -104,6 +104,11 @@ namespace Mmfm
                 return false;
             }
 
+            if(FullPath == path)
+            {
+                return false;
+            }
+
             navigationStack.Push(new FileViewModel(path));
             OnCurrentChanged();
 
