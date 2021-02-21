@@ -279,7 +279,7 @@ namespace Mmfm.Plugins
                             File.Delete(aPath);
                         }
                     }
-                    return true;
+                    return false;
                 }
                 catch (UnauthorizedAccessException)
                 {
