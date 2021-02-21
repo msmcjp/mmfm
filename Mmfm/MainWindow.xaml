@@ -35,6 +35,7 @@
         <i:EventTrigger EventName="Closing" >
             <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
                                 MethodName="SaveWindow"/>
+            <i:CallMethodAction TargetObject="{Binding}" MethodName="Dispose"/>
         </i:EventTrigger>
 
         <i:PropertyChangedTrigger Binding="{Binding Settings.HotKey}">

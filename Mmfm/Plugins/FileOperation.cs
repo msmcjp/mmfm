@@ -146,7 +146,6 @@ namespace Mmfm.Plugins
                 Content = content
             });
 
-            Host.Refresh();            
             if(move && content.IsCancellationRequested == false)
             {
                 ClipboardManager.Clear();
@@ -313,7 +312,6 @@ namespace Mmfm.Plugins
                     Caption = $"Deleting {operations.Sum(o => o.Count)} files." 
                 }
             });
-            Navigation.Refresh();
         }
 
         private void RenameFiles()
@@ -357,8 +355,6 @@ namespace Mmfm.Plugins
                     break;
                 }
             }
-
-            Navigation.Refresh();
         }        
     }
 }

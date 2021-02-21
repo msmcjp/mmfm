@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace Mmfm
 {
-    public class NavigationViewModel : INotifyPropertyChanged
+    public class NavigationViewModel : INotifyPropertyChanged, IDisposable
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -24,6 +24,7 @@ namespace Mmfm
 
         private Stack<FileViewModel> navigationStack = new Stack<FileViewModel>();
         private FolderShortcutViewModel[] roots;
+        private FileSystemWatcher watcher;
 
         public NavigationViewModel()
         {
@@ -158,7 +159,7 @@ namespace Mmfm
 
         private Func<FileViewModel, bool> Predicate => (x => ShowHiddenFiles || !x.IsHidden);
 
-        public void Refresh()
+        private void Refresh()
         {
             if (IsRoot)
             {
@@ -202,6 +203,22 @@ namespace Mmfm
             return items.ToArray();
         }
 
+        private void RenewFileSystemWatcher(string path)
+        {
+            watcher?.Dispose();
+            watcher = null;
+
+            if (Directory.Exists(FullPath))
+            {
+                watcher = new FileSystemWatcher(FullPath);
+                watcher.EnableRaisingEvents = true;
+                watcher.Changed += (s, e) => Refresh();
+                watcher.Created += (s, e) => Refresh();
+                watcher.Deleted += (s, e) => Refresh();
+                watcher.Renamed += (s, e) => Refresh();
+            }
+        }
+
         protected void OnCurrentChanged(FileViewModel selectedItem = null)
         {
             Refresh();
@@ -214,12 +231,14 @@ namespace Mmfm
             {
                 Folders.SelectedItem = Folders.Items.First();
             }
-   
+           
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(FullPath));
             OnPropertyChanged(nameof(IsRoot));
             OnPropertyChanged(nameof(IsNotRoot));
             OnPropertyChanged(nameof(Current));
+            
+            RenewFileSystemWatcher(FullPath);
         }
 
         private void Items_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -235,5 +254,17 @@ namespace Mmfm
                 OnPropertyChanged(nameof(SelectedItems));
             }
         }
+
+        #region IDisposable
+        private bool disposed = false;
+        public void Dispose()
+        {
+            if (disposed)
+            {
+                return;
+            }
+            watcher?.Dispose();
+        }
+        #endregion
     }
 }

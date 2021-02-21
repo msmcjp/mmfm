@@ -12,7 +12,7 @@ using System.Collections.Specialized;
 
 namespace Mmfm
 {
-    public class FileManagerViewModel : INotifyPropertyChanged
+    public class FileManagerViewModel : INotifyPropertyChanged, IDisposable
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -131,5 +131,17 @@ namespace Mmfm
                 }
             }
         }
+
+        #region IDisposable
+        private bool disposed = false;
+        public void Dispose()
+        {
+            if (disposed)
+            {
+                return;
+            }
+            Navigation.Dispose();
+        }
+        #endregion
     }
 }

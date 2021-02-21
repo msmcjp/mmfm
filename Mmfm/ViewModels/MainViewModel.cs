@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace Mmfm
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : INotifyPropertyChanged, IDisposable
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -198,5 +198,17 @@ namespace Mmfm
         {
             File.WriteAllText(App.SettingsJsonPath, Settings.Json);
         }
+
+        #region IDisposable
+        private bool disposed = false;
+        public void Dispose()
+        {
+            if (disposed)
+            {
+                return;
+            }
+            DualFileManager.Dispose();
+        }
+        #endregion
     }
 }

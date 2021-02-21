@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace Mmfm
 {
-    public class DualFileManagerViewModel : INotifyPropertyChanged
+    public class DualFileManagerViewModel : INotifyPropertyChanged, IDisposable
     { 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -65,11 +65,11 @@ namespace Mmfm
             }
         }
 
-        public void Refresh()
-        {
-            First.Navigation.Refresh();
-            Second.Navigation.Refresh();
-        }
+        //public void Refresh()
+        //{
+        //    First.Navigation.Refresh();
+        //    Second.Navigation.Refresh();
+        //}
 
         private void FileManager_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -79,5 +79,19 @@ namespace Mmfm
                 OnPropertyChanged(nameof(ActiveFileManager));
             }
         }
+
+        #region IDisposable
+        private bool disposed = false;
+        public void Dispose()
+        {
+            if(disposed)
+            {
+                return;
+            }
+
+            First.Dispose();
+            Second.Dispose();            
+        }
+        #endregion
     }
 }
