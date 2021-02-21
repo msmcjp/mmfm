@@ -19,12 +19,15 @@ namespace Mmfm
         }
         #endregion
 
-        public CommandPaletteViewModel(IEnumerable<ICommandItem> allCommandItems)
+        private bool ordered;
+
+        public CommandPaletteViewModel(IEnumerable<ICommandItem> allCommandItems, bool ordered)
         {
             AllCommandItems = allCommandItems;
             Items = new List<ICommandItem>(allCommandItems);
             SelectedItem = Items.FirstOrDefault();
             InputText = "";
+            this.ordered = ordered;
         }
 
         private string inputText;
@@ -79,7 +82,13 @@ namespace Mmfm
 
         private void OnInputTextChanged()
         {
-            Items = new List<ICommandItem>(allCommandItems.Where(c => c.Name.Contains(InputText, StringComparison.CurrentCultureIgnoreCase)).OrderBy(c => c.Name));
+            var items = allCommandItems.Where(c => c.Name.Contains(InputText, StringComparison.CurrentCultureIgnoreCase));
+            if (ordered)
+            {
+                items = items.OrderBy(c => c.Name);
+            }
+            Items = items.ToList();
+                
             SelectedItem = Items.FirstOrDefault();
             OnPropertyChanged(nameof(IsInputTextNullOrEmpty));
         }

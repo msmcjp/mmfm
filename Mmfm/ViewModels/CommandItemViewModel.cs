@@ -67,13 +67,13 @@ namespace Mmfm
             Command = command;
         }
 
-        public CommandItemViewModel(string name, IEnumerable<ICommandItem> subItems, string shortCut = null) 
-            : this(name, new Func<IEnumerable<ICommandItem>>(() => subItems), shortCut)
+        public CommandItemViewModel(string name, IEnumerable<ICommandItem> subItems, bool ordered = false, string shortCut = null) 
+            : this(name, new Func<IEnumerable<ICommandItem>>(() => subItems), ordered, shortCut)
         {
 
         }
 
-        public CommandItemViewModel(string name, Func<IEnumerable<ICommandItem>> subItems, string shortCut = null)
+        public CommandItemViewModel(string name, Func<IEnumerable<ICommandItem>> subItems, bool ordered = false, string shortCut = null)
         {
             if (subItems == null)
             {
@@ -84,7 +84,7 @@ namespace Mmfm
             Shortcut = shortCut;
             Command = new RelayCommand(() =>
             {
-                var content = new CommandPaletteViewModel(subItems.Invoke().Where(i => i.Command.CanExecute(null)));
+                var content = new CommandPaletteViewModel(subItems.Invoke().Where(i => i.Command.CanExecute(null)), ordered);
                 Messenger.Default.Send(new OverlayViewModel(content));
             },
             () =>

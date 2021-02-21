@@ -76,7 +76,7 @@ namespace Mmfm
         private CommandItemViewModel CreateCommandPallete(IEnumerable<IPluggable<DualFileManagerViewModel>> plugins)
         {
             var commands = plugins.SelectMany(plugin => plugin.Commands).ToList().AsReadOnly();
-            return new CommandItemViewModel("Show Commands", commands, "Ctrl+Shift+P");
+            return new CommandItemViewModel("Show Commands", commands, true, "Ctrl+Shift+P");
         }
 
         private FileSystemWatcher CreateSettingsFileWatcher()
