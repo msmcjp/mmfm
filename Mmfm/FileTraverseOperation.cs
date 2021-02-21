@@ -58,6 +58,11 @@ namespace Mmfm
             {
                 yield break;
             }
+ 
+            if(File.Exists(path) == false && Directory.Exists(path) == false)
+            {
+                yield break;
+            }
 
             if (new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
             {
