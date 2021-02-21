@@ -109,9 +109,22 @@ namespace Mmfm
                 return false;
             }
 
-            navigationStack.Push(new FileViewModel(path));
-            OnCurrentChanged();
+            // avoid unnecessory stacking
+            FileViewModel current;
+            if (navigationStack.TryPop(out current)) { 
+                FileViewModel peek;
+                if(navigationStack.TryPeek(out peek) && peek.Path == path)
+                { 
+                    OnCurrentChanged();
+                    return true;
+                }
+                // restore stack
+                navigationStack.Push(current);
+            }
 
+            navigationStack.Push(FileViewModel.CreateFolder(path));
+            
+            OnCurrentChanged();
             return true;
         }
 
@@ -158,7 +171,7 @@ namespace Mmfm
                 Folders.Items = new ObservableCollection<FileViewModel>(folders);
 
                 var files = Directory.GetFiles(Current.Path)
-                    .Select(p => new FileViewModel(p))
+                    .Select(p => FileViewModel.CreateFile(p))
                     .Where(Predicate);
                 Files.Items = new ObservableCollection<FileViewModel>(files);
             }
@@ -173,12 +186,12 @@ namespace Mmfm
             }
 
             var items = new List<FileViewModel>();
-            items.Add(FileViewModel.CreateAlias(directoryName, ".."));
+            items.Add(FileViewModel.CreateAlias("..", directoryName));
             try
             {
                 foreach (var path in Directory.GetDirectories(directoryName))
                 {
-                    items.Add(new FileViewModel(path));
+                    items.Add(FileViewModel.CreateFolder(path));
                 }
             }
             catch (UnauthorizedAccessException)

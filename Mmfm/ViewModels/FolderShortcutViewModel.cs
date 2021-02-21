@@ -25,7 +25,7 @@ namespace Mmfm
 
         public static implicit operator FileViewModel(FolderShortcutViewModel s)
         {
-            return FileViewModel.CreateAlias(s.Path, s.Name, s.ItemGroup, s.Icon);
+            return FileViewModel.CreateAlias(s.Name, s.Path, s.Icon, s.ItemGroup);
         }        
 
         private string path;

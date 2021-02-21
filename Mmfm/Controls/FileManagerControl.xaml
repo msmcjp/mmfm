@@ -50,7 +50,7 @@
             
             <DataTemplate x:Key="NameCell">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="{Binding IconImage}" Width="20" Height="20" Opacity="{Binding IconOpacity}"/>
+                    <Image Source="{Binding IconImage, IsAsync=True}" Width="20" Height="20" Opacity="{Binding IconOpacity}"/>
                     <TextBlock Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </DataTemplate>
