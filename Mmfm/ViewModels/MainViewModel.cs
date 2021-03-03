@@ -29,7 +29,9 @@ namespace Mmfm
 
         private readonly FileSystemWatcher settingsWatcher;
 
-        private readonly ICommandItem commandPallete;
+        private ICommandItem commandPallete;     
+       
+        private readonly (Func<Settings> Defaults, Action<Settings> Apply) settingsFactory;
 
         private Settings settings;
         public Settings Settings
@@ -53,8 +55,6 @@ namespace Mmfm
                 OnPropertyChanged(nameof(InputBindings));
             }
         }
-
-        private readonly (Func<Settings> Defaults, Action<Settings> Apply) settingsFactory;
 
         private IEnumerable<IPluggable<DualFileManagerViewModel>> LoadPlugins()
         {
@@ -133,8 +133,7 @@ namespace Mmfm
 
         public MainViewModel()
         {
-            var plugins = LoadPlugins();
-            OnPropertyChanged(nameof(InputBindings));
+            var plugins = LoadPlugins();            
 
             settingsFactory = (
                 Defaults: () => 
@@ -162,13 +161,14 @@ namespace Mmfm
                         plugins,
                         s => s.Key,
                         p => p.Name,
-                        (s, p) => p.Settings = s.Value
-                    ).ToArray();
+                        (s, p) => (Settings : s.Value, Plugin : p)
+                    ).ToArray().ForEach(x => x.Plugin.Settings = x.Settings);
+                    commandPallete = CreateCommandPallete(plugins);
+                    OnPropertyChanged(nameof(InputBindings));
                 }
             );
             settingsFactory.Apply(settingsFactory.Defaults());
 
-            commandPallete = CreateCommandPallete(plugins);
             settingsWatcher = CreateSettingsFileWatcher();
         }
 
