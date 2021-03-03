@@ -18,25 +18,23 @@ namespace Mmfm
         public override ExpandoObject Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             IDictionary<string, object> deserialized = new ExpandoObject();
+            int depth = reader.CurrentDepth;
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.PropertyName)
                 {
+                    
                     var propertyName = reader.GetString();
                     if (template.ContainsKey(propertyName))
                     {
                         var type = template[propertyName].GetType();
                         deserialized[propertyName] = JsonSerializer.Deserialize(ref reader, type, options) ?? template[propertyName];
-                    }
-                    else
-                    {
-                        reader.Skip();
+                        continue;
                     }
                 }
 
-                if (reader.TokenType == JsonTokenType.EndObject)
+                if (reader.TokenType == JsonTokenType.EndObject && reader.CurrentDepth == depth)
                 {
-                    reader.Read();
                     break;
                 }
             }
