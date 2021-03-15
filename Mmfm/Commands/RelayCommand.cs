@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace Mmfm.Commands
 {
-    public class RelayCommand<T> : ICommand
+    public class RelayCommand<T> : RelayCommandBase
     {
         private Action<T> _action;
         private Func<T, bool> _canExecute;
@@ -20,19 +20,7 @@ namespace Mmfm.Commands
             _canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add
-            {
-                CommandManager.RequerySuggested += value;
-            }
-            remove
-            {
-                CommandManager.RequerySuggested -= value;
-            }
-        }
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
             bool canExecute = _action != null && parameter is T;
 
@@ -44,18 +32,13 @@ namespace Mmfm.Commands
             return canExecute;
         }
 
-        public void RaiseCanExecuteChanged()
-        {
-            CommandManager.InvalidateRequerySuggested();
-        }
-
-        public void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             _action?.Invoke((T)parameter);
         }
     }
 
-    public class RelayCommand : ICommand
+    public class RelayCommand : RelayCommandBase
     {
         private Action _action;
         private Func<bool> _canExecute;
@@ -68,19 +51,7 @@ namespace Mmfm.Commands
             _canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add
-            {
-                CommandManager.RequerySuggested += value;
-            }
-            remove
-            {
-                CommandManager.RequerySuggested -= value;
-            }
-        }
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
             if (_canExecute != null)
             {
@@ -89,12 +60,7 @@ namespace Mmfm.Commands
             return true;
         }
 
-        public void RaiseCanExecuteChanged()
-        {
-            CommandManager.InvalidateRequerySuggested();
-        }
-
-        public void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             _action?.Invoke();
         }
