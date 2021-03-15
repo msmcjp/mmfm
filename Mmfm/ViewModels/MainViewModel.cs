@@ -25,7 +25,7 @@ namespace Mmfm
 
         public DualFileManagerViewModel DualFileManager { get; } = new DualFileManagerViewModel();
 
-        public IEnumerable<InputBinding> InputBindings => commandPallete.InputBindings;
+        public IEnumerable<InputBinding> InputBindings => commandPallete.Flatten().Where(c => c.InputBinding != null).Select(c => c.InputBinding);
 
         private readonly FileSystemWatcher settingsWatcher;
 

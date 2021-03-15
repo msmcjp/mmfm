@@ -29,5 +29,19 @@ namespace Mmfm
         {
             CommandText.Focus();
         }
+
+        private void CommandText_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var count = CommandsList.ItemContainerGenerator.Items.Count;
+            if(count == 0)
+            {
+                return;
+            }
+            var delta = 0;
+            if(e.Key == Key.Up) { delta = -1; e.Handled = true; }
+            if(e.Key == Key.Down) { delta = 1; e.Handled = true; }
+            CommandsList.SelectedIndex = (CommandsList.SelectedIndex + delta + count) % count;
+            CommandsList.ScrollIntoView(CommandsList.SelectedItem);
+        }
     }
 }

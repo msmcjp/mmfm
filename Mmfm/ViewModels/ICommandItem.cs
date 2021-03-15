@@ -11,10 +11,22 @@ namespace Mmfm
     {
         string Name { get; }
 
+        string DisplayName { get; }
+
         string Shortcut { get; }
 
-        ICommand Command { get;  }
+        ICommand Command { get; }
 
-        IEnumerable<InputBinding> InputBindings { get; }
+        InputBinding InputBinding { get; }
+
+        IEnumerable<ICommandItem> SubCommands { get; }
     }
+
+    public static class ICommandItemExtension
+    {
+        public static IEnumerable<ICommandItem> Flatten(this IEnumerable<ICommandItem> commandItems) => commandItems.SelectMany(commandItem => commandItem.Flatten());
+
+        public static IEnumerable<ICommandItem> Flatten(this ICommandItem commandItem) => (new ICommandItem[] { commandItem }).Concat(commandItem.SubCommands?.Flatten());
+    }
+
 }

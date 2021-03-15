@@ -12,46 +12,37 @@ namespace Mmfm
 {
     public class CommandItemViewModel : ICommandItem
     {
-        private Func<IEnumerable<ICommandItem>> subItems = null;   
+        public static readonly string SeparatorString = "/";
 
-        public IEnumerable<InputBinding> InputBindings 
-        {
-            get
-            {
-                var inputBindings = new List<InputBinding>();           
-                
-                if (string.IsNullOrEmpty(shortcut) == false)
-                {
-                    
-                    inputBindings.Add(new InputBinding(
-                        Command,
-                        (KeyGesture)new ExKeyGestureConverter().ConvertFromString(shortcut)                        
-                    ));
-                }
-                
-                if(subItems != null)
-                {
-                    inputBindings.AddRange(subItems().SelectMany(subItem => subItem.InputBindings));
-                }
+        public static readonly string DisplaySeparatorString = " \U0001f782 ";
 
-                return inputBindings.AsReadOnly();
-            }                
-        }
+        private Func<ICommandItem, IEnumerable<ICommandItem>> subCommands = null;
 
+        public InputBinding InputBinding => string.IsNullOrEmpty(shortcut) ? 
+            null : new InputBinding(Command, (KeyGesture)new ExKeyGestureConverter().ConvertFromString(shortcut));
+
+        public IEnumerable<ICommandItem> SubCommands => subCommands?.Invoke(this) ?? Enumerable.Empty<ICommandItem>();
+       
         public string Name
         {
             get;
             private set;
-        }
+        }     
 
         private string shortcut;
         public string Shortcut
         {
-            get => shortcut ?? (subItems?.Invoke().Count() > 0 ? "\U0001f782" : "");
+            get => shortcut ?? (subCommands?.Invoke(this).Count() > 0 ? "\U0001f782" : "");
             private set
             {
                 shortcut = value;                
             }
+        }
+
+        public string DisplayName
+        {
+            get;
+            private set;
         }
 
         public ICommand Command
@@ -63,36 +54,45 @@ namespace Mmfm
         public CommandItemViewModel(string name, string shortcut, ICommand command)
         {
             Name = name;
+            DisplayName = name.Split(SeparatorString).Last();
             Shortcut = shortcut;
             Command = command;
         }
 
-        public CommandItemViewModel(string name, IEnumerable<ICommandItem> subItems, bool ordered = false, string shortCut = null) 
-            : this(name, new Func<IEnumerable<ICommandItem>>(() => subItems), ordered, shortCut)
+        public CommandItemViewModel(string name, IEnumerable<ICommandItem> subItems, bool ordered = false, string shortCut = null)
+            : this(name, new Func<ICommandItem, IEnumerable<ICommandItem>>((parent) => subItems), ordered, shortCut)
         {
-
         }
 
-        public CommandItemViewModel(string name, Func<IEnumerable<ICommandItem>> subItems, bool ordered = false, string shortCut = null)
+        public CommandItemViewModel(string name, Func<ICommandItem, IEnumerable<ICommandItem>> subCommands, bool ordered = false, string shortCut = null)
         {
-            if (subItems == null)
+            if (subCommands == null)
             {
-                throw new ArgumentNullException("subItems");
+                throw new ArgumentNullException();
             }
 
             Name = name;
+            DisplayName = name.Split(SeparatorString).Last();
             Shortcut = shortCut;
             Command = new RelayCommand(() =>
             {
-                var content = new CommandPaletteViewModel(subItems.Invoke().Where(i => i.Command.CanExecute(null)), ordered);
+                var content = new CommandPaletteViewModel(subCommands.Invoke(this).Where(i => i.Command.CanExecute(null)), ordered);
                 Messenger.Default.Send(new OverlayViewModel(content));
             },
             () =>
             {
-                return subItems.Invoke().Where(i => i.Command.CanExecute(null)).Count() > 0;
+                return subCommands.Invoke(this).Where(i => i.Command.CanExecute(null)).Count() > 0;
             });
 
-            this.subItems = subItems;
+            this.subCommands = subCommands;
+        }
+
+        public CommandItemViewModel(ICommandItem baseItem)
+        {
+            Name = baseItem.Name;
+            DisplayName = baseItem.Name.Replace(SeparatorString, DisplaySeparatorString);
+            Shortcut = baseItem.Shortcut;
+            Command = baseItem.Command;
         }
     }
 }

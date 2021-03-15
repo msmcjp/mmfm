@@ -24,7 +24,7 @@
             </Grid.Resources>
 
             <Border BorderThickness="1" CornerRadius="2" Margin="4" Focusable="True">
-                <TextBox x:Name="CommandText" Grid.Row="0" BorderThickness="0" FontSize="18" Padding="4" Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                <TextBox x:Name="CommandText" Grid.Row="0" BorderThickness="0" FontSize="18" Padding="4" Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="CommandText_PreviewKeyDown" >
                     <i:Interaction.Triggers>
                         <local:KeyDownEventTrigger Key="Enter">
                             <local:HideWindowAction/>
@@ -34,34 +34,45 @@
                 </TextBox>
             </Border>
 
-            <Label Content="Enter a command..." Grid.Row="0" Opacity="0.2" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="18" Visibility="{Binding IsInputTextNullOrEmpty, Converter={StaticResource boolVisibilityConverter}}" IsHitTestVisible="False"/>
+            <Label Content="Enter keywords..." Grid.Row="0" Opacity="0.2" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="18" Visibility="{Binding IsKeywordEmpty, Converter={StaticResource boolVisibilityConverter}}" IsHitTestVisible="False"/>
 
-            <ListView Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" BorderThickness="0">
+            <ListView x:Name="CommandsList" Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" BorderThickness="0">
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
+                    <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="Margin" Value="0"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="local:InteractivityItems.Template">
+                            <Setter.Value>
+                                <local:InteractivityTemplate>
+                                    <local:InteractivityItems>
+                                        <local:InteractivityItems.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                                <local:HideWindowAction/>
+                                                <i:InvokeCommandAction Command="{Binding Command}" />
+                                            </i:EventTrigger>
+                                            <local:KeyDownEventTrigger Key="Enter">
+                                                <local:HideWindowAction/>
+                                                <i:InvokeCommandAction Command="{Binding Command}" />
+                                            </local:KeyDownEventTrigger>
+                                        </local:InteractivityItems.Triggers>
+                                    </local:InteractivityItems>
+                                </local:InteractivityTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </ListView.ItemContainerStyle>
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
-                                    <local:HideWindowAction/>
-                                    <i:InvokeCommandAction Command="{Binding Command}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10" FontSize="18" />
+                            <TextBlock Grid.Column="0" Text="{Binding DisplayName}" Margin="10" FontSize="18" />
                             <TextBlock Grid.Column="1" 
                                        Text="{Binding Shortcut}" 
                                        Margin="4,4,30,4" 

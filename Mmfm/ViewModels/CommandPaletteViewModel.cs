@@ -75,22 +75,33 @@ namespace Mmfm
             }
         }
 
-        public bool IsInputTextNullOrEmpty 
+        public bool HasAnyKeyword 
         { 
-            get => string.IsNullOrEmpty(InputText); 
+            get => string.IsNullOrEmpty(InputText) == false; 
         }
+
+        public bool IsKeywordEmpty => !HasAnyKeyword;       
 
         private void OnInputTextChanged()
         {
-            var items = allCommandItems.Where(c => c.Name.Contains(InputText, StringComparison.CurrentCultureIgnoreCase));
-            if (ordered)
+            var items = allCommandItems;
+            if (HasAnyKeyword)
             {
-                items = items.OrderBy(c => c.Name);
-            }
-            Items = items.ToList();
-                
+                items = allCommandItems
+                .Flatten()
+                .Where(
+                    commandItem => InputText.Split(" ").All(
+                        keyword => commandItem.Name.Contains(
+                            keyword, 
+                            StringComparison.CurrentCultureIgnoreCase
+                        )
+                    )
+                )
+                .Select(item => new CommandItemViewModel(item));
+            }        
+            Items = (ordered ? items.OrderBy(c => c.Name) : items).ToList();                
             SelectedItem = Items.FirstOrDefault();
-            OnPropertyChanged(nameof(IsInputTextNullOrEmpty));
+            OnPropertyChanged(nameof(IsKeywordEmpty));
         }
     }
 }

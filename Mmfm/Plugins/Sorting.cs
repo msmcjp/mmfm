@@ -22,46 +22,49 @@ namespace Mmfm.Plugins
             new CommandItemViewModel("Sort", CreateSortCommands()),
         };
 
-        private Func<IEnumerable<ICommandItem>> CreateSortCommands()
+        private Func<ICommandItem, IEnumerable<ICommandItem>> CreateSortCommands()
         {
-            return () =>
+            return (parent) =>
             {
                 List<ICommandItem> commands = new List<ICommandItem>();
                 
                 if (Folders != null)
                 {
-                    commands.Add(new CommandItemViewModel("Folders", SortCommandItems(Folders)));
+                    commands.Add(new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Folders", SortCommandItems(Folders)));
                 }
 
                 if (Files != null)
                 {
-                    commands.Add(new CommandItemViewModel("Files", SortCommandItems(Files)));
+                    commands.Add(new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Files", SortCommandItems(Files)));
                 }
                
                 return commands.AsReadOnly();
             };
         }
 
-        private IEnumerable<ICommandItem> SortCommandItems<T>(ItemsViewModel<T> itemsVieModel)
+        private Func<ICommandItem, IEnumerable<ICommandItem>> SortCommandItems<T>(ItemsViewModel<T> itemsVieModel)
             where T : IHasIsSelected, INotifyPropertyChanged
         {
-            var descs = ((IDictionary<string, object>)itemsVieModel.SortDescriptions).Values.Cast<ISortDescription<T>>();
-            var commands = descs.Select(desc => new CommandItemViewModel($"by {desc.Name}", new CommandItemViewModel[]
+            return (parent) =>
             {
-                new CommandItemViewModel("Ascending", null, new RelayCommand(() => {
-                    desc.IsDescending = false;
-                    itemsVieModel.SortDescription = desc;
-                })),
-                new CommandItemViewModel("Descending", null, new RelayCommand(() => {
-                    desc.IsDescending = true;
-                    itemsVieModel.SortDescription = desc;
-               })),
-            }));
+                var descs = ((IDictionary<string, object>)itemsVieModel.SortDescriptions).Values.Cast<ISortDescription<T>>();
+                var commands = descs.Select(desc => new CommandItemViewModel($"{parent}/by {desc.Name}", new Func<ICommandItem, IEnumerable<ICommandItem>>((parent) => new CommandItemViewModel[]
+                {
+                    new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Ascending", null, new RelayCommand(() => {
+                        desc.IsDescending = false;
+                        itemsVieModel.SortDescription = desc;
+                    })),
+                    new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Descending", null, new RelayCommand(() => {
+                        desc.IsDescending = true;
+                        itemsVieModel.SortDescription = desc;
+                    })),
+                })));
 
-            var none = new CommandItemViewModel("Clear", "", new RelayCommand(() => itemsVieModel.SortDescription = null));
-            commands = commands.Concat(new CommandItemViewModel[] { none });
+                var none = new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Clear", "", new RelayCommand(() => itemsVieModel.SortDescription = null));
+                commands = commands.Concat(new CommandItemViewModel[] { none });
 
-            return commands;
+                return commands;
+            };
         }
 
         public Messenger Messenger

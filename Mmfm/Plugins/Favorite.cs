@@ -141,10 +141,10 @@ namespace Mmfm.Plugins
 
         private ICommandItem CreateJumptoFavoriteCommand()
         {
-            var itemsFactory = new Func<IEnumerable<ICommandItem>>(() =>
+            var itemsFactory = new Func<ICommandItem, IEnumerable<ICommandItem>>((parent) =>
             {
                 return Favorites?.Select((f, i) => new CommandItemViewModel(
-                    f.Name,
+                    $"{parent.Name}{CommandItemViewModel.SeparatorString}{f.Name}",
                     $"Shift+F{i + 1}",
                     new RelayCommand(() =>
                     {
@@ -152,7 +152,7 @@ namespace Mmfm.Plugins
                     })
                 ));
             });
-            return new CommandItemViewModel("Jump to", itemsFactory);
+            return new CommandItemViewModel("Jump to Favorite", itemsFactory);
         }
 
         private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
