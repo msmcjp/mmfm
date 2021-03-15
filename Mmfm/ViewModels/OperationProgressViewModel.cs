@@ -11,33 +11,14 @@ using System.Windows.Input;
 
 namespace Mmfm
 {
-    public class OperationProgressViewModel : INotifyPropertyChanged
+    public class OperationProgressViewModel : ContentDialogViewModel, IDisposable
     {
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
-        public OperationProgressViewModel(IEnumerable<IOperationProvider> operationProviders)
+        public OperationProgressViewModel(IEnumerable<IOperationProvider> operationProviders) : base()
         {
             OperationProviders = operationProviders;
             foreach(var operationProvider in OperationProviders)
             {
-                operationProvider.TokenSource = tokenSource;
                 operationProvider.OperationProgressed += OperationProvider_OperationProgressed;
-            }
-        }
-
-        ~OperationProgressViewModel()
-        {
-            foreach (var operationProvider in OperationProviders)
-            {
-                operationProvider.TokenSource = new CancellationTokenSource();
-                operationProvider.OperationProgressed -= OperationProvider_OperationProgressed;
             }
         }
 
@@ -47,8 +28,8 @@ namespace Mmfm
             private set;
         }
 
-        private CancellationTokenSource tokenSource = new CancellationTokenSource();
-        private int _value = 0;
+        private CancellationTokenSource cancellationTokenSource = null;
+        private int current = 0;
 
         private ICommand startOperationCommand;
         public ICommand StartOperationCommand
@@ -59,17 +40,24 @@ namespace Mmfm
                 {
                     startOperationCommand = new RelayCommand(async () =>
                     {
+                        cancellationTokenSource?.Dispose();
+                        cancellationTokenSource = new CancellationTokenSource();
+
                         Count = OperationProviders.Sum(p => p.Count);
-                        value = 0;
-                        foreach(var op in OperationProviders)
+                        total = 0;
+                        var cancellationToken = cancellationTokenSource.Token;
+                        foreach (var op in OperationProviders)
                         {
-                            _value = 0;
-                            await Task.Run(op.Operation, tokenSource.Token);
-                            if (tokenSource.IsCancellationRequested)
+                            current = 0;
+                            await Task.Run(
+                                op.ProvideOperationTaskWith(cancellationToken), 
+                                cancellationToken
+                            );
+                            if (cancellationToken.IsCancellationRequested)
                             {
                                 break;
                             }
-                            value += op.Count;
+                            total += op.Count;
                         }
                         OperationFinished = true;
                     });
@@ -89,14 +77,14 @@ namespace Mmfm
             }
         }
 
-        private string current;
-        public string Current
+        private string statusText;
+        public string StatusText
         {
-            get => current;
+            get => statusText;
             private set
             {
-                current = value;
-                OnPropertyChanged(nameof(Current));
+                statusText = value;
+                OnPropertyChanged(nameof(StatusText));
             }
         }
 
@@ -111,7 +99,7 @@ namespace Mmfm
             }
         }
 
-        public bool IsCancellationRequested => tokenSource.IsCancellationRequested;
+        public bool IsCancellationRequested => cancellationTokenSource?.IsCancellationRequested ?? false;
 
         private int count;
         public int Count
@@ -124,8 +112,8 @@ namespace Mmfm
             }
         }
 
-        private int value;
-        public int Value => value + _value;   
+        private int total;
+        public int Value => total + current;   
 
         private ICommand cancelCommand;
         public ICommand CancelCommand
@@ -134,7 +122,7 @@ namespace Mmfm
             {
                 if(cancelCommand == null)
                 {
-                    cancelCommand = new RelayCommand(() => tokenSource.Cancel());
+                    cancelCommand = new RelayCommand(() => cancellationTokenSource?.Cancel());
                 }
                 return cancelCommand;
             }
@@ -142,9 +130,26 @@ namespace Mmfm
 
         private void OperationProvider_OperationProgressed(object sender, OperationProgressedEventArgs e)
         {
-            _value = e.Value;
-            Current = e.Current;
+            current = e.Current;
+            StatusText = e.StatusText;
             OnPropertyChanged(nameof(Value));
+        }
+
+        private bool disposed = false;
+        public void Dispose()
+        {
+            if (disposed)
+            {
+                return;
+            }
+
+            foreach (var operationProvider in OperationProviders)
+            {
+                operationProvider.OperationProgressed -= OperationProvider_OperationProgressed;
+            }
+
+            cancellationTokenSource?.Dispose();
+            cancellationTokenSource = null;
         }
     }
 }

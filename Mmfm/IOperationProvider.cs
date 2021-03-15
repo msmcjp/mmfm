@@ -10,23 +10,23 @@ namespace Mmfm
     public interface IOperationProvider
     {
         /// <summary>
-        /// Fires when an operation progressed.
+        /// Fires when the operation is progressed.
         /// </summary>
         event OperationProgressedEventHandler OperationProgressed;
 
         /// <summary>
-        /// Count of operation. 
+        /// Count of the operation. 
         /// </summary>
         int Count { get; }
 
         /// <summary>
-        /// Operation 
+        /// Provides the operation task.
         /// </summary>
-        Action Operation { get; }
-
-        /// <summary>
-        /// Cancellation token
-        /// </summary>
-        CancellationTokenSource TokenSource { get; set; }
+        /// <param name="cancellationTokenSource">
+        /// The cancellation token object. 
+        /// The operation task must be cancelled by a request of the object.
+        /// </param>
+        /// <returns>The task executes the operation.</returns>
+        Func<Task> ProvideOperationTaskWith(CancellationToken cancellationToken);        
     }
 }

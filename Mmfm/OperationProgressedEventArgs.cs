@@ -8,22 +8,22 @@ namespace Mmfm
 {
     public class OperationProgressedEventArgs
     {
-        public string Current
+        public string StatusText
         {
             get;
             private set;
         }
 
-        public int Value
+        public int Current
         {
             get;
             private set;
         }
 
-        public OperationProgressedEventArgs(string current, int value)
+        public OperationProgressedEventArgs(string statusText, int current)
         {
+            StatusText = statusText;
             Current = current;
-            Value = value;
         }
     }
 
