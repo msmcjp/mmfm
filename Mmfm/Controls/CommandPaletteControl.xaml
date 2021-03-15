@@ -7,17 +7,13 @@
              xmlns:converters="clr-namespace:Mmfm.Converters"
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             Background="Transparent"
              Width="400"            
              Height="400"
              Focusable="False"
              Loaded="UserControl_Loaded">
-    <UserControl.Effect>
-        <DropShadowEffect BlurRadius="10" Direction="-90" RenderingBias="Quality" ShadowDepth="0"/>
-    </UserControl.Effect>
-
-    <Border BorderBrush="White" BorderThickness="1" CornerRadius="2" Focusable="False">
-        <Grid Background="White" Focusable="False">
+  
+    <Border BorderThickness="1" CornerRadius="2" Focusable="False">
+        <Grid Focusable="False">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -27,7 +23,7 @@
                 <converters:BoolVisibilityConverter x:Key="boolVisibilityConverter"/>
             </Grid.Resources>
 
-            <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="2" Margin="4" Focusable="True">
+            <Border BorderThickness="1" CornerRadius="2" Margin="4" Focusable="True">
                 <TextBox x:Name="CommandText" Grid.Row="0" BorderThickness="0" FontSize="18" Padding="4" Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                     <i:Interaction.Triggers>
                         <local:KeyDownEventTrigger Key="Enter">
@@ -38,7 +34,7 @@
                 </TextBox>
             </Border>
 
-            <Label Content="Enter a command..." Grid.Row="0" Opacity="0.2" Margin="4,0,0,0" VerticalAlignment="Center" FontSize="18" Visibility="{Binding IsInputTextNullOrEmpty, Converter={StaticResource boolVisibilityConverter}}" IsHitTestVisible="False"/>
+            <Label Content="Enter a command..." Grid.Row="0" Opacity="0.2" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="18" Visibility="{Binding IsInputTextNullOrEmpty, Converter={StaticResource boolVisibilityConverter}}" IsHitTestVisible="False"/>
 
             <ListView Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" BorderThickness="0">
                 <ListView.ItemContainerStyle>
@@ -68,7 +64,7 @@
                             <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10" FontSize="18" />
                             <TextBlock Grid.Column="1" 
                                        Text="{Binding Shortcut}" 
-                                       Margin="4,4,10,4" 
+                                       Margin="4,4,30,4" 
                                        Foreground="Gray" 
                                        FontSize="12"
                                        HorizontalAlignment="Right" 

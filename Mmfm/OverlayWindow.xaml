@@ -5,16 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Mmfm"
         mc:Ignorable="d"
-        Title="OverlayWindow" 
+        Title="" 
         WindowStyle="None"
         SizeToContent="WidthAndHeight"
         AllowsTransparency="True"
-        Background="Transparent"        
         ResizeMode="NoResize" 
         Deactivated="Window_Deactivated" 
         KeyUp="Window_KeyUp" 
+        BorderBrush="Transparent"
+        Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+        BorderThickness="20"
         PreviewKeyDown="Window_PreviewKeyDown">
+  
+    <Window.Effect>
+        <DropShadowEffect Color="Gray" BlurRadius="10" Direction="-90" RenderingBias="Quality" ShadowDepth="2"/>
+    </Window.Effect>
+
     <Grid>
-        <ContentControl Content="{Binding}" Margin="10" />
+        <ContentControl Content="{Binding}" Margin="10"/>
     </Grid>
 </Window>

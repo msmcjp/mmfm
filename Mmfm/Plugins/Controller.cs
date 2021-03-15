@@ -28,7 +28,7 @@ namespace Mmfm.Plugins
             new CommandItemViewModel("Open settings file", "Ctrl+,", new RelayCommand(() => Process.Start(new ProcessStartInfo(App.SettingsJsonPath) { UseShellExecute = true }))),
         };
 
-        public IMessenger Messenger
+        public Messenger Messenger
         {
             get;
             set;

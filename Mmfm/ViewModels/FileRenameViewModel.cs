@@ -8,17 +8,8 @@ using System.Threading.Tasks;
 
 namespace Mmfm
 {
-    public class FileRenameViewModel : INotifyPropertyChanged
+    public class FileRenameViewModel : ContentDialogViewModel
     {
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
         private string path;
         private string current;
         private string fileNameWithoutExtension;

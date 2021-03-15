@@ -2,22 +2,32 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Mmfm"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+             xmlns:ui="http://schemas.modernwpf.com/2019">
     <Application.Resources>
-        <DataTemplate DataType="{x:Type local:OperationProgressViewModel}">
-            <local:OperationProgressControl />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type local:CommandPaletteViewModel}">
-            <local:CommandPaletteControl/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type local:FileConflictViewModel}">
-            <local:FileConflictControl/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type local:FileRenameViewModel}">
-            <local:FileRenameControl/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type local:FavoriteRegisterViewModel}">
-            <local:FavoriteRegisterControl/>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+                <!-- Other merged dictionaries here -->
+                <ResourceDictionary>
+                    <DataTemplate DataType="{x:Type local:OperationProgressViewModel}">
+                        <local:OperationProgressControl />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:CommandPaletteViewModel}">
+                        <local:CommandPaletteControl/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:FileConflictViewModel}">
+                        <local:FileConflictControl/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:FileRenameViewModel}">
+                        <local:FileRenameControl/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:FavoriteRegisterViewModel}">
+                        <local:FavoriteRegisterControl/>
+                    </DataTemplate>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

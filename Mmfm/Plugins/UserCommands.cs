@@ -32,7 +32,7 @@ namespace Mmfm.Plugins
 
         public IEnumerable<ICommandItem> Commands => CreateuserCommands();
 
-        public IMessenger Messenger
+        public Messenger Messenger
         {
             get;
             set;

@@ -9,17 +9,8 @@ using System.Windows.Input;
 
 namespace Mmfm
 {
-    public class FileConflictViewModel : INotifyPropertyChanged
-    {
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
+    public class FileConflictViewModel : ContentDialogViewModel
+    { 
         public FileConflictViewModel(string source, string destination)
         {
             Source = source;

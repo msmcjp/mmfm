@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Mmfm
 {
@@ -14,6 +16,13 @@ namespace Mmfm
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            DispatcherUnhandledException += Application_DispatcherUnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
         public static string SettingsJsonPath
         {
             get
@@ -32,6 +41,21 @@ namespace Mmfm
                 );
             }
         }
+
+        private void LogException(Exception ex)
+        {
+            EventLog.WriteEntry(
+                Assembly.GetExecutingAssembly().GetName().Name,
+                ex.ToString(), 
+                EventLogEntryType.Error
+            );
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) => LogException((Exception)e.ExceptionObject);
+
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e) => LogException(e.Exception);
+
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) => LogException(e.Exception);      
 
     }
 }

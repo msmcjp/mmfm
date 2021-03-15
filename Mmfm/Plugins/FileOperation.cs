@@ -1,9 +1,12 @@
 ﻿using Mmfm.Commands;
+using ModernWpf.Controls;
 using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Mmfm.Plugins
@@ -32,13 +35,13 @@ namespace Mmfm.Plugins
         {
             new CommandItemViewModel("Copy", "Ctrl+C", new RelayCommand(() => Copy(), CanExecute)),
             new CommandItemViewModel("Cut", "Ctrl+X", new RelayCommand(() => Cut(), CanExecute)),
-            new CommandItemViewModel("Paste", "Ctrl+V", new RelayCommand(() => Paste(), CanPaste)),
-            new CommandItemViewModel("Move to Recycle Bin", "Delete", new RelayCommand(() => DeleteFiles(), CanExecute)),
-            new CommandItemViewModel("Delete", "Shift+Delete", new RelayCommand(() => DeleteFiles(false), CanExecute)),
-            new CommandItemViewModel("Rename", "F2", new RelayCommand(() => RenameFiles(), CanExecute)),
+            new CommandItemViewModel("Paste", "Ctrl+V", new AsyncRelayCommand(async () => await PasteAsync(), CanPaste)),
+            new CommandItemViewModel("Move to Recycle Bin", "Delete", new AsyncRelayCommand(async () => await DeleteFilesAsync(), CanExecute)),
+            new CommandItemViewModel("Delete", "Shift+Delete", new AsyncRelayCommand(async () => await DeleteFilesAsync(false), CanExecute)),
+            new CommandItemViewModel("Rename", "F2", new AsyncRelayCommand(async () => await RenameFilesAsync(), CanExecute)),
         };
 
-        public IMessenger Messenger
+        public Messenger Messenger
         {
             get;
             set;
@@ -68,29 +71,33 @@ namespace Mmfm.Plugins
 
         }
 
-        private FileConflictAction ConfirmFileConflictAction(string source, ref string destination)
+        private async Task<FileConflictAction> ConfirmFileConflictActionAsync(string source, string destination)
         {
             if (File.Exists(destination) == false)
             {
                 return FileConflictAction.Overwrite;
             }
 
-            var content = new FileConflictViewModel(source, destination);
-            var dialog = new DialogViewModel
-            {
-                Title = "Confirm",
-                Content = content
-            };
-            Messenger.Send(dialog);
+            var dialog = new FileConflictViewModel(source, destination);          
+            await Messenger.SendAsync(dialog);
 
             var action = FileConflictAction.None;
-            if (dialog.Result == true)
+
+            if (dialog.Result == ContentDialogResult.Primary)
             {
-                if (content.ApplyToAll) { action |= FileConflictAction.ApplyToAll; }
-                if (content.Skip) { action |= FileConflictAction.Skip; }
-                if (content.Overwrite) { action |= FileConflictAction.Overwrite; }
-                if (content.Newer) { action |= FileConflictAction.Newer; }
+                action = FileConflictAction.Overwrite;
             }
+
+            if (dialog.Result == ContentDialogResult.Secondary)
+            {
+                action = FileConflictAction.Skip;
+            }
+
+            if (dialog.Result != ContentDialogResult.None && dialog.ApplyToAll)
+            {
+                action |= FileConflictAction.ApplyToAll;
+            }
+
             return action;
         }
 
@@ -127,7 +134,7 @@ namespace Mmfm.Plugins
             ClipboardManager.SetDropFileList(SelectedPaths, true);
         }
 
-        private void Paste()
+        private async Task PasteAsync()
         {
             bool move = false;
             var paths = ClipboardManager.GetDropFileList(out move);
@@ -135,33 +142,34 @@ namespace Mmfm.Plugins
             conflictAction = FileConflictAction.None;
 
             var operations = paths.Select(path => CopyOrMoveOperation(path, Navigation.FullPath, move)).ToArray();
-            var content = new OperationProgressViewModel(operations) 
-            { 
-                Caption = $"{(move ? "Moving" : "Copying")} {operations.Sum(o => o.Count)} files." 
+            var dialog = new OperationProgressViewModel(operations)
+            {
+                Caption = $"{(move ? "Moving" : "Copying")} {operations.Sum(o => o.Count)} files."
             };
 
-            Messenger.Send(new DialogViewModel
-            {
-                Title = move ? "Move" : "Copy",
-                Content = content
-            });
+            await Messenger.SendAsync(dialog);
 
-            if(move && content.IsCancellationRequested == false)
+            if(move && dialog.IsCancellationRequested == false)
             {
                 ClipboardManager.Clear();
             }
         }
 
+        private object conflictActionSyncObject = new object();
         private FileTraverseOperation CopyOrMoveOperation(string from, string to, bool move)
         {
-            return new FileTraverseOperation(from, (path) =>
+            return new FileTraverseOperation(from, async (path) =>
             {
                 var dest = to + path.Substring(Path.GetDirectoryName(from).Length);
 
-                // Do nothing in case of source and destination is same
-                if(path == dest)
+                if (path == dest)
                 {
-                    return false;
+                    // Do not move when source and destination is same
+                    if (move)
+                    {
+                        return false;
+                    }
+                    dest = dest.CopyableFileName();
                 }
 
                 if (new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
@@ -200,12 +208,12 @@ namespace Mmfm.Plugins
 
                 if (conflictAction.HasFlag(FileConflictAction.ApplyToAll) == false)
                 {
-                    if ((conflictAction = ConfirmFileConflictAction(path, ref dest)) == FileConflictAction.None)
+                    if ((conflictAction = await ConfirmFileConflictActionAsync(path, dest)) == FileConflictAction.None)
                     {
                         return true;
                     }
                 }
-
+                   
                 if (conflictAction.CanWrite(path, dest) == true)
                 {
                     var restoreReadOnly = false;
@@ -225,7 +233,7 @@ namespace Mmfm.Plugins
                         Directory.CreateDirectory(Path.GetDirectoryName(dest));
                         if (move)
                         {
-                            if(path != dest)
+                            if (path != dest)
                             {
                                 File.Delete(dest);
                                 File.Move(path, dest);
@@ -254,7 +262,7 @@ namespace Mmfm.Plugins
 
         private FileTraverseOperation DeleteOperation(string path, bool moveToRecycleBin)
         {
-            return new FileTraverseOperation(path, (aPath) =>
+            return new FileTraverseOperation(path, (aPath) => Task.Run(()=>
             {
                 var fi = new FileInfo(aPath);
 
@@ -284,10 +292,10 @@ namespace Mmfm.Plugins
                 {
                     return ConfirmContinueOperation(Properties.Resources.Delete_UnauthorizedException);
                 }
-            });
+            }));
         }
 
-        private void DeleteFiles(bool moveToRecycleBin = true)
+        private async Task DeleteFilesAsync(bool moveToRecycleBin = true)
         {
             var operations = SelectedPaths.Select(path => DeleteOperation(path, moveToRecycleBin)).ToArray();
 
@@ -298,51 +306,41 @@ namespace Mmfm.Plugins
                 Caption = "Confirm",
                 Text = $"Are you sure to delete {operations.Sum(o => o.Count)} files?"
             };
-            Messenger.Send(message);
+            await Messenger.SendAsync(message);
             if (message.Result == MessageBoxResult.No)
             {
                 return;
             }
 
-            Messenger.Send(new DialogViewModel
+            await Messenger.SendAsync(new OperationProgressViewModel(operations)
             {
-                Title = "Delete",
-                Content = new OperationProgressViewModel(operations) 
-                { 
-                    Caption = $"Deleting {operations.Sum(o => o.Count)} files." 
-                }
+                Caption = $"Deleting {operations.Sum(o => o.Count)} files."
             });
         }
 
-        private void RenameFiles()
+        private async Task RenameFilesAsync()
         {
             foreach (var path in SelectedPaths)
             {
-                var content = new FileRenameViewModel(path);
-                var dialog = new DialogViewModel
-                {
-                    Title = "Rename",
-                    Content = content
-                };
+                var dialog = new FileRenameViewModel(path);               
+                await Messenger.SendAsync(dialog);
 
-                Messenger.Send(dialog);
-
-                if (dialog.Result == false)
+                if (dialog.Result == ModernWpf.Controls.ContentDialogResult.None)
                 {
                     break;
                 }
 
                 try
                 {
-                    if (path != content.Next)
+                    if (path != dialog.Next)
                     {
                         if(new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
                         {
-                            Directory.Move(path, content.Next);
+                            Directory.Move(path, dialog.Next);
                         }
                         else
                         {
-                            File.Move(path, content.Next);
+                            File.Move(path, dialog.Next);
                         }
                     }
                 }

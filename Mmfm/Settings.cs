@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Windows.Media;
 
 namespace Mmfm
 {
@@ -34,7 +35,8 @@ namespace Mmfm
                 new JsonSerializerOptions
                 {
                     Converters = {
-                        new TemplateObjectConverter(defaults.Plugins)
+                        new TemplateObjectConverter(defaults.Plugins),
+                        new JsonStringEnumConverter()
                     }
                 }
             );
@@ -47,6 +49,10 @@ namespace Mmfm
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 WriteIndented = true,
+                Converters =
+                {
+                    new JsonStringEnumConverter()
+                }          
             }
         );
 
@@ -95,6 +101,28 @@ namespace Mmfm
             }
         }
 
+        private ModernWpf.ApplicationTheme theme;
+        public ModernWpf.ApplicationTheme Theme
+        {
+            get => theme;
+            set
+            {
+                theme = value;
+                OnPropertyChanged(nameof(Theme));
+            }
+        }
+
+        private string accentColor;
+        public string AccentColor
+        {
+            get => accentColor;
+            set
+            {
+                accentColor = value;
+                OnPropertyChanged(nameof(AccentColor));
+            }
+        }
+
         private PropertyChangedEventHandler BubbleUpEventHandler
         {
             get => (s, e) => PropertyChanged?.Invoke(s, e);
@@ -134,6 +162,8 @@ namespace Mmfm
         public Settings()
         {
             HotKey = "Ctrl+;";
+            Theme = ModernWpf.ApplicationTheme.Light;
+            AccentColor = "Purple";
         }
     }
 }

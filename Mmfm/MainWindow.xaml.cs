@@ -1,9 +1,12 @@
 ﻿using Mmfm.Commands;
 using Mmfm.Converters;
+using ModernWpf.Controls;
+using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Mmfm
 {
@@ -24,30 +28,64 @@ namespace Mmfm
     {
         private HotKey.HotKey hotKey;
         private Window overlayWindow = new OverlayWindow();
-        private Stack<Window> dialogStack = new Stack<Window>();
+
+        private async Task<ContentDialogResult> ShowContentDialog(ContentDialog contentDialog)
+        {
+            // First ContentDialog is shown as InPlace.
+            if (ContentDialogBorder.Child == null)
+            {
+                ContentDialogBorder.Child = contentDialog;
+            }
+
+            var result = await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
+
+            if (ContentDialogBorder.Child == contentDialog)
+            {
+                ContentDialogBorder.Child = null;
+            }
+
+            return result;
+        }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            Msmc.Patterns.Messenger.Messenger.Default.Register<MessageBoxViewModel>(this, (vm) =>
+            Messenger.Default.RegisterAsyncMessage<MessageBoxViewModel>(
+            this, 
+            false,
+            async (vm) =>
             {
-                vm.Result = MessageBox.Show(this, vm.Text, vm.Caption, vm.Button, vm.Icon, vm.Result, vm.Options);
-            });
-            
-            Msmc.Patterns.Messenger.Messenger.Default.Register<DialogViewModel>(this, (vm) =>
-            {
-                this.Dispatcher.Invoke(() =>
+                await this.Dispatcher.Invoke(async () =>
                 {
-                    var owner = (dialogStack.Count == 0) ? this : dialogStack.Peek();
-                    var window = new DialogWindow { Owner = owner, DataContext = vm };
-                    dialogStack.Push(window);
-                    vm.Result = window.ShowDialog();
-                    dialogStack.Pop();
+                    var contentDialog = vm.BuildContentDialog();
+                    contentDialog.DataContext = vm;
+
+                    vm.Result = vm.ToMessageBoxResult(await ShowContentDialog(contentDialog));
                 });
             });
 
-            Msmc.Patterns.Messenger.Messenger.Default.Register<OverlayViewModel>(this, (vm) =>
+            Messenger.Default.RegisterAsyncMessage(
+            this,
+            true,
+            (Func<ContentDialogViewModel, Task>)(async (vm) =>
+            {                   
+                await this.Dispatcher.Invoke(async () =>
+                {
+                    var dataTemplate = Application.Current.FindResource(new DataTemplateKey(vm.GetType())) as DataTemplate;
+                    if(dataTemplate == null)
+                    {
+                        return;
+                    }
+
+                    var contentDialog = (ContentDialog)dataTemplate.LoadContent();
+                    contentDialog.DataContext = vm;
+
+                    vm.Result = await ShowContentDialog(contentDialog);
+                });                   
+            }));
+
+            Messenger.Default.Register<OverlayViewModel>(this, (vm) =>
             {
                 overlayWindow.DataContext = vm.Content;
                 overlayWindow.Show();
@@ -180,7 +218,51 @@ namespace Mmfm
                 }
                 return registerHotKeyCommand;
             }
-        }    
+        }
+
+        private ICommand changeThemeCommand;
+        public ICommand ChangeThemeCommand
+        {
+            get
+            {
+                if(changeThemeCommand == null)
+                {
+                    changeThemeCommand = new RelayCommand<ModernWpf.ApplicationTheme>((theme) =>
+                    {
+                        ModernWpf.ThemeManager.Current.ApplicationTheme = theme;
+                    });
+                }
+                return changeThemeCommand;
+            }
+        }
+
+        private ICommand changeAccentColorCommand;
+        public ICommand ChangeAccentColorCommand
+        {
+            get
+            {
+                if (changeAccentColorCommand == null)
+                {
+                    changeAccentColorCommand = new AsyncRelayCommand<string>(async (color) =>
+                    {
+                        try
+                        {
+                            ModernWpf.ThemeManager.Current.AccentColor = (Color)ColorConverter.ConvertFromString(color);
+                        }
+                        catch (FormatException)
+                        {
+                            await Messenger.Default.SendAsync(new MessageBoxViewModel
+                            {
+                                Caption = "Settings error",
+                                Text = "Invalid Accent color.",
+                                Button = MessageBoxButton.OK                                
+                            });
+                        }
+                    });
+                }
+                return changeAccentColorCommand;
+            }
+        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

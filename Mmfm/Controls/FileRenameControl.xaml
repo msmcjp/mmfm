@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Mmfm.FileRenameControl"
+﻿<ui:ContentDialog x:Class="Mmfm.FileRenameControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,10 +6,15 @@
              xmlns:local="clr-namespace:Mmfm"
              xmlns:c="clr-namespace:Mmfm.Commands"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             mc:Ignorable="d" >
-    <UserControl.Resources>
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             Title="Enter new name of:"
+             PrimaryButtonText="_OK"    
+             CloseButtonText="_Cancel"
+             DefaultButton="Primary"                              
+             mc:Ignorable="d">
+    <ui:ContentDialog.Resources>
         <c:FocusCommand x:Key="FocusCommand"/>
-    </UserControl.Resources>
+    </ui:ContentDialog.Resources>
     
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -20,29 +25,15 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <TextBlock Grid.Row="0" Text="Enter new file name of :" Margin="10" FontSize="18"/>
-        <TextBlock Grid.Row="1" Text="{Binding Current}" Margin="10" FontSize="18" FontWeight="Bold"/>
+        <TextBlock Grid.Row="0" Text="{Binding Current}" Margin="10" FontSize="18" FontWeight="Bold"/>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBox x:Name="FileName" Width="500" Text="{Binding FileNameWithoutExtension}" Margin="10,10,0,10" FontSize="18" local:SelectAllOnFocusBehavior.Enable="True" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox x:Name="FileName" Width="300" Text="{Binding FileNameWithoutExtension}" Margin="10,10,0,10" FontSize="18" local:SelectAllOnFocusBehavior.Enable="True" />
             <TextBlock Text="." VerticalAlignment="Bottom" Margin="5,10,5,10" FontSize="20"/>
             <TextBox x:Name="Extension" Width="100" Text="{Binding FileExtension}" Margin="0,10,10,10" FontSize="18" local:SelectAllOnFocusBehavior.Enable="True"/>
         </StackPanel>
-
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10">
-            <Button Content="_OK" IsDefault="True" Width="100" Margin="8">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <i:ChangePropertyAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" PropertyName="DialogResult" Value="True"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Button>
-            <Button IsCancel="True" Content="_Cancel"  Width="100" Margin="8"/>
-        </StackPanel>
     </Grid>
-</UserControl>
+</ui:ContentDialog>

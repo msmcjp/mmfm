@@ -26,8 +26,8 @@ namespace Mmfm
         {
             { "Name" , new SortDescriptionViewModel<FileViewModel>("Name", x => x.Name) },
             { "Extension", new SortDescriptionViewModel<FileViewModel>("Extension", x => x.Extension) },
-            { "Modified" , new SortDescriptionViewModel<FileViewModel>("Modified", x => x.ModifiedAt, "Modified at") },
-            { "Size" ,new SortDescriptionViewModel<FileViewModel>("Size", x => x.FileSize) },
+            { "Modified" , new SortDescriptionViewModel<FileViewModel>("Modified", x => x.ModifiedAt, "Modified at   ") },
+            { "Size" ,new SortDescriptionViewModel<FileViewModel>("Size", x => x.FileSize, "Size    ") },
         })
         {
           

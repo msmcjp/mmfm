@@ -197,6 +197,7 @@ namespace Mmfm
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             File.WriteAllText(App.SettingsJsonPath, Settings.Json);
+            OnPropertyChanged(nameof(InputBindings));
         }
 
         #region IDisposable

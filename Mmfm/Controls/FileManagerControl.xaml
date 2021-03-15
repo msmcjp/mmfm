@@ -19,7 +19,7 @@
         <Style TargetType="{x:Type UserControl}">
             <Style.Triggers>
                 <Trigger Property="IsKeyboardFocusWithin" Value="False">
-                    <Setter Property="Opacity" Value="0.5"/>
+                    <Setter Property="Opacity" Value="0.6"/>
                 </Trigger>
 
                 <Trigger Property="IsKeyboardFocusWithin" Value="True">
@@ -43,15 +43,24 @@
         
         <Grid.Resources>
             <DataTemplate x:Key="CheckCell">
-                <StackPanel Orientation="Horizontal" Visibility="{Binding IsNotAlias, Converter={StaticResource BoolVisibilityConverter}}">
-                    <CheckBox IsChecked="{Binding IsSelected}" Focusable="False"/>
-                </StackPanel>
+                <CheckBox IsChecked="{Binding IsSelected}" 
+                          Focusable="False" 
+                          Visibility="{Binding IsNotAlias, Converter={StaticResource BoolVisibilityConverter}}">
+                    <i:Interaction.Behaviors>
+                        <local:DisableMouseDoubleClickBehavior/>
+                    </i:Interaction.Behaviors>
+                    <CheckBox.Style>
+                        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                            <Setter Property="MinWidth" Value="32"/>
+                        </Style>
+                    </CheckBox.Style>
+                </CheckBox>
             </DataTemplate>
-            
+
             <DataTemplate x:Key="NameCell">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="{Binding IconImage, IsAsync=True}" Width="20" Height="20" Opacity="{Binding IconOpacity}"/>
-                    <TextBlock Text="{Binding Name}" Margin="4,0,0,0" VerticalAlignment="Center"/>
+                    <Image Source="{Binding IconImage, IsAsync=True}" Width="25" Height="25" Opacity="{Binding IconOpacity}" Margin="0,5,5,5"/>
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
                 </StackPanel>
             </DataTemplate>
 
@@ -61,7 +70,9 @@
                 </CollectionViewSource.GroupDescriptions>
             </CollectionViewSource>
 
-             <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
+            <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}" 
+                   TargetType="ListViewItem" 
+                   BasedOn="{StaticResource {x:Static GridView.GridViewItemContainerStyleKey}}">
                 <Setter Property="local:InteractivityItems.Template">
                     <Setter.Value>
                         <local:InteractivityTemplate>
@@ -76,17 +87,16 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
-            <Style x:Key="ListViewStyle" TargetType="ListView">
+
+            <Style x:Key="ListViewStyle" TargetType="ListView" BasedOn="{StaticResource {x:Type ListView}}">
                 <Setter Property="IsTextSearchEnabled" Value="True"/>
                 <Setter Property="SelectionMode" Value="Single"/>
                 <Setter Property="IsTabStop" Value="False"/>
                 <Setter Property="FontFamily" Value="Segoe UI"/>
-                <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItemStyle}"/>
                 <Setter Property="TextSearch.TextPath" Value="Name"/>
             </Style>
 
-            <Style x:Key="GroupItemStyle" TargetType="GroupItem">
+            <Style x:Key="GroupItemStyle" TargetType="GroupItem" BasedOn="{StaticResource {x:Type GroupItem}}">
                 <Setter Property="Margin" Value="0"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -104,14 +114,14 @@
                                            HorizontalAlignment="Left" 
                                            VerticalAlignment="Center"                                               
                                            Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.Navigation.IsRoot, Converter={StaticResource BoolVisibilityConverter}}"/>
-                                <ItemsPresenter Grid.Row="1"/>
+                                <ItemsPresenter Grid.Row="1" />
                             </Grid>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
          
-            <Style x:Key="GridViewColumnHeaderStyle" TargetType="GridViewColumnHeader">
+            <Style x:Key="GridViewColumnHeaderStyle" TargetType="GridViewColumnHeader" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
                 <Setter Property="Visibility"                                   
                         Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.Navigation.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
                 <Setter Property="local:InteractivityItems.Template">
@@ -167,7 +177,14 @@
                         <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Name}"/>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding ModifiedAt}">
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Height="35">
+                                    <Label Content="{Binding ModifiedAt}" VerticalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
                         <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Modified}"/>
                     </GridViewColumn>
@@ -195,20 +212,43 @@
 
             <ListView.View>
                 <local:AutoSizedGridView ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle}">
-                    <GridViewColumn CellTemplate="{StaticResource CheckCell}" Width="30"/>
+                    <GridViewColumn CellTemplate="{StaticResource CheckCell}" />
                     <GridViewColumn CellTemplate="{StaticResource NameCell}">
                         <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Name}"/>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Extension}">
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Height="35">
+                                    <Label Content="{Binding Extension}" VerticalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
                         <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Extension}"/>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding ModifiedAt}">
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Height="35">
+                                    <Label Content="{Binding ModifiedAt}" VerticalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                        
                         <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
-                                              Tag="{Binding SortDescriptions.Modified}"/>
+                                              Tag="{Binding SortDescriptions.Modified}" />
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding FileSizeText}">
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Height="35">
+                                    <Label Content="{Binding FileSizeText}" VerticalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                        
                         <GridViewColumnHeader Content="{Binding RelativeSource={RelativeSource Self}, Path=Tag.HeaderText}" 
                                               Tag="{Binding SortDescriptions.Size}"/>
                     </GridViewColumn>

@@ -22,7 +22,7 @@ namespace Mmfm.Plugins
         /// <summary>
         /// Set Messenger object by host
         /// </summary>
-        IMessenger Messenger { get; set; }
+        Messenger Messenger { get; set; }
 
         /// <summary>
         /// Set a host object by a host

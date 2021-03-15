@@ -25,12 +25,12 @@ namespace Mmfm.Plugins
 
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
         {
-            new CommandItemViewModel("Favorite", "Alt+F", new RelayCommand(() => AddFavorite(), CanAddFavorite)),
+            new CommandItemViewModel("Favorite", "Alt+F", new AsyncRelayCommand(async () => await AddFavoriteAsync(), CanAddFavorite)),
             new CommandItemViewModel("Unfavorite", "Shift+Alt+F", new RelayCommand(() => Removefavorite(), CanRemovefavorite)),
             CreateJumptoFavoriteCommand()
         };
 
-        public IMessenger Messenger
+        public Messenger Messenger
         {
             get;
             set;
@@ -84,20 +84,19 @@ namespace Mmfm.Plugins
                 Favorites?.Where(item => item.Path == Navigation.FullPath).Count() == 0;
         }
 
-        private void AddFavorite()
+        private async Task AddFavoriteAsync()
         {
             var path = Navigation.FullPath;
-            var content = new FavoriteRegisterViewModel(path);
-            var dialog = new DialogViewModel { Content = content };
+            var dialog = new FavoriteRegisterViewModel(path);
 
-            Messenger?.Send(dialog);
-            if (dialog.Result == true)
+            await Messenger?.SendAsync(dialog);
+            if (dialog.Result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
                 var favorite = new FolderShortcutViewModel(
-                    content.FullPath,
-                    content.FavoriteName,
+                    dialog.FullPath,
+                    dialog.FavoriteName,
                     FavoriteItemGroup,
-                    IconExtractor.Extract(content.FullPath)
+                    IconExtractor.Extract(dialog.FullPath)
                 );
                 Favorites?.Add(favorite);
             }

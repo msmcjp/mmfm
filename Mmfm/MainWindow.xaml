@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:Mmfm"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:c="clr-namespace:Mmfm.Commands"
-        mc:Ignorable="d"  
+        mc:Ignorable="d" 
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
         Width="600"
         Height="600"
         MinWidth="600"
@@ -42,6 +44,16 @@
             <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=RegisterHotKeyCommand}" 
                                    CommandParameter="{Binding Settings.HotKey}"/>
         </i:PropertyChangedTrigger>
+
+        <i:PropertyChangedTrigger Binding="{Binding Settings.Theme}">
+            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ChangeThemeCommand}" 
+                                   CommandParameter="{Binding Settings.Theme}"/>
+        </i:PropertyChangedTrigger>
+
+        <i:PropertyChangedTrigger Binding="{Binding Settings.AccentColor}">
+            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ChangeAccentColorCommand}" 
+                                   CommandParameter="{Binding Settings.AccentColor}"/>
+        </i:PropertyChangedTrigger>
     </i:Interaction.Triggers>
     <Grid>
         <Grid.InputBindings>
@@ -68,5 +80,7 @@
         <StatusBar Grid.Row="2" Height="24">
             <TextBlock Text="{Binding DualFileManager.ActiveFileManager.SelectionStatusText}"/>
         </StatusBar>
+
+        <Border x:Name="ContentDialogBorder" Grid.Row="1" VerticalAlignment="Stretch"/>
     </Grid>
 </Window>

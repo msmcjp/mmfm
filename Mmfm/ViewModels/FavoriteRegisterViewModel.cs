@@ -8,17 +8,8 @@ using System.Threading.Tasks;
 
 namespace Mmfm
 {
-    public class FavoriteRegisterViewModel : INotifyPropertyChanged
-    {
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
+    public class FavoriteRegisterViewModel : ContentDialogViewModel
+    {  
         public FavoriteRegisterViewModel(string path)
         {
             FullPath = path;

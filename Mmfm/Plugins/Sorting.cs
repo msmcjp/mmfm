@@ -64,7 +64,7 @@ namespace Mmfm.Plugins
             return commands;
         }
 
-        public IMessenger Messenger
+        public Messenger Messenger
         {
             get;
             set;

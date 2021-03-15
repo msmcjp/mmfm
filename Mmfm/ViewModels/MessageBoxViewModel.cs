@@ -16,16 +16,16 @@ namespace Mmfm
             Button = MessageBoxButton.OK;
             Icon = MessageBoxImage.None;
             Result = MessageBoxResult.None;
-            Options = MessageBoxOptions.None;
+            DefaultResult = MessageBoxResult.None;
         }
 
-        public string Text
+        public string Caption
         {
             get;
             set;
         }
 
-        public string Caption
+        public string Text
         {
             get;
             set;
@@ -43,13 +43,13 @@ namespace Mmfm
             set;
         }
 
-        public MessageBoxResult Result
+        public MessageBoxResult DefaultResult
         {
             get;
             set;
         }
 
-        public MessageBoxOptions Options
+        public MessageBoxResult Result
         {
             get;
             set;
