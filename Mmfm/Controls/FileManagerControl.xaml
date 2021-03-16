@@ -29,12 +29,6 @@
         </Style>
     </UserControl.Style>
 
-    <!--<i:Interaction.Triggers>
-        <i:PropertyChangedTrigger Binding="{Binding Navigation.FullPath}">
-            <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{x:Reference Name=DirectoryList}"/>
-        </i:PropertyChangedTrigger>
-    </i:Interaction.Triggers>-->
-
     <Grid x:Name="Grid">
         <Grid.InputBindings>
             <KeyBinding Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=DirectoryList}" Gesture="Oem2" Key="OemQuestion"/>
@@ -158,7 +152,7 @@
                   Style="{StaticResource ListViewStyle}">
             <i:Interaction.Behaviors>
                 <local:ListViewFocusNextItemOnSpaceKeyBehavior />
-                <local:ListViewFocusSelectedItemOnItemContainersGenerated/>
+                <local:ListViewExclusiveSelectionBehavior/>
             </i:Interaction.Behaviors>
 
             <ListView.GroupStyle>
@@ -202,7 +196,7 @@
                   Style="{StaticResource ListViewStyle}">
             <i:Interaction.Behaviors>
                 <local:ListViewFocusNextItemOnSpaceKeyBehavior />
-                <local:ListViewFocusSelectedItemOnItemContainersGenerated/>
+                <local:ListViewExclusiveSelectionBehavior/>
             </i:Interaction.Behaviors>
 
             <ListView.InputBindings>
