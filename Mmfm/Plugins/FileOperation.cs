@@ -154,8 +154,7 @@ namespace Mmfm.Plugins
                 ClipboardManager.Clear();
             }
         }
-
-        private object conflictActionSyncObject = new object();
+        
         private FileTraverseOperation CopyOrMoveOperation(string from, string to, bool move)
         {
             return new FileTraverseOperation(from, async (path) =>
