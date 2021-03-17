@@ -253,8 +253,8 @@ namespace Mmfm
                         {
                             await Messenger.Default.SendAsync(new MessageBoxViewModel
                             {
-                                Caption = "Settings error",
-                                Text = "Invalid Accent color.",
+                                Caption = "Accent color is invalid.",
+                                Text = $"{color} is invalid color format.",
                                 Button = MessageBoxButton.OK                                
                             });
                         }
