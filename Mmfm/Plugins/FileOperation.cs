@@ -298,15 +298,16 @@ namespace Mmfm.Plugins
         {
             var operations = SelectedPaths.Select(path => DeleteOperation(path, moveToRecycleBin)).ToArray();
 
-            var message = new MessageBoxViewModel
+            var selectionText = Host.ActiveFileManager.SelectionText;
+            var messageBox = new MessageBoxViewModel
             {
                 Button = MessageBoxButton.YesNo,
                 Icon = MessageBoxImage.Question,
                 Caption = "Confirm",
-                Text = $"Are you sure to delete {operations.Sum(o => o.Count)} files?"
+                Text = $"Are you sure you want to {(moveToRecycleBin ? $"send {selectionText} to the Recyle Bin" : $"delete {selectionText}")}?"
             };
-            await Messenger.SendAsync(message);
-            if (message.Result == MessageBoxResult.No)
+            await Messenger.SendAsync(messageBox);
+            if (messageBox.Result == MessageBoxResult.No)
             {
                 return;
             }
