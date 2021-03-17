@@ -27,14 +27,14 @@ namespace Mmfm
 
         public NavigationViewModel Navigation { get; } = new NavigationViewModel();
 
-        public bool IsActive 
-        { 
-            get => isActive; 
+        public bool IsActive
+        {
+            get => isActive;
             set
             {
-                isActive = value; 
-                OnPropertyChanged(nameof(IsActive)); 
-            } 
+                isActive = value;
+                OnPropertyChanged(nameof(IsActive));
+            }
         }
 
         public IList<string> SelectedPaths => Array.AsReadOnly(SelectedItems.Select(item => item.Path).ToArray());
@@ -43,30 +43,31 @@ namespace Mmfm
 
         public FileViewModel SelectedItem => Navigation.SelectedItem;
 
-        public string SelectionStatusText
+        public string SelectionText
         {
             get
             {
-                var fc = Navigation.SelectedItems.Where(item => item.IsFolder == false).Count();
-                var dc = Navigation.SelectedItems.Where(item => item.IsFolder == true).Count();
+                var fileCount = Navigation.SelectedItems.Where(item => item.IsFolder == false).Count();
+                var folderCount = Navigation.SelectedItems.Where(item => item.IsFolder == true).Count();
 
-                if (fc + dc == 0) { return ""; }
+                if (fileCount + folderCount == 0) { return ""; }
 
                 var text = "";
-                if (fc > 0)
+                if (fileCount > 0)
                 {
-                    text += $@"{fc} file{(fc > 1 ? "s" : "")}{(dc > 0 ? " and " : "")}";
+                    text += $@"{fileCount} file{(fileCount > 1 ? "s" : "")}{(folderCount > 0 ? " / " : "")}";
                 }
 
-                if (dc > 0)
+                if (folderCount > 0)
                 {
-                    text += $@"{dc} folder{(dc > 1 ? "s" : "")}";
+                    text += $@"{folderCount} folder{(folderCount > 1 ? "s" : "")}";
                 }
-
-                return $"{text} {(fc + dc > 1 ? "are" : "is")} selected.";
+                return text;
             }
         }
 
+        public string SelectionStatusText => $"{(string.IsNullOrEmpty(SelectionText) ? "" :  "Selecting ")}{SelectionText}";
+   
         private Settings.FileManager settings;
         public Settings.FileManager Settings 
         { 
