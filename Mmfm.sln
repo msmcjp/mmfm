@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mmfm", "mmfm\Mmfm.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Msmc.Patterns", "Patterns\Msmc.Patterns\Msmc.Patterns.csproj", "{0D76B7D5-2999-4312-A392-1530BF2D5DBD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Msmc.Patterns.Test", "Patterns\Msmc.Patterns.Test\Msmc.Patterns.Test.csproj", "{D5074A22-5D1F-45A3-AF38-4CDD65B52C01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0D76B7D5-2999-4312-A392-1530BF2D5DBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D76B7D5-2999-4312-A392-1530BF2D5DBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D76B7D5-2999-4312-A392-1530BF2D5DBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5074A22-5D1F-45A3-AF38-4CDD65B52C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5074A22-5D1F-45A3-AF38-4CDD65B52C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5074A22-5D1F-45A3-AF38-4CDD65B52C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5074A22-5D1F-45A3-AF38-4CDD65B52C01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
