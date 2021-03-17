@@ -35,10 +35,7 @@ namespace Mmfm
         {
             Path = path;
             Action = action;
-            Count = TraverseAsync(null, CancellationToken.None)
-                .Where(fi => fi.Attributes.HasFlag(FileAttributes.Directory) == false)
-                .CountAsync()
-                .Result;
+            Count = TraverseAsync(null, CancellationToken.None).CountAsync().Result;
         }
 
         public Func<Task> ProvideOperationTaskWith(CancellationToken token)
