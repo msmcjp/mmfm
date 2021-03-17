@@ -28,7 +28,7 @@ namespace Mmfm
             get => items;
             set
             {
-                var selectedItem = SelectedItem;
+                var selectedIndex = items.IndexOf(lastSelectedItem);
                 foreach (var item in Items)
                 {
                     item.PropertyChanged -= Item_PropertyChanged;
@@ -38,19 +38,36 @@ namespace Mmfm
                 {
                     item.PropertyChanged += Item_PropertyChanged;
                 }
+
+                if (selectedIndex < 0 || items.Count == 0)
+                {
+                    SelectedItem = default(T);
+                }
+                else if (items.Contains(lastSelectedItem))
+                {
+                    SelectedItem = lastSelectedItem;
+                }
+                else
+                {
+                    SelectedItem = items[Math.Min(items.Count - 1, selectedIndex)];
+                }
+
                 OnPropertyChanged(nameof(Items));
                 OnPropertyChanged(nameof(OrderedItems));
-                SelectedItem = selectedItem;
             }
         }
 
-        private T selectedItem;
+        private T selectedItem, lastSelectedItem;       
         public T SelectedItem
         {
             get => selectedItem;
             set
             {
                 selectedItem = value;
+                if(value?.Equals(default(T)) == false)
+                {
+                    lastSelectedItem = value;
+                }
                 OnPropertyChanged(nameof(SelectedItem));
             }
         }
