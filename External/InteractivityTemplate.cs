@@ -75,6 +75,11 @@ namespace Mmfm
             DependencyPropertyChangedEventArgs e)
         {
             InteractivityTemplate dt = (InteractivityTemplate)e.NewValue;
+
+            if(dt == null)
+            {
+                return;
+            }
 #if (!SILVERLIGHT)
             dt.Seal();
 #endif
