@@ -1,4 +1,5 @@
 ﻿using Mmfm.Commands;
+using Msmc.Patterns.Collections;
 using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace Mmfm.Plugins
                 set;
             }
 
-            public string Key
+            public string KeyBinding
             {
                 get;
                 set;
@@ -30,7 +31,7 @@ namespace Mmfm.Plugins
 
         public string Name => "Commands";
 
-        public IEnumerable<ICommandItem> Commands => CreateuserCommands();
+        public IEnumerable<ICommandItem> Commands => CreateUserCommands();
 
         public Messenger Messenger
         {
@@ -70,7 +71,8 @@ namespace Mmfm.Plugins
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                RedirectStandardOutput = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 WorkingDirectory = Host.ActiveFileManager.Navigation.FullPath,
                 Arguments = $"/c \"{command}\""
             };
@@ -83,13 +85,37 @@ namespace Mmfm.Plugins
             return startInfo;
         }
 
-        private IEnumerable<ICommandItem> CreateuserCommands()
+        private IEnumerable<ICommandItem> CreateUserCommands()
         {
-            return settings.Select(x => new CommandItemViewModel(
-                x.Key,
-                x.Value.Key,
-                new RelayCommand(() => Process.Start(CreateProcessStartInfo(x.Value.Command)))
-            ));
+            if (settings.Count() == 0)
+            {
+                return Enumerable.Empty<ICommandItem>();
+            }
+
+            var tree = new TreeNode<string, CommandDescription>("");
+            foreach(var setting in settings)
+            {
+                var path = setting.Key.Split(CommandItem.PathSeparator);
+                tree[path] = setting.Value;
+            };
+
+            return tree.Composite(
+                (path, command) => new CommandItemViewModel(
+                    string.Join(CommandItem.PathSeparator, path.Skip(1)),
+                    command.KeyBinding,
+                    new RelayCommand(() =>
+                    {
+                        var p = Process.Start(CreateProcessStartInfo(command.Command));
+                        Debug.Print(p.StandardError.ReadToEnd());
+                        p.WaitForExit();
+                        p.Close();
+                    })
+                ),
+                (path, commands) => new CommandItemViewModel(
+                    string.Join(CommandItem.PathSeparator, path.Skip(1)),
+                    commands
+                )
+            ).SubCommands;
         }
     }
 }
