@@ -1,25 +1,94 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
-namespace Msmc.Patterns.Tree
+namespace Msmc.Patterns.Collections
 {
     public static class TreeNodeExtensions
     {
-        public static void Traverse<TBranch, TLeaf>(this ITreeNode<TBranch, TLeaf> tree, Action<IEnumerable<ITreeNode<TBranch, TLeaf>>> action)
+        /// <summary>
+        /// Traverse tree by Pre-order.
+        /// </summary>
+        /// <typeparam name="TBranch">The type of the branch.</typeparam>
+        /// <typeparam name="TLeaf">The type of the leaf.</typeparam>
+        /// <param name="node">The node object.</param>
+        /// <returns>Pre-order tree traversal iterator.</returns>
+        public static IEnumerable<ITreeNode<TBranch, TLeaf>> PreOrder<TBranch, TLeaf>(this ITreeNode<TBranch, TLeaf> node)
         {
+            yield return node;
 
+            foreach(var child in node.Values)
+            {
+                foreach(var cnode in child.PreOrder())
+                {
+                    yield return cnode;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Traverse tree by Post-order.
+        /// </summary>
+        /// <typeparam name="TBranch">The type of the branch.</typeparam>
+        /// <typeparam name="TLeaf">The type of the leaf.</typeparam>
+        /// <param name="node">The node object.</param>
+        /// <returns>The node iterator.</returns>
+        public static IEnumerable<ITreeNode<TBranch, TLeaf>> PostOrder<TBranch, TLeaf>(this ITreeNode<TBranch, TLeaf> node)
+        {
+            foreach (var child in node.Values)
+            {
+                foreach (var cnode in child.PostOrder())
+                {
+                    yield return cnode;
+                }
+            }
+
+            yield return node;
         }
 
         /// <summary>
         /// Composite the leaf and the branch to the specified type object.
         /// </summary>
-        /// <param name="leaf">The function to composite the leaf.</param>
-        /// <param name="branch">The function to composite the branch.</param>
-        /// <typeparam name="T">the specified type to composite</typeparam>
-        /// <returns>The composite object.</returns>
-        public static TLeaf Composite<TBranch, TLeaf>(this ITreeNode<TBranch, TLeaf> tree, Func<TLeaf, TBranch> leaf, Func<IEnumerable<(TBranch, TLeaf)>, TLeaf> branch)
+        /// <typeparam name="TBranch">The type of the branch.</typeparam>
+        /// <typeparam name="TLeaf">The type of the leaf.</typeparam>
+        /// <typeparam name="TComposite">The type of the composite object.</typeparam>
+        /// <param name="node">The node object.</param>
+        /// <param name="leaf">The composition function which argument is the path of the node and the value of the node.</param>
+        /// <param name="branch">The composition function which argument is the path of the node and the values of the children nodes.</param>
+        /// <returns>The composite object of `node`.</returns>
+        public static TComposite Composite<TBranch, TLeaf, TComposite>(
+            this ITreeNode<TBranch, TLeaf> node,
+            Func<IEnumerable<TBranch>, TLeaf, TComposite> leaf,
+            Func<IEnumerable<TBranch>, IEnumerable<TComposite>, TComposite> branch)
         {
-            return default(TLeaf);
+            var stack = new Stack<TComposite>();
+            node.PostOrder().Aggregate(stack, (composite, node) =>
+            {
+                TLeaf value;
+                if (node.TryGetLeafValue(out value))
+                {
+                    stack.Push(leaf(node.Path, value));
+                }
+                else
+                {
+                    stack.Push(branch(
+                        node.Path, 
+                        stack.TakeLast(node.Values.Count()).Aggregate(
+                            new List<TComposite>(), 
+                            (list, _) =>
+                            {
+                                list.Insert(0, stack.Pop());
+                                return list;
+                            }
+                        )
+                    ));
+                }
+                return stack;
+            });
+
+            TComposite composite;
+            stack.TryPeek(out composite);            
+            return composite;
         }
     }
 }

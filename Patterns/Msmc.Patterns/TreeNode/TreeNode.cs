@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Msmc.Patterns.Tree
+namespace Msmc.Patterns.Collections
 {
     public class TreeNode<TBranch, TLeaf> : ITreeNode<TBranch, TLeaf>
     {
@@ -15,17 +15,36 @@ namespace Msmc.Patterns.Tree
 
         private TLeaf leaf;
 
-        public TreeNode()
+        private TreeNode()
         {
+        }
+
+        public TreeNode(TBranch root) : this(new TBranch[] { root })
+        {
+        }
+
+        public TreeNode(IEnumerable<TBranch> path)
+        {
+            if(path == null || path.Count() == 0)
+            {
+                throw new ArgumentException();
+            }
+            Path = path;
             storage = new Dictionary<TBranch, ITreeNode<TBranch, TLeaf>>();
         }
 
-        public TreeNode(TLeaf leaf) : this()
+        public TreeNode(IEnumerable<TBranch> path, TLeaf leaf) : this(path)
         {
             storage = new ReadOnlyDictionary<TBranch, ITreeNode<TBranch, TLeaf>>(storage);
             isTerminal = true;
             this.leaf = leaf;
-       }
+        }
+
+        public IEnumerable<TBranch> Path
+        {
+            get;
+            private set; 
+        }
 
         public TLeaf this[TBranch[] hierachy]
         { 
@@ -76,14 +95,14 @@ namespace Msmc.Patterns.Tree
 
         public void Add(TBranch branch)
         {
-            storage.Add(branch, new TreeNode<TBranch, TLeaf>());
-            Console.WriteLine($"Add {branch}");
+            var path = Path.Concat(new TBranch[] { branch });
+            storage.Add(branch, new TreeNode<TBranch, TLeaf>(path));
         }
 
         public void Add(TBranch branch, TLeaf leaf)
         {
-            storage.Add(branch, new TreeNode<TBranch, TLeaf>(leaf));
-            Console.WriteLine($"Add {branch} {leaf}");
+            var path = Path.Concat(new TBranch[] { branch });
+            storage.Add(branch, new TreeNode<TBranch, TLeaf>(path, leaf));
         }
 
         public void Clear()

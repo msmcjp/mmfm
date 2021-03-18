@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace Msmc.Patterns.Tree
+namespace Msmc.Patterns.Collections
 {
     public interface ITreeNode<TBranch, TLeaf> : 
     IReadOnlyDictionary<TBranch, ITreeNode<TBranch, TLeaf>>
     {          
+        /// <summary>
+        /// Gets the path to the node.
+        /// </summary>
+        IEnumerable<TBranch> Path { get; }
+
         /// <summary>
         /// Adds a branch to the node.
         /// </summary>
