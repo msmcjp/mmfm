@@ -180,7 +180,7 @@ namespace Mmfm
             {
                 if(registerHotKeyCommand == null)
                 {
-                    registerHotKeyCommand = new RelayCommand<string>((keyDefinition) =>
+                    registerHotKeyCommand = new AsyncRelayCommand<string>(async (keyDefinition) =>
                     {
                         Show();
                         Activate();
@@ -204,15 +204,34 @@ namespace Mmfm
                         }
                         catch (NotSupportedException)
                         {
-                            MessageBox.Show("Hot-key is not supported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            var messageBox = new MessageBoxViewModel
+                            {
+                                Caption = "Hot-key is not supported.",
+                                Button = MessageBoxButton.OK,
+                                Icon = MessageBoxImage.Error,
+                            };
+                            Messenger.Default.SendAsync(messageBox);
                         }
                         catch (ArgumentException)
                         {
-                            MessageBox.Show("Invalid Hot-key definition.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            var messageBox = new MessageBoxViewModel
+                            {
+                                Caption = "Invalid Hot-key definition.",
+                                Text = $"{keyDefinition} is invalid format.",
+                                Button = MessageBoxButton.OK,
+                                Icon = MessageBoxImage.Error,
+                            };
+                            Messenger.Default.SendAsync(messageBox);
                         }
                         catch
                         {
-                            MessageBox.Show("Hot-key is already in use. Please use another key.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            var messageBox = new MessageBoxViewModel
+                            {
+                                Caption = "Hot-key is already in use. Please use another key.",
+                                Button = MessageBoxButton.OK,
+                                Icon = MessageBoxImage.Error,
+                            };
+                            Messenger.Default.SendAsync(messageBox);
                         }
                     });
                 }
