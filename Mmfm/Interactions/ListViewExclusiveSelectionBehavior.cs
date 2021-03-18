@@ -73,13 +73,16 @@ namespace Mmfm
 
         private void AssociatedObject_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (LastFocusedListView == AssociatedObject)
+            if(AssociatedObject.SelectedItem != null)
             {
-                lastSelectedItems[AssociatedObject] = AssociatedObject.SelectedItem;
-            }
-            else if(AssociatedObject.SelectedItem != null)
-            {
-                AssociatedObject.SelectedItem = null;
+                if (LastFocusedListView == AssociatedObject)
+                {
+                    lastSelectedItems[AssociatedObject] = AssociatedObject.SelectedItem;
+                }
+                else
+                {
+                    AssociatedObject.SelectedItem = null;
+                }
             }
         }
     }
