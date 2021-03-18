@@ -37,7 +37,9 @@ namespace Mmfm
                 ContentDialogBorder.Child = contentDialog;
             }
 
+            (DataContext as MainViewModel).IsShowingContentDialog = true;
             var result = await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
+            (DataContext as MainViewModel).IsShowingContentDialog = false;
 
             if (ContentDialogBorder.Child == contentDialog)
             {

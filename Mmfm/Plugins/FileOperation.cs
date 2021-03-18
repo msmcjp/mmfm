@@ -15,7 +15,7 @@ namespace Mmfm.Plugins
     {
         public string Name => "File";
  
-        private NavigationViewModel Navigation => Host.ActiveFileManager.Navigation;
+        private NavigationViewModel Navigation => Host.ActiveFileManager?.Navigation;
 
         private IList<string> SelectedPaths => Host.ActiveFileManager.SelectedPaths;
 
@@ -23,12 +23,12 @@ namespace Mmfm.Plugins
 
         private bool CanExecute()
         {
-            return Navigation.FullPath.Length > 0 && SelectedPaths.Count > 0;
+            return Navigation?.FullPath.Length > 0 && SelectedPaths.Count > 0;
         }
 
         private bool CanPaste()
         {
-            return Directory.Exists(Navigation.FullPath) && ClipboardManager.GetDropFileList(out _)?.Length > 0;
+            return Directory.Exists(Navigation?.FullPath) && ClipboardManager.GetDropFileList(out _)?.Length > 0;
         }
 
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]

@@ -13,7 +13,7 @@ namespace Mmfm.Plugins
 
         private bool CanExecute()
         {
-            return Navigation.FullPath.Length > 0;
+            return Navigation?.FullPath.Length > 0;
         }   
 
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
@@ -22,8 +22,8 @@ namespace Mmfm.Plugins
             new CommandItemViewModel("Select All", "Alt+U", new RelayCommand(() => SelectAll(), CanExecute)),
             new CommandItemViewModel("Deselect All", "Shift+Alt+U", new RelayCommand(() => DeselectAll(), CanExecute)),
             new CommandItemViewModel("Go to Top", "Ctrl+Shift+T", new RelayCommand(() => GotoTop(), CanExecute)),
-            new CommandItemViewModel("Show hidden files", "Alt+Z", new RelayCommand(() => FileManagerSettings.ShowHiddenFiles = true, () => FileManagerSettings.ShowHiddenFiles == false)),
-            new CommandItemViewModel("Hide hidden files", "Alt+Shift+Z", new RelayCommand(() => FileManagerSettings.ShowHiddenFiles = false, () => FileManagerSettings.ShowHiddenFiles == true)),
+            new CommandItemViewModel("Show hidden files", "Alt+Z", new RelayCommand(() => FileManagerSettings.ShowHiddenFiles = true, () => FileManagerSettings?.ShowHiddenFiles == false)),
+            new CommandItemViewModel("Hide hidden files", "Alt+Shift+Z", new RelayCommand(() => FileManagerSettings.ShowHiddenFiles = false, () => FileManagerSettings?.ShowHiddenFiles == true)),
             new CommandItemViewModel("Quit", "Alt+F4", new RelayCommand(() => Application.Current.Shutdown(), () => true)),
             new CommandItemViewModel("Open settings file", "Ctrl+,", new RelayCommand(() => Process.Start(new ProcessStartInfo(App.SettingsJsonPath) { UseShellExecute = true }))),
         };
@@ -58,11 +58,11 @@ namespace Mmfm.Plugins
 
         }
 
-        private Settings.FileManager FileManagerSettings => Host.ActiveFileManager.Settings;
+        private Settings.FileManager FileManagerSettings => Host.ActiveFileManager?.Settings;
 
         private FilesViewModel Files => Host.ActiveFileManager.Navigation.Files;
         
-        private NavigationViewModel Navigation => Host.ActiveFileManager.Navigation;
+        private NavigationViewModel Navigation => Host.ActiveFileManager?.Navigation;
         
         private void SelectAll()
         {

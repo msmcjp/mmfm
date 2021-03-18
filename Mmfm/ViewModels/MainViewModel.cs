@@ -25,13 +25,40 @@ namespace Mmfm
 
         public DualFileManagerViewModel DualFileManager { get; } = new DualFileManagerViewModel();
 
-        public IEnumerable<InputBinding> InputBindings => commandPallete.Flatten().Where(c => c.InputBinding != null).Select(c => c.InputBinding);
+        public IEnumerable<InputBinding> InputBindings
+        {
+            get
+            {
+                if (IsShowingContentDialog)
+                {
+                    return Enumerable.Empty<InputBinding>();
+                }
+                return commandPallete.Flatten().Where(c => c.InputBinding != null).Select(c => c.InputBinding);
+            }
+        }
 
         private readonly FileSystemWatcher settingsWatcher;
 
-        private ICommandItem commandPallete;     
+        private ICommandItem commandPallete;
+
+        public ICommand ShowCommandPalleteCommand => commandPallete.Command;
        
         private readonly (Func<Settings> Defaults, Action<Settings> Apply) settingsFactory;
+
+        private bool isShowingContentDialog;
+        public bool IsShowingContentDialog
+        {
+            get => isShowingContentDialog;
+            set
+            {
+                isShowingContentDialog = value;
+                OnPropertyChanged(nameof(IsShowingContentDialog));
+                OnPropertyChanged(nameof(IsNotShowingContentDialog));
+                OnPropertyChanged(nameof(InputBindings));
+            }
+        }
+
+        public bool IsNotShowingContentDialog => !IsShowingContentDialog;
 
         private Settings settings;
         public Settings Settings
@@ -165,6 +192,7 @@ namespace Mmfm
                     ).ToArray().ForEach(x => x.Plugin.Settings = x.Settings);
                     commandPallete = CreateCommandPallete(plugins);
                     OnPropertyChanged(nameof(InputBindings));
+                    OnPropertyChanged(nameof(ShowCommandPalleteCommand));
                 }
             );
             settingsFactory.Apply(settingsFactory.Defaults());

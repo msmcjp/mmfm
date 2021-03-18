@@ -6,21 +6,27 @@
         xmlns:local="clr-namespace:Mmfm"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:c="clr-namespace:Mmfm.Commands"
+        xmlns:converters="clr-namespace:Mmfm.Converters"
         mc:Ignorable="d" 
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
+        ui:TitleBar.ExtendViewIntoTitleBar="True"
         Width="600"
         Height="600"
         MinWidth="600"
         MinHeight="600"
         WindowStartupLocation="CenterScreen" 
-        Title="mmfm"
+        Title="{Binding DualFileManager.ActiveFileManager.Navigation.WindowTitle}"
         local:InputBindingsSourceAttachedProperty.InputBindingsSource="{Binding InputBindings}"
         Loaded="Window_Loaded"
         Closing="Window_Closing" >
 
     <Window.Resources>
         <c:FocusCommand x:Key="FocusCommand"/>
+        <converters:PixelsToGridLengthConverter x:Key="PixelsToGridLength" />
+        <Style x:Key="AppTitleBarButtonStyle" TargetType="ui:TitleBarButton">
+            <Setter Property="IsActive" Value="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}"/>
+        </Style>
     </Window.Resources>
 
     <Window.DataContext>
@@ -65,6 +71,48 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
+        <Grid 
+            x:Name="AppTitleBar"
+            Background="{DynamicResource SystemControlBackgroundAccentBrush}"
+            Height="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=(ui:TitleBar.Height)}">
+
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False">
+                            <Setter Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=(ui:TitleBar.SystemOverlayRightInset), Converter={StaticResource PixelsToGridLength}}" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                FontSize="14"
+                Grid.ColumnSpan="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="7"
+                FontWeight="Bold"
+                Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" />
+
+            <ui:TitleBarButton
+                Grid.Column="0"
+                FontFamily="Segoe UI Emoji"
+                FontSize="14"
+                Content="&#x2630;"
+                HorizontalAlignment="Right"
+                Style="{StaticResource AppTitleBarButtonStyle}"
+                IsEnabled="{Binding IsNotShowingContentDialog}"
+                Command="{Binding ShowCommandPalleteCommand}">
+            </ui:TitleBarButton>
+        </Grid>
 
         <Grid x:Name="Grid" Grid.Row="1">
             <Grid.ColumnDefinitions>

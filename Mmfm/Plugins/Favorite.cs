@@ -19,7 +19,7 @@ namespace Mmfm.Plugins
 
         private readonly string FavoriteItemGroup = "\U0001f496 Favorite";
 
-        private NavigationViewModel Navigation => Host.ActiveFileManager.Navigation;
+        private NavigationViewModel Navigation => Host.ActiveFileManager?.Navigation;
      
         public event EventHandler SettingsChanged;
 
@@ -80,8 +80,8 @@ namespace Mmfm.Plugins
 
         private bool CanAddFavorite()
         {
-            return Navigation.FullPath.Length > 0 && 
-                Favorites?.Where(item => item.Path == Navigation.FullPath).Count() == 0;
+            return Navigation?.FullPath.Length > 0 && 
+                Favorites?.Where(item => item.Path == Navigation?.FullPath).Count() == 0;
         }
 
         private async Task AddFavoriteAsync()

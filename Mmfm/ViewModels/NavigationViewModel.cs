@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -64,6 +65,8 @@ namespace Mmfm
         public string Title => FullPath.Replace("\\", " \U0001f782 ");
 
         public string FullPath => navigationStack.Count == 0 ? "" : navigationStack.Peek().Path;
+
+        public string WindowTitle => $"{Path.GetFileName(FullPath)} - {Assembly.GetExecutingAssembly().GetName().Name.ToLower()}";
 
         public FolderShortcutViewModel[] Roots
         {
@@ -237,6 +240,7 @@ namespace Mmfm
             OnPropertyChanged(nameof(IsRoot));
             OnPropertyChanged(nameof(IsNotRoot));
             OnPropertyChanged(nameof(Current));
+            OnPropertyChanged(nameof(WindowTitle));
             
             RenewFileSystemWatcher(FullPath);
         }
