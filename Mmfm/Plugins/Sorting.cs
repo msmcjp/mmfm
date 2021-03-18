@@ -30,12 +30,12 @@ namespace Mmfm.Plugins
                 
                 if (Folders != null)
                 {
-                    commands.Add(new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Folders", SortCommandItems(Folders)));
+                    commands.Add(new CommandItemViewModel($"{parent.Name}{CommandItem.PathSeparator}Folders", SortCommandItems(Folders)));
                 }
 
                 if (Files != null)
                 {
-                    commands.Add(new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Files", SortCommandItems(Files)));
+                    commands.Add(new CommandItemViewModel($"{parent.Name}{CommandItem.PathSeparator}Files", SortCommandItems(Files)));
                 }
                
                 return commands.AsReadOnly();
@@ -48,19 +48,19 @@ namespace Mmfm.Plugins
             return (parent) =>
             {
                 var descs = ((IDictionary<string, object>)itemsVieModel.SortDescriptions).Values.Cast<ISortDescription<T>>();
-                var commands = descs.Select(desc => new CommandItemViewModel($"{parent}/by {desc.Name}", new Func<ICommandItem, IEnumerable<ICommandItem>>((parent) => new CommandItemViewModel[]
+                var commands = descs.Select(desc => new CommandItemViewModel($"{parent.Name}/by {desc.Name}", new Func<ICommandItem, IEnumerable<ICommandItem>>((parent) => new CommandItemViewModel[]
                 {
-                    new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Ascending", null, new RelayCommand(() => {
+                    new CommandItemViewModel($"{parent.Name}{CommandItem.PathSeparator}Ascending", null, new RelayCommand(() => {
                         desc.IsDescending = false;
                         itemsVieModel.SortDescription = desc;
                     })),
-                    new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Descending", null, new RelayCommand(() => {
+                    new CommandItemViewModel($"{parent.Name}{CommandItem.PathSeparator}Descending", null, new RelayCommand(() => {
                         desc.IsDescending = true;
                         itemsVieModel.SortDescription = desc;
                     })),
                 })));
 
-                var none = new CommandItemViewModel($"{parent.Name}{CommandItemViewModel.SeparatorString}Clear", "", new RelayCommand(() => itemsVieModel.SortDescription = null));
+                var none = new CommandItemViewModel($"{parent.Name}{CommandItem.PathSeparator}Clear", "", new RelayCommand(() => itemsVieModel.SortDescription = null));
                 commands = commands.Concat(new CommandItemViewModel[] { none });
 
                 return commands;

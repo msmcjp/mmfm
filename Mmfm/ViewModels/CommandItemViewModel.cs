@@ -12,9 +12,7 @@ namespace Mmfm
 {
     public class CommandItemViewModel : ICommandItem
     {
-        public static readonly string SeparatorString = "/";
-
-        public static readonly string DisplaySeparatorString = " \U0001f782 ";
+        public static readonly string PathSeparator = "\U0001f782";
 
         private Func<ICommandItem, IEnumerable<ICommandItem>> subCommands = null;
 
@@ -32,7 +30,7 @@ namespace Mmfm
         private string shortcut;
         public string Shortcut
         {
-            get => shortcut ?? (subCommands?.Invoke(this).Count() > 0 ? "\U0001f782" : "");
+            get => shortcut ?? (subCommands?.Invoke(this).Count() > 0 ? PathSeparator : "");
             private set
             {
                 shortcut = value;                
@@ -54,7 +52,7 @@ namespace Mmfm
         public CommandItemViewModel(string name, string shortcut, ICommand command)
         {
             Name = name;
-            DisplayName = name.Split(SeparatorString).Last();
+            DisplayName = name.Split(CommandItem.PathSeparator).Last();
             Shortcut = shortcut;
             Command = command;
         }
@@ -72,7 +70,7 @@ namespace Mmfm
             }
 
             Name = name;
-            DisplayName = name.Split(SeparatorString).Last();
+            DisplayName = name.Split(CommandItem.PathSeparator).Last();
             Shortcut = shortCut;
             Command = new RelayCommand(() =>
             {
@@ -90,7 +88,7 @@ namespace Mmfm
         public CommandItemViewModel(ICommandItem baseItem)
         {
             Name = baseItem.Name;
-            DisplayName = baseItem.Name.Replace(SeparatorString, DisplaySeparatorString);
+            DisplayName = baseItem.Name.Replace(CommandItem.PathSeparator.ToString(), $" {PathSeparator} ");
             Shortcut = baseItem.Shortcut;
             Command = baseItem.Command;
         }

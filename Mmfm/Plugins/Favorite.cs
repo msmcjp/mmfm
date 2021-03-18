@@ -144,7 +144,7 @@ namespace Mmfm.Plugins
             var itemsFactory = new Func<ICommandItem, IEnumerable<ICommandItem>>((parent) =>
             {
                 return Favorites?.Select((f, i) => new CommandItemViewModel(
-                    $"{parent.Name}{CommandItemViewModel.SeparatorString}{f.Name}",
+                    $"{parent.Name}{CommandItem.PathSeparator}{f.Name}",
                     $"Shift+F{i + 1}",
                     new RelayCommand(() =>
                     {
