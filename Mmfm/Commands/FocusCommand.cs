@@ -20,7 +20,8 @@ namespace Mmfm.Commands
 
         public void Execute(object parameter)
         {
-            (parameter as FrameworkElement).Focus();
+            var element = (parameter as FrameworkElement);
+            element.Dispatcher.InvokeAsync(() => element.Focus());
         }
 
         public void RaiseCanExecuteChanged()

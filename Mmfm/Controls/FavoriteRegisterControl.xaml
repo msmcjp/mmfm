@@ -17,12 +17,6 @@
         <c:FocusCommand x:Key="FocusCommand"/>
     </ui:ContentDialog.Resources>
 
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=FavoriteName}"  />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -32,4 +26,10 @@
         <TextBlock Grid.Row="0" Text="{Binding FullPath}" Margin="10" FontSize="14" FontWeight="Bold" TextWrapping="Wrap"/>
         <TextBox Grid.Row="1" x:Name="FavoriteName" HorizontalAlignment="Stretch" Text="{Binding FavoriteName}" Margin="10" FontSize="18" local:SelectAllOnFocusBehavior.Enable="True"/>
     </Grid>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{StaticResource FocusCommand}" CommandParameter="{Binding ElementName=FavoriteName}"  />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 </ui:ContentDialog>
