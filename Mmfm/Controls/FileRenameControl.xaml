@@ -11,8 +11,9 @@
     PrimaryButtonText="_OK"    
     CloseButtonText="_Cancel"
     DefaultButton="Primary"   
-    mc:Ignorable="d">
-    
+    mc:Ignorable="d"
+    IsPrimaryButtonEnabled="{Binding CanRename}">
+
     <ui:ContentDialog.Resources>
         <c:FocusCommand x:Key="FocusCommand"/>
     </ui:ContentDialog.Resources>
@@ -20,16 +21,26 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <TextBlock Grid.Row="0" Text="{Binding Current}" Margin="10" FontSize="18" FontWeight="Bold"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBox x:Name="FileName" Width="300" Text="{Binding FileNameWithoutExtension}" Margin="10,10,0,10" FontSize="18" local:SelectAllOnFocusBehavior.Enable="True" />
+            <TextBox x:Name="FileName" Width="300" Text="{Binding FileNameWithoutExtension, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,0,10" FontSize="18" local:SelectAllOnFocusBehavior.Enable="True"/>
             <TextBlock Text="." VerticalAlignment="Bottom" Margin="5,10,5,10" FontSize="20"/>
-            <TextBox x:Name="Extension" Width="100" Text="{Binding FileExtension}" Margin="0,10,10,10" FontSize="18" local:SelectAllOnFocusBehavior.Enable="True"/>
+            <TextBox x:Name="Extension" Width="100" Text="{Binding FileExtension, UpdateSourceTrigger=PropertyChanged}" Margin="0,10,10,10" FontSize="18" local:SelectAllOnFocusBehavior.Enable="True"/>
         </StackPanel>
+
+        <TextBlock x:Name="NewFileName" Grid.Row="2" Text="{Binding NextFileName}" Visibility="Hidden"/>
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding ElementName=NewFileName, Path=(Validation.Errors)}" Margin="10,0" IsTabStop="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding ErrorContent}" Foreground="Red"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 
     <i:Interaction.Triggers>

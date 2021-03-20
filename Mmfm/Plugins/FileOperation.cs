@@ -332,15 +332,15 @@ namespace Mmfm.Plugins
 
                 try
                 {
-                    if (path != dialog.Next)
+                    if (path != dialog.NextPath)
                     {
                         if(new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
                         {
-                            Directory.Move(path, dialog.Next);
+                            Directory.Move(path, dialog.NextPath);
                         }
                         else
                         {
-                            File.Move(path, dialog.Next);
+                            File.Move(path, dialog.NextPath);
                         }
                     }
                 }

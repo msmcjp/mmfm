@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mmfm
 {
-    public class FileRenameViewModel : ContentDialogViewModel
+    public class FileRenameViewModel : ContentDialogViewModel, INotifyDataErrorInfo
     {
         private string path;
         private string current;
@@ -33,26 +31,38 @@ namespace Mmfm
             }
         }
 
+        [ValidFileName]
         public string FileNameWithoutExtension
         {
             get => fileNameWithoutExtension;
             set
             {
                 fileNameWithoutExtension = value;
-                OnPropertyChanged(nameof(FileNameWithoutExtension));
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(NextFileName));
+                OnPropertyChanged(nameof(CanRename));
             }
         }
 
+        [ValidFileName]
         public string FileExtension
         {
             get => fileExtension;
             set
             {
                 fileExtension = value;
-                OnPropertyChanged(nameof(FileExtension));
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(NextFileName));
+                OnPropertyChanged(nameof(CanRename));
             }
         }
 
-        public string Next => Path.Combine(Path.GetDirectoryName(path), $"{FileNameWithoutExtension}.{FileExtension}");
+        [Required(ErrorMessage = "Filename is not input.")]
+        [ValidFileName(ErrorMessage = "Includes invalid char.")]
+        public string NextFileName => fileNameWithoutExtension?.Length + fileExtension?.Length > 0 ? $"{FileNameWithoutExtension}.{FileExtension}" : "";
+
+        public bool CanRename => GetErrors(nameof(NextFileName)).GetEnumerator().MoveNext() == false;
+
+        public string NextPath => Path.Combine(Path.GetDirectoryName(path), $"{FileNameWithoutExtension}.{FileExtension}");    
     }
 }
