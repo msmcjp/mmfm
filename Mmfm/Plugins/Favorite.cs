@@ -26,7 +26,7 @@ namespace Mmfm.Plugins
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
         {
             new CommandItemViewModel("Favorite", "Alt+F", new AsyncRelayCommand(async () => await AddFavoriteAsync(), CanAddFavorite)),
-            new CommandItemViewModel("Unfavorite", "Shift+Alt+F", new RelayCommand(() => Removefavorite(), CanRemovefavorite)),
+            new CommandItemViewModel("Unfavorite", "Shift+Alt+F", new AsyncRelayCommand(async () => await RemovefavoriteAsync(), CanRemovefavorite)),
             CreateJumptoFavoriteCommand()
         };
 
@@ -107,14 +107,14 @@ namespace Mmfm.Plugins
             return Favorites?.Where(item => item.Path == Navigation.FullPath).Count() != 0;
         }
 
-        private void Removefavorite()
+        private async Task RemovefavoriteAsync()
         {
             var path = Navigation.FullPath;
 
             FolderShortcutViewModel favorite = null;
             if ((favorite = Favorites?.SingleOrDefault(f => f.Path == path)) == null)
             {
-                Messenger?.Send(new MessageBoxViewModel
+                await Messenger?.SendAsync(new MessageBoxViewModel
                 {
                     Caption = "Error",
                     Text = $"{path} is not registered to favorite.",
@@ -132,7 +132,7 @@ namespace Mmfm.Plugins
                 Button = System.Windows.MessageBoxButton.YesNo
             };
 
-            Messenger?.Send(message);
+            await Messenger?.SendAsync(message);
             if (message.Result == System.Windows.MessageBoxResult.Yes)
             {
                 Favorites?.Remove(favorite);
