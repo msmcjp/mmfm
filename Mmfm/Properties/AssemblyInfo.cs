@@ -2,6 +2,7 @@
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
 
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
@@ -15,6 +16,7 @@ using System.Windows;
 [assembly: AssemblyCopyright("Copyright © Marshmallow Machine 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: SupportedOSPlatform("windows10.0.18362.0")]
 
 // ComVisible を false に設定すると、このアセンブリ内の型は COM コンポーネントから
 // 参照できなくなります。COM からこのアセンブリ内の型にアクセスする必要がある場合は、
