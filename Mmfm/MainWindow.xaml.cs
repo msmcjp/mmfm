@@ -212,7 +212,7 @@ namespace Mmfm
                                 Button = MessageBoxButton.OK,
                                 Icon = MessageBoxImage.Error,
                             };
-                            Messenger.Default.SendAsync(messageBox);
+                            await Messenger.Default.SendAsync(messageBox);
                         }
                         catch (ArgumentException)
                         {
@@ -223,7 +223,7 @@ namespace Mmfm
                                 Button = MessageBoxButton.OK,
                                 Icon = MessageBoxImage.Error,
                             };
-                            Messenger.Default.SendAsync(messageBox);
+                            await Messenger.Default.SendAsync(messageBox);
                         }
                         catch
                         {
@@ -233,7 +233,7 @@ namespace Mmfm
                                 Button = MessageBoxButton.OK,
                                 Icon = MessageBoxImage.Error,
                             };
-                            Messenger.Default.SendAsync(messageBox);
+                            await Messenger.Default.SendAsync(messageBox);
                         }
                     });
                 }
