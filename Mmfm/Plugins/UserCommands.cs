@@ -103,13 +103,7 @@ namespace Mmfm.Plugins
                 (path, command) => new CommandItemViewModel(
                     string.Join(CommandItem.PathSeparator, path.Skip(1)),
                     command.KeyBinding,
-                    new RelayCommand(() =>
-                    {
-                        var p = Process.Start(CreateProcessStartInfo(command.Command));
-                        Debug.Print(p.StandardError.ReadToEnd());
-                        p.WaitForExit();
-                        p.Close();
-                    })
+                    new RelayCommand(() => Process.Start(CreateProcessStartInfo(command.Command)))
                 ),
                 (path, commands) => new CommandItemViewModel(
                     string.Join(CommandItem.PathSeparator, path.Skip(1)),
