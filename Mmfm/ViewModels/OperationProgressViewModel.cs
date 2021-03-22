@@ -80,7 +80,7 @@ namespace Mmfm
         private string statusText;
         public string StatusText
         {
-            get => statusText;
+            get => $"({Value}/{Count}) {statusText}";
             private set
             {
                 statusText = value;

@@ -195,16 +195,6 @@ namespace Mmfm.Plugins
                     return false;
                 }
 
-                // 
-                if (path == dest)
-                {
-                    if (move)
-                    {
-                        return false;
-                    }
-                    dest = path.CopyableFileName();
-                }
-
                 if (conflictAction.HasFlag(FileConflictAction.ApplyToAll) == false)
                 {
                     if ((conflictAction = await ConfirmFileConflictActionAsync(path, dest)) == FileConflictAction.None)
