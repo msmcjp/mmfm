@@ -52,7 +52,7 @@ namespace Mmfm
             isCancellationRequestedByAction = false;
             await foreach(var fileInfo in TraverseAsync(Path, async (path) =>
             {
-                OperationProgressed?.Invoke(this, new OperationProgressedEventArgs(path, ++count));
+                OperationProgressed?.Invoke(this, new OperationProgressedEventArgs(System.IO.Path.GetFileName(path), ++count));
 
                 var cancelled = false;
                 if(action != null)
