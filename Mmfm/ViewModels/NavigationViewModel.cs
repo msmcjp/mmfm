@@ -164,6 +164,11 @@ namespace Mmfm
 
         private void Refresh()
         {
+            if(Directory.Exists(Current?.Path) == false)
+            {
+                navigationStack.Clear();
+            }
+
             if (IsRoot)
             {
                 Folders.Items = new ObservableCollection<FileViewModel>(roots.Select(r => (FileViewModel)r));
@@ -219,6 +224,7 @@ namespace Mmfm
                 watcher.Created += (s, e) => Refresh();
                 watcher.Deleted += (s, e) => Refresh();
                 watcher.Renamed += (s, e) => Refresh();
+                watcher.Error += (s, e) => GotoTop();
             }
         }
 
