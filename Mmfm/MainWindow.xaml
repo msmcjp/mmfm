@@ -18,8 +18,9 @@
         WindowStartupLocation="CenterScreen" 
         Title="{Binding DualFileManager.ActiveFileManager.Navigation.WindowTitle}"
         local:InputBindingsSourceAttachedProperty.InputBindingsSource="{Binding InputBindings}"
+        local:HwndSourceHookAttachedProperty.WndProc="{Binding DriveInfoMonitor.WndProc}"
         Loaded="Window_Loaded"
-        Closing="Window_Closing" >
+        Closing="Window_Closing">
 
     <Window.Resources>
         <c:FocusCommand x:Key="FocusCommand"/>
@@ -61,6 +62,7 @@
                                    CommandParameter="{Binding Settings.AccentColor}"/>
         </i:PropertyChangedTrigger>
     </i:Interaction.Triggers>
+    
     <Grid>
         <Grid.InputBindings>
             <KeyBinding Command="" Gesture="Tab"/>
