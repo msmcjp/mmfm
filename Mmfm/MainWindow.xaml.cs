@@ -38,6 +38,7 @@ namespace Mmfm
             }
 
             (DataContext as MainViewModel).IsShowingContentDialog = true;
+            contentDialog.Focus();
             var result = await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
             (DataContext as MainViewModel).IsShowingContentDialog = false;
 
