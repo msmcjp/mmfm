@@ -299,7 +299,7 @@ namespace Mmfm.Plugins
                 Text = $"Are you sure you want to {(moveToRecycleBin ? $"send {selectionText} to the Recyle Bin" : $"delete {selectionText}")}?"
             };
             await Messenger.SendAsync(messageBox);
-            if (messageBox.Result == MessageBoxResult.No)
+            if (messageBox.Result != MessageBoxResult.Yes)
             {
                 return;
             }
