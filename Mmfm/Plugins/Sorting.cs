@@ -159,6 +159,8 @@ namespace Mmfm.Plugins
             set => SetSortContexts(value as IDictionary<string, bool>);
         }
 
+        public IEnumerable<FolderShortcutViewModel> Shortcuts => null;
+
         public event EventHandler SettingsChanged;
 
         private void OnSettingsChanged()

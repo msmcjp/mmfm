@@ -23,6 +23,8 @@ namespace Mmfm
         }
         #endregion
 
+        private static readonly string defaultItemGroup = "\U0001f4bb PC";
+
         public DualFileManagerViewModel DualFileManager { get; } = new DualFileManagerViewModel();
 
         public IEnumerable<InputBinding> InputBindings
@@ -38,6 +40,9 @@ namespace Mmfm
         }
 
         private readonly FileSystemWatcher settingsWatcher;
+
+        private readonly DriveInfoMonitor driveInfoMonitor;
+        public DriveInfoMonitor DriveInfoMonitor => driveInfoMonitor;
 
         private ICommandItem commandPallete;
 
@@ -117,6 +122,33 @@ namespace Mmfm
             return watcher;
         }
 
+        private DriveInfoMonitor CreateDriveInfoMonitor()
+        {
+            var monitor = new DriveInfoMonitor();
+            monitor.DrivesChanged += DriveInfoMonitor_DrivesChanged;
+
+            return monitor;
+        }
+
+        private Func<FolderShortcutViewModel[]> CreateShortcutsGenerator(IEnumerable<FolderShortcutViewModel> extra) => () =>
+        {
+            var specialFolders = new FolderShortcutViewModel[] {
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Desktop" , defaultItemGroup, IconExtractor.Extract("shell32.dll", 34, true) ),
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Documents", defaultItemGroup, IconExtractor.Extract("shell32.dll", 1, true) ),
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "My Pictures", defaultItemGroup, IconExtractor.Extract("shell32.dll", 325, true) )
+            };
+
+            var drives = DriveInfo.GetDrives().Select(di => new FolderShortcutViewModel(
+                    di.Name,
+                    $"{di.Name.Trim(Path.DirectorySeparatorChar)} {di.DriveDescription()}",
+                    defaultItemGroup,
+                    di.DriveIcon()
+            ));
+
+            return specialFolders.Concat(drives).Concat(extra).ToArray();
+        };
+        private Action updateShortcuts;        
+
         private string ReadSettingsJson()
         {
             if (File.Exists(App.SettingsJsonPath))
@@ -191,13 +223,16 @@ namespace Mmfm
                         (s, p) => (Settings : s.Value, Plugin : p)
                     ).ToArray().ForEach(x => x.Plugin.Settings = x.Settings);
                     commandPallete = CreateCommandPallete(plugins);
-                    OnPropertyChanged(nameof(InputBindings));
                     OnPropertyChanged(nameof(ShowCommandPalleteCommand));
+
+                    var shortcutGenerator = CreateShortcutsGenerator(plugins.Where(p => p.Shortcuts != null).SelectMany(p => p.Shortcuts));
+                    updateShortcuts = () => DualFileManager.Roots = shortcutGenerator();
                 }
             );
-            settingsFactory.Apply(settingsFactory.Defaults());
+            Settings = settingsFactory.Defaults();
 
             settingsWatcher = CreateSettingsFileWatcher();
+            driveInfoMonitor = CreateDriveInfoMonitor();
         }
 
         private void SettingsWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -209,24 +244,16 @@ namespace Mmfm
             LoadSettings();
         }
 
-        private void Plugin_SettingsChanged(object sender, EventArgs e)
-        {
-            if(Settings == null)
-            {
-                return;
-            }
-            var plugin = sender as IPluggable<DualFileManagerViewModel>;
-            var pi_settings = (IDictionary<string, object>)Settings.Plugins;
-
-            pi_settings[plugin.Name] = plugin.Settings;            
-            Settings_PropertyChanged(this, new PropertyChangedEventArgs(nameof(Plugins)));
-        }
+        private void Plugin_SettingsChanged(object sender, EventArgs e) => Settings_PropertyChanged(this, new PropertyChangedEventArgs(nameof(Plugins)));
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             File.WriteAllText(App.SettingsJsonPath, Settings.Json);
             OnPropertyChanged(nameof(InputBindings));
+            updateShortcuts();
         }
+
+        private void DriveInfoMonitor_DrivesChanged(object sender, EventArgs e) => updateShortcuts();
 
         #region IDisposable
         private bool disposed = false;

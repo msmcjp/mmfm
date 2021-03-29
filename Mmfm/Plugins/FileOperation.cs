@@ -59,6 +59,8 @@ namespace Mmfm.Plugins
             set;
         }
 
+        public IEnumerable<FolderShortcutViewModel> Shortcuts => null;
+
         public event EventHandler SettingsChanged;
 
         private void OnSettingsChanged()

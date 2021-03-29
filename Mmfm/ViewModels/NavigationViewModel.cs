@@ -171,7 +171,7 @@ namespace Mmfm
 
             if (IsRoot)
             {
-                Folders.Items = new ObservableCollection<FileViewModel>(roots.Select(r => (FileViewModel)r));
+                Folders.Items = new ObservableCollection<FileViewModel>(roots?.Select(r => (FileViewModel)r) ?? Enumerable.Empty<FileViewModel>());
                 Files.Items = new ObservableCollection<FileViewModel>();
             }
             else
@@ -238,7 +238,7 @@ namespace Mmfm
             }
             else
             {
-                Folders.SelectedItem = Folders.Items.First();
+                Folders.SelectedItem = Folders.Items.FirstOrDefault();
             }
            
             OnPropertyChanged(nameof(Title));

@@ -92,7 +92,6 @@ namespace Mmfm
 
         public FileManagerViewModel()
         {
-            Navigation.Roots = DefaultFolderShortcuts.PC();
             Navigation.PropertyChanged += Navigation_PropertyChanged;
             Settings = new Settings.FileManager();
         }

@@ -3,6 +3,7 @@ using Msmc.Patterns.Collections;
 using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
@@ -51,6 +52,8 @@ namespace Mmfm.Plugins
             get => settings;
             set => settings = (value as IDictionary<string, CommandDescription>);
         }
+
+        public IEnumerable<FolderShortcutViewModel> Shortcuts => null;
 
         public event EventHandler SettingsChanged;
 

@@ -60,8 +60,8 @@ namespace Mmfm
         {
             set
             {
-                First.Navigation.Roots = value ?? DefaultFolderShortcuts.PC();
-                Second.Navigation.Roots = value ?? DefaultFolderShortcuts.PC();
+                var roots = value ?? new FolderShortcutViewModel[] { };
+                First.Navigation.Roots = Second.Navigation.Roots = roots;
             }
         }
 

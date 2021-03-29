@@ -20,6 +20,11 @@ namespace Mmfm.Plugins
         IEnumerable<ICommandItem> Commands { get; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        IEnumerable<FolderShortcutViewModel> Shortcuts { get; }
+
+        /// <summary>
         /// Set Messenger object by host
         /// </summary>
         Messenger Messenger { get; set; }

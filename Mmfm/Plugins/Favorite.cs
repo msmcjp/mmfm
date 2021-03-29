@@ -48,6 +48,8 @@ namespace Mmfm.Plugins
             set => Favorites = value as ObservableCollection<FolderShortcutViewModel>;
         }
 
+        public IEnumerable<FolderShortcutViewModel> Shortcuts => Favorites;
+
         private ObservableCollection<FolderShortcutViewModel> favorites;
         public ObservableCollection<FolderShortcutViewModel> Favorites
         {
@@ -66,10 +68,6 @@ namespace Mmfm.Plugins
                 {
                     favorites.CollectionChanged += Favorites_CollectionChanged;
                 }
-                Favorites_CollectionChanged(
-                    favorites,
-                    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)
-                );
             }
         }
 
@@ -157,9 +155,6 @@ namespace Mmfm.Plugins
 
         private void Favorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var favorites = sender as IEnumerable<FolderShortcutViewModel> ?? Enumerable.Empty<FolderShortcutViewModel>();
-            
-            Host.Roots = DefaultFolderShortcuts.PC().Concat(favorites).ToArray();
             if(e.Action != NotifyCollectionChangedAction.Reset)
             {
                 SettingsChanged?.Invoke(this, EventArgs.Empty);
