@@ -12,7 +12,7 @@ using System.Windows.Media;
 
 namespace Mmfm
 {
-    public class Settings : INotifyPropertyChanged
+    public class Settings : INotifyPropertyChanged, ICloneable
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -20,6 +20,13 @@ namespace Mmfm
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
+
+        #region IClonable
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
         #endregion
 
@@ -41,7 +48,7 @@ namespace Mmfm
                 }
             );
         }
-
+    
         [JsonIgnore]
         public string Json => JsonSerializer.Serialize<Settings>(
             this,

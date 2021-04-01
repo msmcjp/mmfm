@@ -8,7 +8,11 @@
     <Authors>Atsushi Kataoka</Authors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="ExKeyGestureConverter.cs" />
     <Compile Remove="Interactions\ListViewFocusOnSelectItemBehavior.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Plugins\UserCommands.resources.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\External\AutoSizedGridView.cs" Link="Controls\AutoSizedGridView.cs" />
@@ -28,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Patterns\Msmc.Patterns\Msmc.Patterns.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Plugins\UserCommands.resources.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

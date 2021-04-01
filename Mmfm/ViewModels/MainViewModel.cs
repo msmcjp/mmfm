@@ -8,6 +8,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Mmfm
@@ -24,6 +25,11 @@ namespace Mmfm
         #endregion
 
         private static readonly string defaultItemGroup = "\U0001f4bb PC";
+
+        public IEnumerable<ICommandItem> Commands => new ICommandItem[]
+        {
+            new CommandItemViewModel("Show settings", "Ctrl+OemComma", new AsyncRelayCommand(async () => await ShowSettingsAsync())),
+        };
 
         public DualFileManagerViewModel DualFileManager { get; } = new DualFileManagerViewModel();
 
@@ -43,6 +49,9 @@ namespace Mmfm
 
         private readonly DriveInfoMonitor driveInfoMonitor;
         public DriveInfoMonitor DriveInfoMonitor => driveInfoMonitor;
+
+        private readonly IEnumerable<string> resourceNames;
+        public IEnumerable<string> ResourceNames => resourceNames;
 
         private ICommandItem commandPallete;
 
@@ -99,16 +108,53 @@ namespace Mmfm
                 plugin.Host = DualFileManager;
                 plugin.ResetToDefault();
                 plugin.Messenger = Messenger.Default;
-                plugin.SettingsChanged += Plugin_SettingsChanged;               
+                plugin.SettingsChanged += Plugin_SettingsChanged;      
             }
 
             return plugins;
         }
 
+        private (Func<Settings> Defaults, Action<Settings> Apply) CreateSettingsFactory(IEnumerable<IPluggable<DualFileManagerViewModel>> plugins) =>
+        (
+            Defaults: () =>
+            {
+                return new Settings()
+                {
+                    FileManagers = new Settings.FileManager[] {
+                        new Settings.FileManager(),
+                        new Settings.FileManager()
+                    },
+                    Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
+                    {
+                        if (p.Settings != null)
+                        {
+                            ((IDictionary<string, object>)o)[p.Name] = p.Settings;
+                        }
+                        return o;
+                    }),
+                };
+            },
+            Apply: (settings) =>
+            {
+                DualFileManager.Settings = settings.FileManagers;
+                settings.Plugins.Join(
+                    plugins,
+                    s => s.Key,
+                    p => p.Name,
+                    (s, p) => (Settings: s.Value, Plugin: p)
+                ).ToArray().ForEach(x => x.Plugin.Settings = x.Settings);
+                commandPallete = CreateCommandPallete(plugins);
+                OnPropertyChanged(nameof(ShowCommandPalleteCommand));
+
+                var shortcutGenerator = CreateShortcutsGenerator(plugins.Where(p => p.Shortcuts != null).SelectMany(p => p.Shortcuts));
+                updateShortcuts = () => DualFileManager.Roots = shortcutGenerator();
+            }
+        );
+
         private CommandItemViewModel CreateCommandPallete(IEnumerable<IPluggable<DualFileManagerViewModel>> plugins)
         {
             var commands = plugins.SelectMany(plugin => plugin.Commands).ToList().AsReadOnly();
-            return new CommandItemViewModel("Show Commands", commands, true, "Ctrl+Shift+P");
+            return new CommandItemViewModel("Show Commands", commands.Concat(Commands), true, "Ctrl+Shift+P");
         }
 
         private FileSystemWatcher CreateSettingsFileWatcher()
@@ -177,6 +223,11 @@ namespace Mmfm
             );
         }
 
+        private void SaveSettings()
+        {
+            File.WriteAllText(App.SettingsJsonPath, Settings.Json);
+        }
+
         private ICommand loadSettingsCommand;
         public ICommand LoadSettingsCommand
         {
@@ -190,49 +241,28 @@ namespace Mmfm
             }
         }
 
+        private async Task ShowSettingsAsync()
+        {
+            var settingsEdit = new SettingsEditViewModel(Settings);
+            await Messenger.Default.SendAsync(settingsEdit);
+
+            if(settingsEdit.Result == ModernWpf.Controls.ContentDialogResult.Primary)
+            {
+                Settings = settingsEdit.Settings;
+                SaveSettings();
+            }
+        }
+
         public MainViewModel()
         {
-            var plugins = LoadPlugins();            
+            var plugins = LoadPlugins();
 
-            settingsFactory = (
-                Defaults: () => 
-                {
-                    return new Settings()
-                    {
-                        FileManagers = new Settings.FileManager[] {
-                            new Settings.FileManager(),
-                            new Settings.FileManager()
-                        },
-                        Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
-                        {
-                            if (p.Settings != null)
-                            {
-                                ((IDictionary<string, object>)o)[p.Name] = p.Settings;
-                            }
-                            return o;
-                        }),
-                    };
-                },
-                Apply: (settings) =>
-                {
-                    DualFileManager.Settings = settings.FileManagers;
-                    settings.Plugins.Join(
-                        plugins,
-                        s => s.Key,
-                        p => p.Name,
-                        (s, p) => (Settings : s.Value, Plugin : p)
-                    ).ToArray().ForEach(x => x.Plugin.Settings = x.Settings);
-                    commandPallete = CreateCommandPallete(plugins);
-                    OnPropertyChanged(nameof(ShowCommandPalleteCommand));
-
-                    var shortcutGenerator = CreateShortcutsGenerator(plugins.Where(p => p.Shortcuts != null).SelectMany(p => p.Shortcuts));
-                    updateShortcuts = () => DualFileManager.Roots = shortcutGenerator();
-                }
-            );
-            Settings = settingsFactory.Defaults();
-
+            settingsFactory = CreateSettingsFactory(plugins);
             settingsWatcher = CreateSettingsFileWatcher();
             driveInfoMonitor = CreateDriveInfoMonitor();
+            resourceNames = plugins.Select(p => $"Plugins/{p.GetType().Name}.resources.xaml");
+            
+            Settings = settingsFactory.Defaults();
         }
 
         private void SettingsWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -248,7 +278,7 @@ namespace Mmfm
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            File.WriteAllText(App.SettingsJsonPath, Settings.Json);
+            SaveSettings();
             OnPropertyChanged(nameof(InputBindings));
             updateShortcuts();
         }

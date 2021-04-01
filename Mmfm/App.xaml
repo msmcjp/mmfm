@@ -2,7 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Mmfm"
+             xmlns:plugin="clr-namespace:Mmfm.Plugins"
              StartupUri="MainWindow.xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:ui="http://schemas.modernwpf.com/2019">
     <Application.Resources>
         <ResourceDictionary>
@@ -11,6 +13,12 @@
                 <ui:XamlControlsResources />
                 <!-- Other merged dictionaries here -->
                 <ResourceDictionary>
+                    <sys:Double x:Key="ContentDialogMaxWidth">900</sys:Double>
+
+                    <Style TargetType="TextBlock" x:Key="SettingsCategoryTextStyle">
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+
                     <DataTemplate DataType="{x:Type local:OperationProgressViewModel}">
                         <local:OperationProgressControl />
                     </DataTemplate>
@@ -25,6 +33,9 @@
                     </DataTemplate>
                     <DataTemplate DataType="{x:Type local:FavoriteRegisterViewModel}">
                         <local:FavoriteRegisterControl/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:SettingsEditViewModel}">
+                        <local:SettingsEditControl/>
                     </DataTemplate>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

@@ -2,7 +2,6 @@
 using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
 
 namespace Mmfm.Plugins
@@ -25,7 +24,6 @@ namespace Mmfm.Plugins
             new CommandItemViewModel("Show hidden files", "Alt+Z", new RelayCommand(() => FileManagerSettings.ShowHiddenFiles = true, () => FileManagerSettings?.ShowHiddenFiles == false)),
             new CommandItemViewModel("Hide hidden files", "Alt+Shift+Z", new RelayCommand(() => FileManagerSettings.ShowHiddenFiles = false, () => FileManagerSettings?.ShowHiddenFiles == true)),
             new CommandItemViewModel("Quit", "Alt+F4", new RelayCommand(() => Application.Current.Shutdown(), () => true)),
-            new CommandItemViewModel("Open settings file", "Ctrl+,", new RelayCommand(() => Process.Start(new ProcessStartInfo(App.SettingsJsonPath) { UseShellExecute = true }))),
         };
 
         public Messenger Messenger

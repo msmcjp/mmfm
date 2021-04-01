@@ -4,6 +4,8 @@ using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
@@ -14,9 +16,15 @@ using System.Threading.Tasks;
 namespace Mmfm.Plugins
 {
     public class UserCommands : IPluggable<DualFileManagerViewModel>
-    {
-        public struct CommandDescription
+    {        
+        public class CommandDescription
         {
+            public string Name
+            {
+                get;
+                set;
+            }
+
             public string Command
             {
                 get;
@@ -29,8 +37,8 @@ namespace Mmfm.Plugins
                 set;
             }
         }
-
-        public string Name => "Commands";
+        
+        public string Name => "UserCommands";
 
         public IEnumerable<ICommandItem> Commands => CreateUserCommands();
 
@@ -46,11 +54,11 @@ namespace Mmfm.Plugins
             set;
         }
 
-        private IDictionary<string, CommandDescription> settings;
+        private ICollection<CommandDescription> settings;
         public object Settings
         {
             get => settings;
-            set => settings = (value as IDictionary<string, CommandDescription>);
+            set => settings = (value as ICollection<CommandDescription>);
         }
 
         public IEnumerable<FolderShortcutViewModel> Shortcuts => null;
@@ -59,7 +67,7 @@ namespace Mmfm.Plugins
 
         public void ResetToDefault()
         {
-            settings = new Dictionary<string, CommandDescription>();
+            settings = new ObservableCollection<CommandDescription>();
         }
 
         private ProcessStartInfo CreateProcessStartInfo(string command)
@@ -98,8 +106,8 @@ namespace Mmfm.Plugins
             var tree = new TreeNode<string, CommandDescription>("");
             foreach(var setting in settings)
             {
-                var path = setting.Key.Split(CommandItem.PathSeparator);
-                tree[path] = setting.Value;
+                var path = setting.Name.Split(CommandItem.PathSeparator);
+                tree[path] = setting;
             };
 
             return tree.Composite(

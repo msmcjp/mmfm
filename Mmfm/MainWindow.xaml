@@ -39,6 +39,8 @@
             <i:InvokeCommandAction Command="{Binding LoadSettingsCommand}" />
             <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
                                 MethodName="RestoreGrid"/>
+            <i:InvokeCommandAction Command="{Binding LoadResourcesCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                   CommandParameter="{Binding ResourceNames}"/>
         </i:EventTrigger>
 
         <i:EventTrigger EventName="Closing" >

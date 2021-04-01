@@ -1,0 +1,56 @@
+﻿<ui:ContentDialog x:Class="Mmfm.SettingsEditControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Mmfm"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:converter="clr-namespace:Mmfm.Converters"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d"
+             PrimaryButtonText="_Save"
+             CloseButtonText="_Cancel"
+             DefaultButton="Close"
+             Title="Settings">
+    <ScrollViewer ui:ScrollViewerHelper.AutoHideScrollBars="True">
+        <StackPanel>
+            <StackPanel.Resources>
+                <converter:EnumBoolConverter x:Key="EnumBoolConverter"/>
+                <local:PluginSettingDataTemplateSelector x:Key="PluginSettingDataTemplateSelector"/>
+            </StackPanel.Resources>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Hot key"  Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <TextBox Text="{Binding HotKey}" HorizontalAlignment="Left" Width="200" Margin="10">
+                    <i:Interaction.Behaviors>
+                        <local:HotKeyEditBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+            </StackPanel>
+            
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Theme" Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <RadioButton IsChecked="{Binding Theme, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Dark}">Dark</RadioButton>
+                    <RadioButton IsChecked="{Binding Theme, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Light}">Light</RadioButton>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Accent color" Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <TextBox Text="{Binding AccentColor}" HorizontalAlignment="Left" Width="200" Margin="10"/>
+            </StackPanel>
+
+            <ItemsControl ItemsSource="{Binding Plugins}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical">
+                            <ContentControl Content="{Binding}"
+                                            ContentTemplateSelector="{StaticResource PluginSettingDataTemplateSelector}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</ui:ContentDialog>

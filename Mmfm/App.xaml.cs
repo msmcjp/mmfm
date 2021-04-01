@@ -44,11 +44,7 @@ namespace Mmfm
 
         private void LogException(Exception ex)
         {
-            EventLog.WriteEntry(
-                Assembly.GetExecutingAssembly().GetName().Name,
-                ex.ToString(), 
-                EventLogEntryType.Error
-            );
+            
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) => LogException((Exception)e.ExceptionObject);

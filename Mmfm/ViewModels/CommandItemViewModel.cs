@@ -17,7 +17,7 @@ namespace Mmfm
         private Func<ICommandItem, IEnumerable<ICommandItem>> subCommands = null;
 
         public InputBinding InputBinding => string.IsNullOrEmpty(shortcut) ? 
-            null : new InputBinding(Command, (KeyGesture)new ExKeyGestureConverter().ConvertFromString(shortcut));
+            null : new InputBinding(Command, (KeyGesture)new KeyGestureConverter().ConvertFromString(shortcut));
 
         public IEnumerable<ICommandItem> SubCommands => subCommands?.Invoke(this) ?? Enumerable.Empty<ICommandItem>();
        

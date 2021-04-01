@@ -4,6 +4,7 @@ using ModernWpf.Controls;
 using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -37,10 +38,18 @@ namespace Mmfm
                 ContentDialogBorder.Child = contentDialog;
             }
 
-            (DataContext as MainViewModel).IsShowingContentDialog = true;
+            var viewModel = DataContext as MainViewModel;
+
+            hotKey?.Dispose();
+            viewModel.IsShowingContentDialog = true;
+            var currentElement = FocusManager.GetFocusedElement(this);
+
             contentDialog.Focus();
             var result = await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
-            (DataContext as MainViewModel).IsShowingContentDialog = false;
+
+            await RegisterHotKeyAsync(viewModel.Settings.HotKey);
+            viewModel.IsShowingContentDialog = false;
+            currentElement?.Focus();
 
             if (ContentDialogBorder.Child == contentDialog)
             {
@@ -176,6 +185,58 @@ namespace Mmfm
             }
         }
 
+        private async Task RegisterHotKeyAsync(string keyGestureString)
+        {
+            try
+            {
+                var keyGesture = (KeyGesture)new KeyGestureConverter().ConvertFromString(keyGestureString);
+                hotKey = new HotKey.HotKey(this, keyGesture);
+                hotKey.Pressed += (o) =>
+                {
+                    if (IsActive)
+                    {
+                        Hide();
+                    }
+                    else
+                    {
+                        Show();
+                        Activate();
+                    }
+                };
+            }
+            catch (NotSupportedException)
+            {
+                var messageBox = new MessageBoxViewModel
+                {
+                    Caption = "Hot-key is not supported.",
+                    Button = MessageBoxButton.OK,
+                    Icon = MessageBoxImage.Error,
+                };
+                await Messenger.Default.SendAsync(messageBox);
+            }
+            catch (ArgumentException)
+            {
+                var messageBox = new MessageBoxViewModel
+                {
+                    Caption = "Invalid Hot-key definition.",
+                    Text = $"{keyGestureString} is invalid format.",
+                    Button = MessageBoxButton.OK,
+                    Icon = MessageBoxImage.Error,
+                };
+                await Messenger.Default.SendAsync(messageBox);
+            }
+            catch
+            {
+                var messageBox = new MessageBoxViewModel
+                {
+                    Caption = "Hot-key is already in use. Please use another key.",
+                    Button = MessageBoxButton.OK,
+                    Icon = MessageBoxImage.Error,
+                };
+                await Messenger.Default.SendAsync(messageBox);
+            }
+        }
+
         private ICommand registerHotKeyCommand;
         public ICommand RegisterHotKeyCommand
         {
@@ -185,57 +246,9 @@ namespace Mmfm
                 {
                     registerHotKeyCommand = new AsyncRelayCommand<string>(async (keyDefinition) =>
                     {
-                        Show();
-                        Activate();
+                        Show(); Activate();
                         hotKey?.Dispose();
-                        try
-                        {
-                            var keyGesture = (KeyGesture)new ExKeyGestureConverter().ConvertFromString(keyDefinition);
-                            hotKey = new HotKey.HotKey(this, keyGesture);
-                            hotKey.Pressed += (o) =>
-                            {
-                                if (IsActive)
-                                {
-                                    Hide();
-                                }
-                                else
-                                {
-                                    Show();
-                                    Activate();
-                                }
-                            };
-                        }
-                        catch (NotSupportedException)
-                        {
-                            var messageBox = new MessageBoxViewModel
-                            {
-                                Caption = "Hot-key is not supported.",
-                                Button = MessageBoxButton.OK,
-                                Icon = MessageBoxImage.Error,
-                            };
-                            await Messenger.Default.SendAsync(messageBox);
-                        }
-                        catch (ArgumentException)
-                        {
-                            var messageBox = new MessageBoxViewModel
-                            {
-                                Caption = "Invalid Hot-key definition.",
-                                Text = $"{keyDefinition} is invalid format.",
-                                Button = MessageBoxButton.OK,
-                                Icon = MessageBoxImage.Error,
-                            };
-                            await Messenger.Default.SendAsync(messageBox);
-                        }
-                        catch
-                        {
-                            var messageBox = new MessageBoxViewModel
-                            {
-                                Caption = "Hot-key is already in use. Please use another key.",
-                                Button = MessageBoxButton.OK,
-                                Icon = MessageBoxImage.Error,
-                            };
-                            await Messenger.Default.SendAsync(messageBox);
-                        }
+                        await RegisterHotKeyAsync(keyDefinition);
                     });
                 }
                 return registerHotKeyCommand;
@@ -283,6 +296,39 @@ namespace Mmfm
                     });
                 }
                 return changeAccentColorCommand;
+            }
+        }
+
+        private string[] GetAssemblyResourceNames()
+        {
+            var assembly = App.ResourceAssembly;
+            string resourceName = assembly.GetName().Name + ".g.resources";
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                using (var reader = new System.Resources.ResourceReader(stream))
+                {
+                    return reader.Cast<System.Collections.DictionaryEntry>().Select(entry => (string)entry.Key).ToArray();
+                }
+            }
+        }
+
+        private ICommand loadResourcesCommand;
+        public ICommand LoadResourcesCommand
+        {
+            get
+            {
+                if(loadResourcesCommand == null)
+                {
+                    loadResourcesCommand = new RelayCommand<IEnumerable<string>>((resourceNames) =>
+                    {
+                        var assemblyResourceNames = GetAssemblyResourceNames();
+                        resourceNames
+                            .Where(name => assemblyResourceNames.Contains(name.ToLowerInvariant()))
+                            .Select(name => new Uri(name, UriKind.Relative))
+                            .ForEach(uri => App.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = uri }));                        
+                    });
+                }
+                return loadResourcesCommand;
             }
         }
 
