@@ -44,7 +44,8 @@
                     Width="200" 
                     HorizontalAlignment="Left" 
                     Background="Transparent" 
-                    FontSize="18" 
+                    FontSize="16" 
+                    Height="32"
                     SelectedColor="{Binding AccentColor}"/>
             </StackPanel>
 
