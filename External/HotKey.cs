@@ -52,8 +52,7 @@ namespace HotKey
         /// 新規のホットキーを登録します。
         /// </summary>
         /// <param name="window">ウィンドウ</param>
-        /// <param name="modifierKey">修飾キー</param>
-        /// <param name="key">キー</param>
+        /// <param name="keyGesture">キーの組み合わせ</param>
         public HotKey(System.Windows.Window window, KeyGesture keyGesture)
         {
             var handle = new WindowInteropHelper(window).Handle;
@@ -68,13 +67,6 @@ namespace HotKey
             RegisterHotKey();
 
             ComponentDispatcher.ThreadPreprocessMessage += ThreadPreprocessMessageMethod;
-        }
-
-        ~HotKey()
-        {
-            ComponentDispatcher.ThreadPreprocessMessage -= ThreadPreprocessMessageMethod;
-
-            UnregisterHotKey();
         }
 
         private void RegisterHotKey()
@@ -115,8 +107,17 @@ namespace HotKey
             Pressed?.Invoke(this);
         }
 
+        private bool disposed = false;
         public void Dispose()
         {
+            if (disposed)
+            {
+                return;
+            }
+            disposed = true;
+
+            ComponentDispatcher.ThreadPreprocessMessage -= ThreadPreprocessMessageMethod;
+
             UnregisterHotKey();
         }
     }
