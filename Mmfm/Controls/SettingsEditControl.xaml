@@ -7,6 +7,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:converter="clr-namespace:Mmfm.Converters"
              xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:pt="http://propertytools.org/wpf"
              mc:Ignorable="d"
              PrimaryButtonText="_Save"
              CloseButtonText="_Cancel"
@@ -38,7 +39,13 @@
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Accent color" Style="{StaticResource SettingsCategoryTextStyle}"/>
-                <TextBox Text="{Binding AccentColor}" HorizontalAlignment="Left" Width="200" Margin="10"/>
+                <pt:ColorPicker 
+                    Margin="10" 
+                    Width="200" 
+                    HorizontalAlignment="Left" 
+                    Background="Transparent" 
+                    FontSize="18" 
+                    SelectedColor="{Binding AccentColor}"/>
             </StackPanel>
 
             <ItemsControl ItemsSource="{Binding Plugins}">
