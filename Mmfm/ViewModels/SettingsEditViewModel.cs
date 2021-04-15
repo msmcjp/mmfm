@@ -19,7 +19,7 @@ namespace Mmfm
         public SettingsEditViewModel(Settings settings)
         {
             this.settings = (Settings)settings.Clone();
-            plugins = settings.Plugins.Select(p => new PluginSettingEditViewModel(p));
+            plugins = this.settings.Plugins.Select(p => new PluginSettingEditViewModel(p));
         }
 
         public string HotKey
