@@ -12,11 +12,11 @@ namespace Mmfm
         public static string CopyableFileName(this string path)
         {
             var newPath = path;
-            while (File.Exists(newPath))
+            while (File.Exists(newPath) || Directory.Exists(newPath))
             {
                 newPath = Path.Combine(
-                    Path.GetDirectoryName(path),
-                    $"{Path.GetFileNameWithoutExtension(path)}{Properties.Resources.Posfix_Copy}{Path.GetExtension(path)}"
+                    Path.GetDirectoryName(newPath),
+                    $"{Path.GetFileNameWithoutExtension(newPath)}{Properties.Resources.Posfix_Copy}{Path.GetExtension(newPath)}"
                 );
             }
             return newPath;
