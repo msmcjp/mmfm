@@ -147,7 +147,7 @@ namespace Mmfm
                 OnPropertyChanged(nameof(ShowCommandPalleteCommand));
 
                 var shortcutGenerator = CreateShortcutsGenerator(plugins.Where(p => p.Shortcuts != null).SelectMany(p => p.Shortcuts));
-                updateShortcuts = () => DualFileManager.Roots = shortcutGenerator();
+                (updateShortcuts = () => DualFileManager.Roots = shortcutGenerator())();
             }
         );
 
