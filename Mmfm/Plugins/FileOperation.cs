@@ -21,21 +21,15 @@ namespace Mmfm.Plugins
 
         private IList<FileViewModel> SelectedItems => Host.ActiveFileManager.SelectedItems;
 
-        private bool CanExecute()
-        {
-            return Navigation?.FullPath.Length > 0 && SelectedPaths.Count > 0;
-        }
+        private bool CanExecute() => Navigation?.FullPath.Length > 0 && SelectedPaths.Count > 0;
 
-        private bool CanPaste()
-        {
-            return Directory.Exists(Navigation?.FullPath) && ClipboardManager.GetDropFileList(out _)?.Length > 0;
-        }
+        private bool CanPaste() => Directory.Exists(Navigation?.FullPath) && Clipboard.GetDataObject().FromFileDropList(out _)?.Count() > 0;        
 
         public IEnumerable<ICommandItem> Commands => new ICommandItem[]
         {
             new CommandItemViewModel("Copy", "Ctrl+C", new RelayCommand(() => Copy(), CanExecute)),
             new CommandItemViewModel("Cut", "Ctrl+X", new RelayCommand(() => Cut(), CanExecute)),
-            new CommandItemViewModel("Paste", "Ctrl+V", new AsyncRelayCommand(async () => await PasteAsync(), CanPaste)),
+            new CommandItemViewModel("Paste", "Ctrl+V", new AsyncRelayCommand(async () => await PasteAsync(Clipboard.GetDataObject()), CanPaste)),
             new CommandItemViewModel("Move to Recycle Bin", "Delete", new AsyncRelayCommand(async () => await DeleteFilesAsync(), CanExecute)),
             new CommandItemViewModel("Delete", "Shift+Delete", new AsyncRelayCommand(async () => await DeleteFilesAsync(false), CanExecute)),
             new CommandItemViewModel("Rename", "F2", new AsyncRelayCommand(async () => await RenameFilesAsync(), CanExecute)),
@@ -62,6 +56,21 @@ namespace Mmfm.Plugins
         public IEnumerable<FolderShortcutViewModel> Shortcuts => null;
 
         public event EventHandler SettingsChanged;
+
+        public FileOperation()
+        {
+            Messenger.Default.Register<ClipboardManager.Notification>(this, (n) =>
+            {
+                foreach (var item in Host.First.Navigation.Items.Concat(Host.Second.Navigation.Items))
+                {
+                    item.IsCut = n.Move && n.Paths.Contains(item.Path);
+                }
+            });
+
+            Messenger.Default.RegisterAsyncMessage<DropFileListMessage>(this, async (m) => {
+                await PasteAsync(m.DataObject);            
+            });
+        }
 
         private void OnSettingsChanged()
         {
@@ -136,11 +145,10 @@ namespace Mmfm.Plugins
             ClipboardManager.SetDropFileList(SelectedPaths, true);
         }
 
-        private async Task PasteAsync()
+        private async Task PasteAsync(IDataObject dataObject)
         {
-            bool move = false;
-            var paths = ClipboardManager.GetDropFileList(out move);
-
+            bool move;
+            var paths = dataObject.FromFileDropList(out move);
             conflictAction = FileConflictAction.None;
 
             var operations = paths.Select(path => CopyOrMoveOperation(path, Navigation.FullPath, move)).ToArray();

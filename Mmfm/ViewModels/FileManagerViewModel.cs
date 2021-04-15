@@ -39,6 +39,8 @@ namespace Mmfm
 
         public IList<string> SelectedPaths => Array.AsReadOnly(SelectedItems.Select(item => item.Path).ToArray());
 
+        public IDataObject SelectedPathsDataObject => SelectedPaths.ToFileDropList();
+
         public IList<FileViewModel> SelectedItems => Navigation.SelectedItems;
 
         public FileViewModel SelectedItem => Navigation.SelectedItem;
@@ -115,6 +117,7 @@ namespace Mmfm
             {
                 OnPropertyChanged(nameof(SelectedItems));
                 OnPropertyChanged(nameof(SelectedPaths));
+                OnPropertyChanged(nameof(SelectedPathsDataObject));
                 OnPropertyChanged(nameof(SelectionStatusText));
             }
 

@@ -36,14 +36,6 @@ namespace Mmfm
         {
             First.PropertyChanged += FileManager_PropertyChanged;
             Second.PropertyChanged += FileManager_PropertyChanged;
-
-            Messenger.Default.Register<ClipboardManager.Notification>(this, (n) =>
-            {                
-                foreach (var item in First.Navigation.Items.Concat(Second.Navigation.Items))
-                {
-                    item.IsCut = n.Move && n.Paths.Contains(item.Path);
-                }
-            });
         }
 
         public IEnumerable<Settings.FileManager> Settings

@@ -21,7 +21,9 @@
     <Compile Include="..\External\IconExtractor.cs" Link="IconExtractor.cs" />
     <Compile Include="..\External\InputBindingsSourceAttachedProperty.cs" Link="Interactions\InputBindingsSourceAttachedProperty.cs" />
     <Compile Include="..\External\InteractivityTemplate.cs" Link="Interactions\InteractivityTemplate.cs" />
+    <Compile Include="..\External\NativeMethods.cs" Link="NativeMethods.cs" />
     <Compile Include="..\External\RoutedEventTrigger.cs" Link="Interactions\RoutedEventTrigger.cs" />
+    <Compile Include="..\External\ValueConverterGroup.cs" Link="Converters\ValueConverterGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

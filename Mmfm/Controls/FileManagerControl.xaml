@@ -5,14 +5,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"        
              xmlns:commands="clr-namespace:Mmfm.Commands"
-             xmlns:converters="clr-namespace:Mmfm.Converters"
+             xmlns:converters="clr-namespace:Mmfm.Converters"             
+             xmlns:pc="clr-namespace:PipedConverters"
              xmlns:local="clr-namespace:Mmfm"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
         <converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+        <pc:ValueConverterGroup x:Key="FileDropListConverter">
+            <converters:DataObjectConverter DataFormat="FileDrop"/> 
+            <converters:FileDropListConverter/>
+        </pc:ValueConverterGroup>
         <commands:FocusCommand x:Key="FocusCommand"/>
+        <commands:SendAsyncMessageCommand x:Key="SendDropCommand" MessageType="{x:Type local:DropFileListMessage}"/>
     </UserControl.Resources>
 
     <UserControl.Style>
@@ -133,6 +139,19 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <DataTemplate x:Key="DragAdorner">
+                <Border Background="Gray" CornerRadius="3" Padding="10" Opacity="0.8">
+                    <TextBlock 
+                        MinWidth="120" 
+                        MaxWidth="300"
+                        Foreground="White" 
+                        FontWeight="Bold" 
+                        TextWrapping="Wrap"
+                        Text="{Binding Converter={StaticResource FileDropListConverter}}" 
+                    />
+                </Border>
+            </DataTemplate>
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -149,10 +168,16 @@
                   DataContext="{Binding Navigation.Folders}"
                   ItemsSource="{Binding Source={StaticResource NavigationSource}}"
                   SelectedItem="{Binding SelectedItem}"                   
-                  Style="{StaticResource ListViewStyle}">
+                  Style="{StaticResource ListViewStyle}"
+                  AllowDrop="True"
+                  local:DragDropBehavior.DataObject="{Binding Path=DataContext.SelectedPathsDataObject, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  local:DragDropBehavior.AdornerDataTemplate="{StaticResource DragAdorner}"
+                  local:DragDropBehavior.Command="{StaticResource SendDropCommand}">
+                    
             <i:Interaction.Behaviors>
                 <local:ListViewFocusNextItemOnSpaceKeyBehavior />
                 <local:ListViewExclusiveSelectionBehavior/>
+                <local:DragDropBehavior />
             </i:Interaction.Behaviors>
 
             <ListView.GroupStyle>
@@ -193,10 +218,15 @@
                   DataContext="{Binding Navigation.Files}"
                   ItemsSource="{Binding OrderedItems}"
                   SelectedItem="{Binding SelectedItem}"
-                  Style="{StaticResource ListViewStyle}">
+                  Style="{StaticResource ListViewStyle}"
+                  AllowDrop="True"
+                  local:DragDropBehavior.DataObject="{Binding Path=DataContext.SelectedPathsDataObject, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  local:DragDropBehavior.AdornerDataTemplate="{StaticResource DragAdorner}"
+                  local:DragDropBehavior.Command="{StaticResource SendDropCommand}">
             <i:Interaction.Behaviors>
                 <local:ListViewFocusNextItemOnSpaceKeyBehavior />
                 <local:ListViewExclusiveSelectionBehavior/>
+                <local:DragDropBehavior />
             </i:Interaction.Behaviors>
 
             <ListView.InputBindings>
