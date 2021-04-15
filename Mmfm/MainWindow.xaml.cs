@@ -47,7 +47,7 @@ namespace Mmfm
             contentDialog.Focus();
             var result = await contentDialog.ShowAsync(ContentDialogPlacement.InPlace);
 
-            await RegisterHotKeyAsync(viewModel.Settings.HotKey);
+            TryRegisterHotKey(viewModel.Settings.HotKey, out hotKey);
             viewModel.IsShowingContentDialog = false;
             currentElement?.Focus();
 
@@ -185,24 +185,45 @@ namespace Mmfm
             }
         }
 
+        private bool TryRegisterHotKey(string keyGestureString, out HotKey.HotKey hotKey)
+        {
+            try
+            {
+                hotKey = RegisterHotKey(keyGestureString);
+                return true;
+            }
+            catch
+            {
+                hotKey = null;
+                return false;
+            }
+        }
+
+        private HotKey.HotKey RegisterHotKey(string keyGestureString)
+        {
+            var keyGesture = (KeyGesture)new KeyGestureConverter().ConvertFromString(keyGestureString);
+            hotKey = new HotKey.HotKey(this, keyGesture);
+            hotKey.Pressed += (o) =>
+            {
+                if (IsActive)
+                {
+                    Hide();
+                }
+                else
+                {
+                    Show();
+                    Activate();
+                }
+            };
+
+            return hotKey;
+        }
+
         private async Task RegisterHotKeyAsync(string keyGestureString)
         {
             try
             {
-                var keyGesture = (KeyGesture)new KeyGestureConverter().ConvertFromString(keyGestureString);
-                hotKey = new HotKey.HotKey(this, keyGesture);
-                hotKey.Pressed += (o) =>
-                {
-                    if (IsActive)
-                    {
-                        Hide();
-                    }
-                    else
-                    {
-                        Show();
-                        Activate();
-                    }
-                };
+                hotKey = RegisterHotKey(keyGestureString);
             }
             catch (NotSupportedException)
             {
