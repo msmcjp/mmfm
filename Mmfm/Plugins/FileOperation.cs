@@ -150,8 +150,16 @@ namespace Mmfm.Plugins
             bool move;
             var paths = dataObject.FromFileDropList(out move);
             conflictAction = FileConflictAction.None;
+            
+            var operations = paths
+            .Select(path => CopyOrMoveOperation(
+                path, 
+                Path.Combine(Navigation.FullPath, Path.GetFileName(path)), 
+                move
+            ))
+            .Where(o => o != null)
+            .ToArray();
 
-            var operations = paths.Select(path => CopyOrMoveOperation(path, Navigation.FullPath, move)).ToArray();
             var dialog = new OperationProgressViewModel(operations)
             {
                 Caption = $"{(move ? "Moving" : "Copying")} {operations.Sum(o => o.Count)} files."
@@ -167,18 +175,22 @@ namespace Mmfm.Plugins
         
         private FileTraverseOperation CopyOrMoveOperation(string from, string to, bool move)
         {
+            if(from == to)
+            {
+                if (move)
+                {
+                    return null;
+                }
+                to = to.CopyableFileName();
+            }
+
             return new FileTraverseOperation(from, async (path) =>
             {
-                var dest = to + path.Substring(Path.GetDirectoryName(from).Length);
+                var dest = path.Replace(from, to);
 
-                if (path == dest)
+                if(path == dest)
                 {
-                    // Do not move when source and destination is same
-                    if (move)
-                    {
-                        return false;
-                    }
-                    dest = dest.CopyableFileName();
+                    return false;
                 }
 
                 if (new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
