@@ -24,10 +24,7 @@ namespace Mmfm
         #endregion
 
         #region IClonable
-        public object Clone()
-        {
-            return this.MemberwiseClone();
-        }
+        public object Clone() => LoadFromJsonOrDefaults(Json, this);
         #endregion
 
         public static Settings LoadFromJsonOrDefaults(string json, Settings defaults)
