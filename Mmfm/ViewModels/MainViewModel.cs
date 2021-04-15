@@ -274,7 +274,16 @@ namespace Mmfm
             LoadSettings();
         }
 
-        private void Plugin_SettingsChanged(object sender, EventArgs e) => Settings_PropertyChanged(this, new PropertyChangedEventArgs(nameof(Plugins)));
+        private void Plugin_SettingsChanged(object sender, EventArgs e) 
+        {
+            var plugin = sender as IPluggable<DualFileManagerViewModel>;
+            var settings = Settings.Plugins as IDictionary<string, object>;
+            if(settings[plugin.Name] != plugin.Settings)
+            {
+                settings[plugin.Name] = plugin.Settings;
+            }
+            Settings_PropertyChanged(this, new PropertyChangedEventArgs(nameof(Plugins)));
+        }
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
