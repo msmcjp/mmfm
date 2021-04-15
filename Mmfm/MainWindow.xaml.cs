@@ -258,65 +258,37 @@ namespace Mmfm
             }
         }
 
-        private ICommand registerHotKeyCommand;
-        public ICommand RegisterHotKeyCommand
+        private ICommand updateSettingsCommand;
+        public ICommand UpdateSettingsCommand
         {
             get
             {
-                if(registerHotKeyCommand == null)
+                if(updateSettingsCommand == null)
                 {
-                    registerHotKeyCommand = new AsyncRelayCommand<string>(async (keyDefinition) =>
+                    updateSettingsCommand = new AsyncRelayCommand<Settings>(async (settings) => 
                     {
-                        Show(); Activate();
-                        hotKey?.Dispose();
-                        await RegisterHotKeyAsync(keyDefinition);
-                    });
-                }
-                return registerHotKeyCommand;
-            }
-        }
+                        ModernWpf.ThemeManager.Current.ApplicationTheme = settings.Theme;
 
-        private ICommand changeThemeCommand;
-        public ICommand ChangeThemeCommand
-        {
-            get
-            {
-                if(changeThemeCommand == null)
-                {
-                    changeThemeCommand = new RelayCommand<ModernWpf.ApplicationTheme>((theme) =>
-                    {
-                        ModernWpf.ThemeManager.Current.ApplicationTheme = theme;
-                    });
-                }
-                return changeThemeCommand;
-            }
-        }
-
-        private ICommand changeAccentColorCommand;
-        public ICommand ChangeAccentColorCommand
-        {
-            get
-            {
-                if (changeAccentColorCommand == null)
-                {
-                    changeAccentColorCommand = new AsyncRelayCommand<string>(async (color) =>
-                    {
                         try
                         {
-                            ModernWpf.ThemeManager.Current.AccentColor = (Color)ColorConverter.ConvertFromString(color);
+                            ModernWpf.ThemeManager.Current.AccentColor = (Color)ColorConverter.ConvertFromString(settings.AccentColor);
                         }
                         catch (FormatException)
                         {
                             await Messenger.Default.SendAsync(new MessageBoxViewModel
                             {
                                 Caption = "Accent color is invalid.",
-                                Text = $"{color} is invalid color format.",
-                                Button = MessageBoxButton.OK                                
+                                Text = $"{settings.AccentColor} is invalid color format.",
+                                Button = MessageBoxButton.OK
                             });
                         }
+
+                        Show(); Activate();
+                        hotKey?.Dispose();
+                        await RegisterHotKeyAsync(settings.HotKey);
                     });
                 }
-                return changeAccentColorCommand;
+                return updateSettingsCommand;
             }
         }
 
