@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace Mmfm
             DispatcherUnhandledException += Application_DispatcherUnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Directory.CreateDirectory(Path.GetDirectoryName(SettingsJsonPath));
         }
 
         public static string SettingsJsonPath
