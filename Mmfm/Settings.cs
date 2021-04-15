@@ -165,9 +165,9 @@ namespace Mmfm
 
         public Settings()
         {
-            HotKey = "Ctrl+;";
+            HotKey = "";
             Theme = ModernWpf.ApplicationTheme.Light;
-            AccentColor = "Purple";
+            AccentColor = "#FF0080C0";
         }
     }
 }
