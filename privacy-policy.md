@@ -1,4 +1,4 @@
-## Privacy Policy
+# Privacy Policy
 
 mmfm and MARSHMALLOW MACHINE Inc. do not store any personal information, keyboard typing.
 
