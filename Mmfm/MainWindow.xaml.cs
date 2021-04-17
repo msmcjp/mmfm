@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,11 +15,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Windows.Services.Store;
+using WinRT;
 
 namespace Mmfm
 {
@@ -324,6 +328,66 @@ namespace Mmfm
                 return loadResourcesCommand;
             }
         }
+
+        #region License management
+        private StoreContext storeContext;
+        private StoreAppLicense appLicense;
+
+        public async void InitializeLicenseAsync()
+        {
+            if (storeContext == null)
+            {
+                storeContext = StoreContext.GetDefault();
+                storeContext.As<IInitializeWithWindow>().Initialize(new WindowInteropHelper(this).Handle);
+            }
+
+            ProgressRing.IsActive = true;
+            appLicense = await storeContext.GetAppLicenseAsync();
+            ProgressRing.IsActive = false;
+            if (appLicense.IsTrial)
+            {
+                await ShowStoreContextControlAsync(appLicense);
+            }
+            storeContext.OfflineLicensesChanged += StoreContext_OfflineLicensesChanged;
+        }
+
+        private async void StoreContext_OfflineLicensesChanged(StoreContext sender, object args)
+        {
+            ProgressRing.IsActive = true;
+            appLicense = await storeContext.GetAppLicenseAsync();
+            ProgressRing.IsActive = false;
+            if (appLicense.IsActive)
+            {
+                if (appLicense.IsTrial)
+                {
+                    // Trial period has been expired.
+                    await ShowStoreContextControlAsync(appLicense);
+                }
+                else
+                {
+                    // Show the features that are available only with a full license.
+                }
+            }
+        }
+
+        private async Task ShowStoreContextControlAsync(StoreAppLicense appLicense)
+        {
+            var storeContextViewModel = new StoreContextViewModel(appLicense);
+            do
+            {
+                await Messenger.Default.SendAsync(storeContextViewModel);
+                if (storeContextViewModel.Result == ContentDialogResult.Primary)
+                {
+                    var puchaseResult = await storeContext.RequestPurchaseAsync(appLicense.SkuStoreId);
+                    if (puchaseResult.Status == StorePurchaseStatus.Succeeded ||
+                        puchaseResult.Status == StorePurchaseStatus.AlreadyPurchased)
+                    {
+                        break;
+                    }
+                }
+            } while (storeContextViewModel.IsExpired);
+        }
+        #endregion
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

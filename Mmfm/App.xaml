@@ -37,6 +37,9 @@
                     <DataTemplate DataType="{x:Type local:SettingsEditViewModel}">
                         <local:SettingsEditControl/>
                     </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:StoreContextViewModel}">
+                        <local:StoreContextControl/>
+                    </DataTemplate>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

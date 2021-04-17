@@ -36,6 +36,8 @@
     
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
+            <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
+                                MethodName="InitializeLicenseAsync"/>
             <i:InvokeCommandAction Command="{Binding LoadSettingsCommand}" />
             <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
                                 MethodName="RestoreGrid"/>
@@ -122,6 +124,8 @@
         <StatusBar Grid.Row="2" Height="24">
             <TextBlock Text="{Binding DualFileManager.ActiveFileManager.SelectionStatusText}"/>
         </StatusBar>
+
+        <ui:ProgressRing x:Name="ProgressRing" Grid.Row="1" Width="64" Height="64" />
 
         <Border x:Name="ContentDialogBorder" Grid.Row="1" VerticalAlignment="Stretch"/>
     </Grid>
