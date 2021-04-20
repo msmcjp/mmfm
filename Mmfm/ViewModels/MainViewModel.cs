@@ -184,12 +184,22 @@ namespace Mmfm
                 new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "My Pictures", defaultItemGroup, IconExtractor.Extract("shell32.dll", 325, true) )
             };
 
-            var drives = DriveInfo.GetDrives().Select(di => new FolderShortcutViewModel(
-                    di.Name,
-                    $"{di.Name.Trim(Path.DirectorySeparatorChar)} {di.DriveDescription()}",
-                    defaultItemGroup,
-                    di.DriveIcon()
-            ));
+            var drives = DriveInfo.GetDrives().Select(di =>
+            {
+                try
+                {
+                    return new FolderShortcutViewModel(
+                        di.Name,
+                        $"{di.Name.Trim(Path.DirectorySeparatorChar)} {di.DriveDescription()}",
+                        defaultItemGroup,
+                        di.DriveIcon()
+                    );
+                }
+                catch(UnauthorizedAccessException)
+                {
+                    return null;
+                }
+            }).Where(x => x != null);
 
             return specialFolders.Concat(drives).Concat(extra).ToArray();
         };

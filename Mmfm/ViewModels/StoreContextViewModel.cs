@@ -17,7 +17,7 @@ namespace Mmfm
             this.appLicense = appLicense;
             if (IsNotExpired)
             {
-                title = $"Trial period will end in a {(int)appLicense.TrialTimeRemaining.TotalDays} days.";
+                title = $"Trial period will end in a {(int)(appLicense.ExpirationDate - DateTime.Now).TotalDays} days.";
                 content = "If you were touched, please puchase.";
             }
             else
@@ -27,7 +27,7 @@ namespace Mmfm
             }
         }
 
-        public bool IsNotExpired => appLicense.TrialTimeRemaining.TotalSeconds > 0;
+        public bool IsNotExpired => appLicense.ExpirationDate > DateTime.Now;
         
         public bool IsExpired => !IsNotExpired;
 

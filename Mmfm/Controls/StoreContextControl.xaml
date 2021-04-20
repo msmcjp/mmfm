@@ -7,7 +7,7 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              PrimaryButtonText="Purchase"
              SecondaryButtonText="No, thank you."
-             IsSecondaryButtonEnabled="{Binding IsExpired}"                  
+             IsSecondaryButtonEnabled="{Binding IsNotExpired}"                  
              DefaultButton="Primary"
              Title="{Binding Title}"
              mc:Ignorable="d">

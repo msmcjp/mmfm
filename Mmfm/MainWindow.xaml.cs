@@ -378,12 +378,19 @@ namespace Mmfm
                 await Messenger.Default.SendAsync(storeContextViewModel);
                 if (storeContextViewModel.Result == ContentDialogResult.Primary)
                 {
-                    var puchaseResult = await storeContext.RequestPurchaseAsync(appLicense.SkuStoreId);
-                    if (puchaseResult.Status == StorePurchaseStatus.Succeeded ||
-                        puchaseResult.Status == StorePurchaseStatus.AlreadyPurchased)
+                    var productResult = await storeContext.GetStoreProductForCurrentAppAsync();
+                    if(productResult.ExtendedError == null)
                     {
-                        break;
-                    }
+                        var puchaseResult = await productResult.Product.RequestPurchaseAsync();
+                        if(puchaseResult.ExtendedError == null)
+                        {
+                            if (puchaseResult.Status == StorePurchaseStatus.Succeeded ||
+                                puchaseResult.Status == StorePurchaseStatus.AlreadyPurchased)
+                            {
+                                break;
+                            }
+                        }
+                    }                   
                 }
             } while (storeContextViewModel.IsExpired);
         }
