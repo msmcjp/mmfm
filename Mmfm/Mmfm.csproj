@@ -29,7 +29,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
-    <PackageReference Include="ModernWpfUis" Version="1.2.0" />
+    <PackageReference Include="ModernWpfUI" Version="0.9.4" />
     <PackageReference Include="PropertyTools.Wpf" Version="3.1.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Linq.Async" Version="5.0.0" />
