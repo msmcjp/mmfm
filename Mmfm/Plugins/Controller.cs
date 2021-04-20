@@ -20,7 +20,7 @@ namespace Mmfm.Plugins
             new CommandItemViewModel("Back to parent", "Backspace", new RelayCommand(() => BackToParent(), CanExecute)),
             new CommandItemViewModel("Select All", "Alt+U", new RelayCommand(() => SelectAll(), CanExecute)),
             new CommandItemViewModel("Deselect All", "Shift+Alt+U", new RelayCommand(() => DeselectAll(), CanExecute)),
-            new CommandItemViewModel("Go to Top", "Ctrl+Shift+T", new RelayCommand(() => GotoTop(), CanExecute)),
+            new CommandItemViewModel("Go to Quick access", "Ctrl+Shift+T", new RelayCommand(() => GotoTop(), CanExecute)),
             new CommandItemViewModel("Show hidden files", "Alt+Z", new RelayCommand(() => FileManagerSettings.ShowHiddenFiles = true, () => FileManagerSettings?.ShowHiddenFiles == false)),
             new CommandItemViewModel("Hide hidden files", "Alt+Shift+Z", new RelayCommand(() => FileManagerSettings.ShowHiddenFiles = false, () => FileManagerSettings?.ShowHiddenFiles == true)),
             new CommandItemViewModel("Quit", "Alt+F4", new RelayCommand(() => Application.Current.Shutdown(), () => true)),

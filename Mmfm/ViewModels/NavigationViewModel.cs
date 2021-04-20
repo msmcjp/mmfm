@@ -66,7 +66,7 @@ namespace Mmfm
 
         public string FullPath => navigationStack.Count == 0 ? "" : navigationStack.Peek().Path;
 
-        public string WindowTitle => $"{Path.GetFileName(FullPath)} - {Assembly.GetExecutingAssembly().GetName().Name.ToLower()}";
+        public string WindowTitle => $"{(IsRoot ? "Quick access" : Path.GetFileName(FullPath))} - {Assembly.GetExecutingAssembly().GetName().Name.ToLower()}";
 
         public FolderShortcutViewModel[] Roots
         {
