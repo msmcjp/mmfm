@@ -68,7 +68,7 @@ namespace Mmfm
             }
         }
 
-        public string SelectionStatusText => $"{(string.IsNullOrEmpty(SelectionText) ? "" :  "Selecting ")}{SelectionText}.";
+        public string SelectionStatusText => $"{(string.IsNullOrEmpty(SelectionText) ? "" :  "Selecting ")}{SelectionText}{(SelectionText.Length > 0 ? "." : "")}";
    
         private Settings.FileManager settings;
         public Settings.FileManager Settings 
