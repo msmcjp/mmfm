@@ -144,6 +144,18 @@ namespace Mmfm
             {
                 return false;
             }
+
+            if(navigationStack.Count == 1)
+            {
+                var parent = Path.GetDirectoryName(Current.Path);
+                if (parent?.Length > 0)
+                {
+                    navigationStack.Pop();
+                    Goto(parent);
+                    return true;
+                }
+            }
+
             OnCurrentChanged(navigationStack.Pop());
             return true;
         }
