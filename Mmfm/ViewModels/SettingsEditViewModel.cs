@@ -13,13 +13,34 @@ namespace Mmfm
 {
     public class SettingsEditViewModel : ContentDialogViewModel
     { 
+        public class KeyBinding
+        {
+            public string CommandName
+            {
+                get;
+                set;
+            }
+
+            private string keyGesture;
+            public string KeyGesture
+            {
+                get => keyGesture;
+                set
+                {
+                    keyGesture = value;
+                }
+            }
+        }
+
         private Settings settings;
         private IEnumerable<PluginSettingEditViewModel> plugins;
+        private IEnumerable<KeyBinding> keyBindings;
 
         public SettingsEditViewModel(Settings settings)
         {
             this.settings = (Settings)settings.Clone();
             plugins = this.settings.Plugins.Select(p => new PluginSettingEditViewModel(p));
+            keyBindings = this.settings.KeyBindings.Select(k => new KeyBinding { CommandName = k.Key, KeyGesture = k.Value }).ToList();
         }
 
         public string HotKey
@@ -52,8 +73,14 @@ namespace Mmfm
             }
         }
 
+        public IEnumerable<KeyBinding> KeyBindings => keyBindings;      
+
         public IEnumerable<PluginSettingEditViewModel> Plugins => plugins;
 
-        public Settings Settings => settings;
+        public Settings EndEdit()
+        {
+            settings.KeyBindings = KeyBindings.ToDictionary(k => k.CommandName, k => k.KeyGesture);
+            return settings;
+        }
     }
 }

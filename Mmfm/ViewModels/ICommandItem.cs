@@ -17,7 +17,7 @@ namespace Mmfm
 
         ICommand Command { get; }
 
-        InputBinding InputBinding { get; }
+        InputBinding InputBinding { get; set; }
 
         IEnumerable<ICommandItem> SubCommands { get; }
     }

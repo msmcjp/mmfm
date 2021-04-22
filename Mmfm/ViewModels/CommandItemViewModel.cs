@@ -16,8 +16,11 @@ namespace Mmfm
 
         private Func<ICommandItem, IEnumerable<ICommandItem>> subCommands = null;
 
-        public InputBinding InputBinding => string.IsNullOrEmpty(shortcut) ? 
-            null : new InputBinding(Command, (KeyGesture)new KeyGestureConverter().ConvertFromString(shortcut));
+        public InputBinding InputBinding
+        {
+            get;
+            set;
+        }
 
         public IEnumerable<ICommandItem> SubCommands => subCommands?.Invoke(this) ?? Enumerable.Empty<ICommandItem>();
        
@@ -27,16 +30,8 @@ namespace Mmfm
             private set;
         }     
 
-        private string shortcut;
-        public string Shortcut
-        {
-            get => shortcut ?? (subCommands?.Invoke(this).Count() > 0 ? PathSeparator : "");
-            private set
-            {
-                shortcut = value;                
-            }
-        }
-
+        public string Shortcut => new KeyGestureConverter().ConvertToString(InputBinding?.Gesture) ?? (subCommands?.Invoke(this).Count() > 0 ? PathSeparator : "");
+       
         public string DisplayName
         {
             get;
@@ -53,8 +48,11 @@ namespace Mmfm
         {
             Name = name;
             DisplayName = name.Split(CommandItem.PathSeparator).Last();
-            Shortcut = shortcut;
             Command = command;
+            if(shortcut != null)
+            {
+                InputBinding = new InputBinding(command, (KeyGesture)new KeyGestureConverter().ConvertFromString(shortcut));
+            }
         }
 
         public CommandItemViewModel(string name, IEnumerable<ICommandItem> subItems, bool ordered = false, string shortCut = null)
@@ -71,7 +69,6 @@ namespace Mmfm
 
             Name = name;
             DisplayName = name.Split(CommandItem.PathSeparator).Last();
-            Shortcut = shortCut;
             Command = new RelayCommand(() =>
             {
                 var content = new CommandPaletteViewModel(subCommands.Invoke(this).Where(i => i.Command.CanExecute(null)), ordered);
@@ -82,6 +79,11 @@ namespace Mmfm
                 return subCommands.Invoke(this).Where(i => i.Command.CanExecute(null)).Count() > 0;
             });
 
+            if(shortCut != null) 
+            {
+                InputBinding = new InputBinding(Command, (KeyGesture)new KeyGestureConverter().ConvertFromString(shortCut));
+            }
+
             this.subCommands = subCommands;
         }
 
@@ -89,7 +91,7 @@ namespace Mmfm
         {
             Name = baseItem.Name;
             DisplayName = baseItem.Name.Replace(CommandItem.PathSeparator.ToString(), $" {PathSeparator} ");
-            Shortcut = baseItem.Shortcut;
+            InputBinding = baseItem.InputBinding;
             Command = baseItem.Command;
         }
     }

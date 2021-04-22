@@ -24,28 +24,31 @@ namespace Mmfm
         #endregion
 
         #region IClonable
-        public object Clone() => LoadFromJsonOrDefaults(Json, this);
+        public object Clone() => LoadFromJsonOrDefaults(Json);
         #endregion
 
-        public static Settings LoadFromJsonOrDefaults(string json, Settings defaults)
+        public static Settings Defaults { get; set; }
+
+        public static Settings LoadFromJsonOrDefaults(string json)
         {
             if (string.IsNullOrEmpty(json))
             {
-                return defaults;
+                return Defaults;
             }
 
-            return JsonSerializer.Deserialize<Settings>(
+            var settings = JsonSerializer.Deserialize<Settings>(
                 json,
                 new JsonSerializerOptions
                 {
                     Converters = {
-                        new TemplateObjectConverter(defaults.Plugins),
+                        new TemplateObjectConverter(Defaults.Plugins),
                         new JsonStringEnumConverter()
                     }
                 }
             );
+            return settings;
         }
-    
+
         [JsonIgnore]
         public string Json => JsonSerializer.Serialize<Settings>(
             this,
@@ -56,7 +59,7 @@ namespace Mmfm
                 Converters =
                 {
                     new JsonStringEnumConverter()
-                }          
+                }
             }
         );
 
@@ -145,7 +148,7 @@ namespace Mmfm
                 fileManagers = value;
 
                 fileManagers?.ForEach(s => {
-                    s.PropertyChanged += BubbleUpEventHandler;               
+                    s.PropertyChanged += BubbleUpEventHandler;
                 });
 
                 OnPropertyChanged(nameof(FileManagers));
@@ -157,17 +160,29 @@ namespace Mmfm
         {
             get => plugins;
             set
-            {               
+            {
                 plugins = value;
                 OnPropertyChanged(nameof(Plugins));
             }
-        }    
+        }
+
+        private IDictionary<string, string> keyBindings;
+        public IDictionary<string, string> KeyBindings
+        {
+            get => keyBindings;
+            set
+            {
+                keyBindings = value;
+                OnPropertyChanged(nameof(KeyBindings));
+            }
+        }
 
         public Settings()
         {
-            HotKey = "";
-            Theme = ModernWpf.ApplicationTheme.Light;
-            AccentColor = "#FF0080C0";
+            HotKey = Defaults?.HotKey ?? "";
+            Theme = Defaults?.Theme ?? ModernWpf.ApplicationTheme.Light;
+            AccentColor = Defaults?.AccentColor ?? "#FF0080C0";
+            KeyBindings = Defaults != null ? new Dictionary<string, string>(Defaults.KeyBindings) : new Dictionary<string, string>();
         }
     }
 }

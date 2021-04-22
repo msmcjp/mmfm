@@ -12,7 +12,7 @@
                     <DataGridTemplateColumn Header="Key binding">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBox BorderThickness="0" Text="{Binding KeyBinding}">
+                                <TextBox BorderThickness="0" Text="{Binding KeyBinding, UpdateSourceTrigger=PropertyChanged}">
                                     <i:Interaction.Behaviors>
                                         <local:HotKeyEditBehavior/>
                                     </i:Interaction.Behaviors>

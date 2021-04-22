@@ -49,6 +49,26 @@
                     SelectedColor="{Binding AccentColor}"/>
             </StackPanel>
 
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Key bindings" Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <DataGrid ItemsSource="{Binding KeyBindings}" AutoGenerateColumns="False" Margin="20" CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Command" Binding="{Binding CommandName}" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="Key binding">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox BorderThickness="0" Text="{Binding KeyGesture, UpdateSourceTrigger=PropertyChanged}">
+                                        <i:Interaction.Behaviors>
+                                            <local:HotKeyEditBehavior/>
+                                        </i:Interaction.Behaviors>
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
             <ItemsControl ItemsSource="{Binding Plugins}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

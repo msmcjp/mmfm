@@ -132,6 +132,10 @@ namespace Mmfm
                         }
                         return o;
                     }),
+                    KeyBindings = CreateCommandPallete(plugins.Where(p => p.Name != "UserCommands"))
+                        .Flatten()                        
+                        .Where(c => c.InputBinding != null)
+                        .ToDictionary(c => c.Name, c => new KeyGestureConverter().ConvertToString(c.InputBinding.Gesture))
                 };
             },
             Apply: (settings) =>
@@ -154,7 +158,26 @@ namespace Mmfm
         private CommandItemViewModel CreateCommandPallete(IEnumerable<IPluggable<DualFileManagerViewModel>> plugins)
         {
             var commands = plugins.SelectMany(plugin => plugin.Commands).ToList().AsReadOnly();
-            return new CommandItemViewModel("Show Commands", commands.Concat(Commands), true, "Ctrl+Shift+P");
+            var showPallete = new CommandItemViewModel("Show Command pallete", commands.Concat(Commands), true, "Ctrl+Shift+P");
+
+            Func<ICommandItem, InputBinding> selector = (command) =>
+            {
+                if (command.InputBinding == null)
+                {
+                    return null;
+                }
+
+                if (Settings == null || Settings.KeyBindings.ContainsKey(command.Name) == false)
+                {
+                    return command.InputBinding;
+                }
+
+                var keyGesture = new KeyGestureConverter().ConvertFromString(Settings.KeyBindings[command.Name]);
+                return new InputBinding(command.Command, (KeyGesture)keyGesture);
+            };
+            showPallete.Flatten().ForEach(c => c.InputBinding = selector(c));
+
+            return showPallete;
         }
 
         private FileSystemWatcher CreateSettingsFileWatcher()
@@ -227,10 +250,7 @@ namespace Mmfm
             {
                 return;
             }            
-            Settings = Settings.LoadFromJsonOrDefaults(
-                jsonText,
-                settingsFactory.Defaults()
-            );
+            Settings = Settings.LoadFromJsonOrDefaults(jsonText);
         }
 
         private void SaveSettings()
@@ -258,7 +278,7 @@ namespace Mmfm
 
             if(settingsEdit.Result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
-                Settings = settingsEdit.Settings;
+                Settings = settingsEdit.EndEdit();
                 SaveSettings();
             }
         }
@@ -272,7 +292,7 @@ namespace Mmfm
             driveInfoMonitor = CreateDriveInfoMonitor();
             resourceNames = plugins.Select(p => $"Plugins/{p.GetType().Name}.resources.xaml");
             
-            Settings = settingsFactory.Defaults();
+            Settings.Defaults = Settings = settingsFactory.Defaults();
         }
 
         private void SettingsWatcher_Changed(object sender, FileSystemEventArgs e)
