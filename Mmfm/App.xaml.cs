@@ -38,7 +38,6 @@ namespace Mmfm
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     company.Company.Replace(" ", "_"),
                     assembly.GetName().Name,
-                    assembly.GetName().Version.ToString(),
                     "Settings.json"
                 );
             }
