@@ -16,7 +16,7 @@ namespace Mmfm
 
         private Func<ICommandItem, IEnumerable<ICommandItem>> subCommands = null;
 
-        public InputBinding InputBinding
+        public KeyGesture KeyGesture
         {
             get;
             set;
@@ -28,9 +28,19 @@ namespace Mmfm
         {
             get;
             private set;
-        }     
+        }
 
-        public string Shortcut => new KeyGestureConverter().ConvertToString(InputBinding?.Gesture) ?? (subCommands?.Invoke(this).Count() > 0 ? PathSeparator : "");
+        public string Shortcut
+        {
+            get
+            {
+                if(KeyGesture != null)
+                {
+                    return new KeyGestureConverter().ConvertToString(KeyGesture);
+                }
+                return (subCommands?.Invoke(this).Count() > 0 ? PathSeparator : "");
+            }
+        }
        
         public string DisplayName
         {
@@ -51,7 +61,7 @@ namespace Mmfm
             Command = command;
             if(shortcut != null)
             {
-                InputBinding = new InputBinding(command, (KeyGesture)new KeyGestureConverter().ConvertFromString(shortcut));
+                KeyGesture = (KeyGesture)new KeyGestureConverter().ConvertFromString(shortcut);
             }
         }
 
@@ -81,7 +91,7 @@ namespace Mmfm
 
             if(shortCut != null) 
             {
-                InputBinding = new InputBinding(Command, (KeyGesture)new KeyGestureConverter().ConvertFromString(shortCut));
+                KeyGesture = (KeyGesture)new KeyGestureConverter().ConvertFromString(shortCut);
             }
 
             this.subCommands = subCommands;
@@ -91,7 +101,7 @@ namespace Mmfm
         {
             Name = baseItem.Name;
             DisplayName = baseItem.Name.Replace(CommandItem.PathSeparator.ToString(), $" {PathSeparator} ");
-            InputBinding = baseItem.InputBinding;
+            KeyGesture = baseItem.KeyGesture;
             Command = baseItem.Command;
         }
     }

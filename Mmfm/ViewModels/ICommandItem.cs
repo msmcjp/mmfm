@@ -17,7 +17,7 @@ namespace Mmfm
 
         ICommand Command { get; }
 
-        InputBinding InputBinding { get; set; }
+        KeyGesture KeyGesture { get; set; }
 
         IEnumerable<ICommandItem> SubCommands { get; }
     }

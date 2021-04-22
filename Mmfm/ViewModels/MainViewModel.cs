@@ -41,7 +41,7 @@ namespace Mmfm
                 {
                     return Enumerable.Empty<InputBinding>();
                 }
-                return commandPallete.Flatten().Where(c => c.InputBinding != null).Select(c => c.InputBinding);
+                return commandPallete.Flatten().Where(c => c.KeyGesture != null).Select(c => new InputBinding(c.Command, c.KeyGesture));
             }
         }
 
@@ -134,8 +134,8 @@ namespace Mmfm
                     }),
                     KeyBindings = CreateCommandPallete(plugins.Where(p => p.Name != "UserCommands"))
                         .Flatten()                        
-                        .Where(c => c.InputBinding != null)
-                        .ToDictionary(c => c.Name, c => new KeyGestureConverter().ConvertToString(c.InputBinding.Gesture))
+                        .Where(c => c.KeyGesture != null)
+                        .ToDictionary(c => c.Name, c => new KeyGestureConverter().ConvertToString(c.KeyGesture))
                 };
             },
             Apply: (settings) =>
@@ -160,22 +160,21 @@ namespace Mmfm
             var commands = plugins.SelectMany(plugin => plugin.Commands).ToList().AsReadOnly();
             var showPallete = new CommandItemViewModel("Show Command pallete", commands.Concat(Commands), true, "Ctrl+Shift+P");
 
-            Func<ICommandItem, InputBinding> selector = (command) =>
+            Func<ICommandItem, KeyGesture> selector = (command) =>
             {
-                if (command.InputBinding == null)
+                if (command.KeyGesture == null)
                 {
                     return null;
                 }
 
                 if (Settings == null || Settings.KeyBindings.ContainsKey(command.Name) == false)
                 {
-                    return command.InputBinding;
+                    return command.KeyGesture;
                 }
 
-                var keyGesture = new KeyGestureConverter().ConvertFromString(Settings.KeyBindings[command.Name]);
-                return new InputBinding(command.Command, (KeyGesture)keyGesture);
+                return (KeyGesture)new KeyGestureConverter().ConvertFromString(Settings.KeyBindings[command.Name]);
             };
-            showPallete.Flatten().ForEach(c => c.InputBinding = selector(c));
+            showPallete.Flatten().ForEach(c => c.KeyGesture = selector(c));
 
             return showPallete;
         }
