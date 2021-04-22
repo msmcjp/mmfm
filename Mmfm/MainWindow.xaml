@@ -38,7 +38,8 @@
         <i:EventTrigger EventName="Loaded">
             <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
                                 MethodName="InitializeLicenseAsync"/>
-            <i:InvokeCommandAction Command="{Binding LoadSettingsCommand}" />
+            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=UpdateSettingsCommand}" 
+                                   CommandParameter="{Binding Settings}"/>
             <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
                                 MethodName="RestoreGrid"/>
             <i:InvokeCommandAction Command="{Binding LoadResourcesCommand, RelativeSource={RelativeSource AncestorType=Window}}"

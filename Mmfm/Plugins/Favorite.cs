@@ -102,7 +102,7 @@ namespace Mmfm.Plugins
 
         private bool CanRemovefavorite()
         {
-            return Favorites?.Where(item => item.Path == Navigation.FullPath).Count() != 0;
+            return Favorites?.Where(item => item.Path == Navigation?.FullPath).Count() != 0;
         }
 
         private async Task RemovefavoriteAsync()

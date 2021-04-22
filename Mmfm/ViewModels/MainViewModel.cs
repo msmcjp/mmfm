@@ -108,52 +108,66 @@ namespace Mmfm
                 plugin.Host = DualFileManager;
                 plugin.ResetToDefault();
                 plugin.Messenger = Messenger.Default;
-                plugin.SettingsChanged += Plugin_SettingsChanged;      
             }
 
             return plugins;
         }
 
-        private (Func<Settings> Defaults, Action<Settings> Apply) CreateSettingsFactory(IEnumerable<IPluggable<DualFileManagerViewModel>> plugins) =>
-        (
-            Defaults: () =>
-            {
-                return new Settings()
+        private (Func<Settings> Defaults, Action<Settings> Apply) CreateSettingsFactory(IEnumerable<IPluggable<DualFileManagerViewModel>> plugins)
+        {
+            var settingsFactory = (
+                Defaults: new Func<Settings>(() =>
                 {
-                    FileManagers = new Settings.FileManager[] {
+                    return new Settings()
+                    {
+                        FileManagers = new Settings.FileManager[] {
                         new Settings.FileManager(),
                         new Settings.FileManager()
-                    },
-                    Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
-                    {
-                        if (p.Settings != null)
+                        },
+                        Plugins = plugins.Aggregate(new ExpandoObject(), (o, p) =>
                         {
-                            ((IDictionary<string, object>)o)[p.Name] = p.Settings;
-                        }
-                        return o;
-                    }),
-                    KeyBindings = CreateCommandPallete(plugins.Where(p => p.Name != "UserCommands"))
-                        .Flatten()                        
-                        .Where(c => c.KeyGesture != null)
-                        .ToDictionary(c => c.Name, c => new KeyGestureConverter().ConvertToString(c.KeyGesture))
-                };
-            },
-            Apply: (settings) =>
-            {
-                DualFileManager.Settings = settings.FileManagers;
-                settings.Plugins.Join(
-                    plugins,
-                    s => s.Key,
-                    p => p.Name,
-                    (s, p) => (Settings: s.Value, Plugin: p)
-                ).ToArray().ForEach(x => x.Plugin.Settings = x.Settings);
-                commandPallete = CreateCommandPallete(plugins);
-                OnPropertyChanged(nameof(ShowCommandPalleteCommand));
+                            if (p.Settings != null)
+                            {
+                                ((IDictionary<string, object>)o)[p.Name] = p.Settings;
+                            }
+                            return o;
+                        }),
+                        KeyBindings = CreateCommandPallete(plugins.Where(p => p.Name != "UserCommands"))
+                            .Flatten()
+                            .Where(c => c.KeyGesture != null)
+                            .ToDictionary(c => c.Name, c => new KeyGestureConverter().ConvertToString(c.KeyGesture))
+                    };
+                }),
+                Apply: new Action<Settings>((settings) =>
+                {
+                    foreach (var plugin in plugins)
+                    {
+                        plugin.SettingsChanged -= Plugin_SettingsChanged;
+                    }
 
-                var shortcutGenerator = CreateShortcutsGenerator(plugins.Where(p => p.Shortcuts != null).SelectMany(p => p.Shortcuts));
-                (updateShortcuts = () => DualFileManager.Roots = shortcutGenerator())();
-            }
-        );
+                    DualFileManager.Settings = settings.FileManagers;
+                    settings.Plugins.Join(
+                        plugins,
+                        s => s.Key,
+                        p => p.Name,
+                        (s, p) => (Settings: s.Value, Plugin: p)
+                    ).ToArray().ForEach(x => x.Plugin.Settings = x.Settings);
+
+                    commandPallete = CreateCommandPallete(plugins);
+                    OnPropertyChanged(nameof(ShowCommandPalleteCommand));
+
+                    var shortcutGenerator = CreateShortcutsGenerator(plugins.Where(p => p.Shortcuts != null).SelectMany(p => p.Shortcuts));
+                    (updateShortcuts = () => DualFileManager.Roots = shortcutGenerator())();
+
+                    foreach (var plugin in plugins)
+                    {
+                        plugin.SettingsChanged += Plugin_SettingsChanged;
+                    }
+                })
+            );
+            Settings.Defaults = settingsFactory.Defaults();
+            return settingsFactory;
+        }
 
         private CommandItemViewModel CreateCommandPallete(IEnumerable<IPluggable<DualFileManagerViewModel>> plugins)
         {
@@ -257,19 +271,6 @@ namespace Mmfm
             File.WriteAllText(App.SettingsJsonPath, Settings.Json);
         }
 
-        private ICommand loadSettingsCommand;
-        public ICommand LoadSettingsCommand
-        {
-            get
-            {
-                if (loadSettingsCommand == null)
-                {
-                    loadSettingsCommand = new RelayCommand(() => LoadSettings());
-                }
-                return loadSettingsCommand;
-            }
-        }
-
         private async Task ShowSettingsAsync()
         {
             var settingsEdit = new SettingsEditViewModel(Settings);
@@ -290,8 +291,7 @@ namespace Mmfm
             settingsWatcher = CreateSettingsFileWatcher();
             driveInfoMonitor = CreateDriveInfoMonitor();
             resourceNames = plugins.Select(p => $"Plugins/{p.GetType().Name}.resources.xaml");
-            
-            Settings.Defaults = Settings = settingsFactory.Defaults();
+            LoadSettings();
         }
 
         private void SettingsWatcher_Changed(object sender, FileSystemEventArgs e)
