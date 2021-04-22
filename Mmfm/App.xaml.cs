@@ -45,7 +45,9 @@ namespace Mmfm
 
         private void LogException(Exception ex)
         {
-            
+#if DEBUG == true
+            MessageBox.Show(ex.ToString());
+#endif
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) => LogException((Exception)e.ExceptionObject);
