@@ -95,5 +95,14 @@ namespace Mmfm.Properties {
                 return ResourceManager.GetString("Rename_UnauthorizedException", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   File is opened by other process or you don&apos;t have permission to access. Do you continue to zip file? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Zip_UnauthorizedException {
+            get {
+                return ResourceManager.GetString("Zip_UnauthorizedException", resourceCulture);
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using Msmc.Patterns.Messenger;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace Mmfm.Plugins
             new CommandItemViewModel("Move to Recycle Bin", "Delete", new AsyncRelayCommand(async () => await DeleteFilesAsync(), CanExecute)),
             new CommandItemViewModel("Delete", "Shift+Delete", new AsyncRelayCommand(async () => await DeleteFilesAsync(false), CanExecute)),
             new CommandItemViewModel("Rename", "F2", new AsyncRelayCommand(async () => await RenameFilesAsync(), CanExecute)),
+            new CommandItemViewModel("Zip", null, new AsyncRelayCommand(async () => await ZipAsync(), CanExecute)),
         };
 
         public Messenger Messenger
@@ -112,7 +114,7 @@ namespace Mmfm.Plugins
             return action;
         }
 
-        private bool ConfirmContinueOperation(string messageText)
+        private async Task<bool> ConfirmContinueOperationAsync(string messageText)
         {
             var message = new MessageBoxViewModel
             {
@@ -122,14 +124,14 @@ namespace Mmfm.Plugins
                 Text = messageText
             };
 
-            Messenger.Send(message);
+            await Messenger.SendAsync(message);
 
             switch (message.Result)
             {
                 case MessageBoxResult.Yes:
-                    return true;
-                default:
                     return false;
+                default:
+                    return true;
             }
         }  
 
@@ -209,7 +211,7 @@ namespace Mmfm.Plugins
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        if (ConfirmContinueOperation(Properties.Resources.Copy_UnauthorizedException) == false)
+                        if (await ConfirmContinueOperationAsync(Properties.Resources.Copy_UnauthorizedException) == false)
                         {
                             return true;
                         }
@@ -257,7 +259,7 @@ namespace Mmfm.Plugins
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        return ConfirmContinueOperation(Properties.Resources.Copy_UnauthorizedException);
+                        return await ConfirmContinueOperationAsync(Properties.Resources.Copy_UnauthorizedException);
                     }
 
                     if (restoreReadOnly)
@@ -273,7 +275,7 @@ namespace Mmfm.Plugins
 
         private FileTraverseOperation DeleteOperation(string path, bool moveToRecycleBin)
         {
-            return new FileTraverseOperation(path, (aPath) => Task.Run(()=>
+            return new FileTraverseOperation(path, async (aPath) => 
             {
                 var fi = new FileInfo(aPath);
 
@@ -301,9 +303,9 @@ namespace Mmfm.Plugins
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    return ConfirmContinueOperation(Properties.Resources.Delete_UnauthorizedException);
+                    return await ConfirmContinueOperationAsync(Properties.Resources.Delete_UnauthorizedException);
                 }
-            }));
+            });
         }
 
         private async Task DeleteFilesAsync(bool moveToRecycleBin = true)
@@ -358,13 +360,51 @@ namespace Mmfm.Plugins
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    if (ConfirmContinueOperation(Properties.Resources.Rename_UnauthorizedException))
+                    if (await ConfirmContinueOperationAsync(Properties.Resources.Rename_UnauthorizedException))
                     {
                         continue;
                     }
                     break;
                 }
             }
-        }        
+        }
+
+        private async Task ZipAsync()
+        {
+            var zipPath = Path.Combine(
+                Navigation.FullPath, 
+                Path.ChangeExtension(SelectedPaths.First(), ".zip")
+            ).CopyableFileName();
+
+            using (var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+            {
+                var operations = SelectedPaths.Select(path => ZipOperation(archive, path)).ToArray();
+
+                var dialog = new OperationProgressViewModel(operations)
+                {
+                    Caption = $"Zipping {operations.Sum(o => o.Count)} files."
+                };
+
+                await Messenger.SendAsync(dialog);
+            }
+        }
+
+        private FileTraverseOperation ZipOperation(ZipArchive archive, string path) => new FileTraverseOperation(path, async (aPath) => 
+        {
+            try
+            {
+                if(new FileInfo(aPath).Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    return false;
+                }
+                var entryName = aPath.Substring(Navigation.FullPath.Length).TrimStart(Path.DirectorySeparatorChar);
+                archive.CreateEntryFromFile(aPath, entryName);
+                return false;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return await ConfirmContinueOperationAsync(Properties.Resources.Zip_UnauthorizedException);
+            }
+        });        
     }
 }
