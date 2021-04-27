@@ -175,7 +175,7 @@ namespace Mmfm
 
         public bool IsFolder => Directory.Exists(path);
 
-        public string ModifiedAt => isAlias ? "" : fileInfo.Value.LastWriteTime.ToString("yyyy/MM/dd HH:mm");
+        public string ModifiedAt => isAlias ? "" : fileInfo.Value.LastWriteTime.ToString("g");
 
         public string FileSizeText => isAlias ? "" : FileSize.ToFileSize();
 
