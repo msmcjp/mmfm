@@ -16,6 +16,7 @@
         Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
         BorderThickness="20"
+        FontFamily="{DynamicResource ContentControlThemeFontFamily}"
         PreviewKeyDown="Window_PreviewKeyDown">
   
     <Window.Effect>

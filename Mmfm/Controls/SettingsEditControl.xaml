@@ -50,6 +50,10 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
+                <TextBlock Text="Font" Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <ComboBox SelectedItem="{Binding FontFamily}" ItemsSource="{Binding FontFamilies}" Margin="10" MinWidth="200"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
                 <TextBlock Text="Key bindings" Style="{StaticResource SettingsCategoryTextStyle}"/>
                 <DataGrid ItemsSource="{Binding KeyBindings}" AutoGenerateColumns="False" Margin="20" CanUserAddRows="False">
                     <DataGrid.Columns>

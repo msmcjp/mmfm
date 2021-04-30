@@ -177,8 +177,20 @@ namespace Mmfm
             }
         }
 
+        private string fontFamily;
+        public string FontFamily
+        {
+            get => fontFamily;
+            set
+            {
+                fontFamily = value;
+                OnPropertyChanged(nameof(FontFamily));
+            }
+        }
+
         public Settings()
         {
+            FontFamily = Defaults?.FontFamily ?? "Segoe UI";
             HotKey = Defaults?.HotKey ?? "";
             Theme = Defaults?.Theme ?? ModernWpf.ApplicationTheme.Light;
             AccentColor = Defaults?.AccentColor ?? "#FF0080C0";

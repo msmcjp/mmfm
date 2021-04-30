@@ -271,6 +271,7 @@ namespace Mmfm
                 {
                     updateSettingsCommand = new AsyncRelayCommand<Settings>(async (settings) => 
                     {
+                        SetFontFamily(new FontFamily(settings.FontFamily));
                         ModernWpf.ThemeManager.Current.ApplicationTheme = settings.Theme;
 
                         try
@@ -293,6 +294,22 @@ namespace Mmfm
                     });
                 }
                 return updateSettingsCommand;
+            }
+        }
+
+        private void SetFontFamily(FontFamily fontFamily)
+        {
+            object[] keys =
+            {
+                SystemFonts.MessageFontFamilyKey,
+                "ContentControlThemeFontFamily",
+                "PivotHeaderItemFontFamily",
+                "PivotTitleFontFamily"
+            };
+
+            foreach(var key in keys)
+            {
+                App.Current.Resources[key] = fontFamily;
             }
         }
 

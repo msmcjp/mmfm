@@ -87,7 +87,6 @@
                 <Setter Property="IsTextSearchEnabled" Value="True"/>
                 <Setter Property="SelectionMode" Value="Single"/>
                 <Setter Property="IsTabStop" Value="False"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
                 <Setter Property="TextSearch.TextPath" Value="Name"/>
             </Style>
 

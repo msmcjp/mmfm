@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace Mmfm
 {
@@ -70,6 +71,18 @@ namespace Mmfm
             {
                 settings.AccentColor = value;
                 OnPropertyChanged(nameof(AccentColor));
+            }
+        }
+
+        public IEnumerable<string> FontFamilies => Fonts.SystemFontFamilies.Select(f => f.ToString());
+
+        public string FontFamily
+        {
+            get => settings.FontFamily;
+            set
+            {
+                settings.FontFamily = value;
+                OnPropertyChanged(nameof(FontFamily));
             }
         }
 
