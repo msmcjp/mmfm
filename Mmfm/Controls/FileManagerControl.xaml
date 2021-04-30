@@ -55,7 +55,7 @@
             <DataTemplate x:Key="NameCell">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{Binding IconImage, IsAsync=True}" Width="25" Height="25" Opacity="{Binding IconOpacity}" Margin="0,5,5,5"/>
-                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="{DynamicResource FileManagerFontSize}"/>
                 </StackPanel>
             </DataTemplate>
 
@@ -132,6 +132,7 @@
                         </local:InteractivityTemplate>
                     </Setter.Value>
                 </Setter>
+                <Setter Property="FontSize" Value="{DynamicResource FileManagerFontSize}"/>
             </Style>
 
             <DataTemplate x:Key="DragAdorner">
@@ -155,7 +156,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{Binding Navigation.Title}" FontSize="14" FontWeight="Bold" Margin="5" Visibility="{Binding Navigation.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
+        <TextBlock Grid.Row="0" Text="{Binding Navigation.Title}" FontSize="{DynamicResource FileManagerFontSize}" FontWeight="Bold" Margin="5" Visibility="{Binding Navigation.IsNotRoot, Converter={StaticResource BoolVisibilityConverter}}" />
 
         <ListView x:Name="DirectoryList"
                   Grid.Row="1" 
@@ -193,8 +194,8 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Height="35">
-                                    <Label Content="{Binding ModifiedAt}" VerticalAlignment="Center"/>
+                                <Border MinHeight="35">
+                                    <Label Content="{Binding ModifiedAt}" VerticalAlignment="Center" FontSize="{DynamicResource FileManagerFontSize}"/>
                                 </Border>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -238,8 +239,8 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Height="35">
-                                    <Label Content="{Binding Extension}" VerticalAlignment="Center"/>
+                                <Border MinHeight="35">
+                                    <Label Content="{Binding Extension}" VerticalAlignment="Center" FontSize="{DynamicResource FileManagerFontSize}"/>
                                 </Border>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -249,8 +250,8 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Height="35">
-                                    <Label Content="{Binding ModifiedAt}" VerticalAlignment="Center"/>
+                                <Border MinHeight="35">
+                                    <Label Content="{Binding ModifiedAt}" VerticalAlignment="Center"  FontSize="{DynamicResource FileManagerFontSize}"/>
                                 </Border>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -261,8 +262,8 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Height="35">
-                                    <Label Content="{Binding FileSizeText}" VerticalAlignment="Center"/>
+                                <Border MinHeight="35">
+                                    <Label Content="{Binding FileSizeText}" VerticalAlignment="Center" FontSize="{DynamicResource FileManagerFontSize}"/>
                                 </Border>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

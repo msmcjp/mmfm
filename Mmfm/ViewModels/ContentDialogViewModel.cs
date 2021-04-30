@@ -15,10 +15,13 @@ namespace Mmfm
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName]string propertyName = null, bool needValidation = true)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            Validate(propertyName);
+            if (needValidation)
+            {
+                Validate(propertyName);
+            }
         }
         #endregion
 
@@ -42,9 +45,14 @@ namespace Mmfm
                 );
             }
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+
+            OnPropertyChanged(nameof(HasErrors), false);
+            OnPropertyChanged(nameof(HasNoErrors), false);
         }
 
         public bool HasErrors => validationErrors.SelectMany(error => error.Value).Count() > 0;
+
+        public bool HasNoErrors => !HasErrors;
 
         public System.Collections.IEnumerable GetErrors(string propertyName) => validationErrors.ContainsKey(propertyName) ? validationErrors[propertyName] : Enumerable.Empty<string>();
         #endregion

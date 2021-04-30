@@ -68,7 +68,7 @@ namespace Mmfm
             InitializeComponent();
 
             Messenger.Default.RegisterAsyncMessage<MessageBoxViewModel>(
-            this, 
+            this,
             false,
             async (vm) =>
             {
@@ -85,11 +85,11 @@ namespace Mmfm
             this,
             true,
             (Func<ContentDialogViewModel, Task>)(async (vm) =>
-            {                   
+            {
                 await this.Dispatcher.Invoke(async () =>
                 {
                     var dataTemplate = Application.Current.FindResource(new DataTemplateKey(vm.GetType())) as DataTemplate;
-                    if(dataTemplate == null)
+                    if (dataTemplate == null)
                     {
                         return;
                     }
@@ -98,7 +98,7 @@ namespace Mmfm
                     contentDialog.DataContext = vm;
 
                     vm.Result = await ShowContentDialog(contentDialog);
-                });                   
+                });
             }));
 
             Messenger.Default.Register<OverlayViewModel>(this, (vm) =>
@@ -180,7 +180,7 @@ namespace Mmfm
             var defaults = Properties.Settings.Default;
             var location = defaults.WindowLocation;
             var size = defaults.WindowSize;
-            if(location.X >= 0 && location.Y >= 0)
+            if (location.X >= 0 && location.Y >= 0)
             {
                 Left = location.X;
                 Top = location.Y;
@@ -267,11 +267,12 @@ namespace Mmfm
         {
             get
             {
-                if(updateSettingsCommand == null)
+                if (updateSettingsCommand == null)
                 {
-                    updateSettingsCommand = new AsyncRelayCommand<Settings>(async (settings) => 
+                    updateSettingsCommand = new AsyncRelayCommand<Settings>(async (settings) =>
                     {
                         SetFontFamily(new FontFamily(settings.FontFamily));
+                        SetFontSize(settings.FontSize);
                         ModernWpf.ThemeManager.Current.ApplicationTheme = settings.Theme;
 
                         try
@@ -307,10 +308,15 @@ namespace Mmfm
                 "PivotTitleFontFamily"
             };
 
-            foreach(var key in keys)
+            foreach (var key in keys)
             {
                 App.Current.Resources[key] = fontFamily;
             }
+        }
+
+        private void SetFontSize(double fontSize)
+        {
+            App.Current.Resources["FileManagerFontSize"] = fontSize;
         }
 
         private string[] GetAssemblyResourceNames()

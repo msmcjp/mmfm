@@ -10,6 +10,7 @@
              xmlns:pt="http://propertytools.org/wpf"
              mc:Ignorable="d"
              PrimaryButtonText="_Save"
+             IsPrimaryButtonEnabled="{Binding HasNoErrors}"
              CloseButtonText="_Cancel"
              DefaultButton="Close"
              Title="Settings">
@@ -51,7 +52,21 @@
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Font" Style="{StaticResource SettingsCategoryTextStyle}"/>
-                <ComboBox SelectedItem="{Binding FontFamily}" ItemsSource="{Binding FontFamilies}" Margin="10" MinWidth="200"/>
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox SelectedItem="{Binding FontFamily}" ItemsSource="{Binding FontFamilies}" Margin="10" MinWidth="200"/>
+                    <TextBox x:Name="FontSize" Text="{Binding FontSize}" VerticalAlignment="Center">
+                        <i:Interaction.Behaviors>
+                            <local:NumericOnlyTextBoxBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding ElementName=FontSize, Path=(Validation.Errors)}" Margin="10,0" IsTabStop="False">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ErrorContent}" Foreground="Red"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Key bindings" Style="{StaticResource SettingsCategoryTextStyle}"/>

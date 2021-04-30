@@ -86,6 +86,17 @@ namespace Mmfm
             }
         }
 
+        [Range(6, 64, ErrorMessage = "{0} must be between {1} and {2}.")]
+        public int FontSize
+        {
+            get => settings.FontSize;
+            set
+            {
+                settings.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
+            }
+        }
+
         public IEnumerable<KeyBinding> KeyBindings => keyBindings;      
 
         public IEnumerable<PluginSettingEditViewModel> Plugins => plugins;

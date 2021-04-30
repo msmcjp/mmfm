@@ -40,6 +40,8 @@
                     <DataTemplate DataType="{x:Type local:StoreContextViewModel}">
                         <local:StoreContextControl/>
                     </DataTemplate>
+
+                    <sys:Double x:Key="FileManagerFontSize">14</sys:Double>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
