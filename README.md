@@ -1,16 +1,24 @@
-# mmfm
-Modern Dual-Pane Flie Manager for Windows 10.
+![](mmfm-logo.png)
 
-Folders and files are sepearated to another pane.
+mmfm is a modern Dual-Pane File Manager App for Windows 10.
+
+## Screenshots
+
+Dual pane 
 ![main1](Screenshots/main1.PNG)
 
-Shows Command pallete with Ctrl+Shift+P.
+Command palette like VSCode, Windows Terminal.
 ![main2](Screenshots/main2.png)
 
 Fully customizable.
 
 ![](Screenshots/main3.png)
 
-Light theme 
+Light theme.
 
 ![](Screenshots/light-theme-main.png)
+
+## Documents
+
+[Github Pages](https://msmcjp.github.io/mmfm)
+
