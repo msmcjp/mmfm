@@ -61,6 +61,15 @@ namespace Mmfm.Properties {
         }
         
         /// <summary>
+        ///   Cannot process file or directory. Do you continue to copy files? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Copy_IOException {
+            get {
+                return ResourceManager.GetString("Copy_IOException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   File is opened by other process or you don&apos;t have permission to access. Do you continue to copy files? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Copy_UnauthorizedException {

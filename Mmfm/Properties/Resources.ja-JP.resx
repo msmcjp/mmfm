@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Copy_IOException" xml:space="preserve">
+    <value>ファイルのコピーに失敗しました。コピーを続けますか？</value>
+  </data>
   <data name="Copy_UnauthorizedException" xml:space="preserve">
     <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないためコピーできませんでした。コピーを続けますか？</value>
   </data>

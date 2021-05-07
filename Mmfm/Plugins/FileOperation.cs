@@ -216,6 +216,10 @@ namespace Mmfm.Plugins
                             return true;
                         }
                     }
+                    catch(IOException)
+                    {
+
+                    }
                     return false;
                 }
 
@@ -258,6 +262,10 @@ namespace Mmfm.Plugins
                         }
                     }
                     catch (UnauthorizedAccessException)
+                    {
+                        return await ConfirmContinueOperationAsync(Properties.Resources.Copy_UnauthorizedException);
+                    }
+                    catch (IOException)
                     {
                         return await ConfirmContinueOperationAsync(Properties.Resources.Copy_UnauthorizedException);
                     }
