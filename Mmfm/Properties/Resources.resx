@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccentColor_Invalid" xml:space="preserve">
+    <value>Accent color is invalid.</value>
+  </data>
+  <data name="AccentColor_InvalidText" xml:space="preserve">
+    <value>{0} is invalid color format.</value>
+  </data>
+  <data name="Caption_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
   <data name="Copy_IOException" xml:space="preserve">
     <value>Cannot process file or directory. Do you continue to copy files?</value>
   </data>
@@ -126,11 +135,131 @@
   <data name="Delete_UnauthorizedException" xml:space="preserve">
     <value>File is opened by other process or you don't have permission to access. Do you continue to delete files?</value>
   </data>
+  <data name="Desktop" xml:space="preserve">
+    <value>Desktop</value>
+  </data>
+  <data name="DriveInfo_Local" xml:space="preserve">
+    <value>Local Disk</value>
+  </data>
+  <data name="DriveInfo_Network" xml:space="preserve">
+    <value>Network Drive</value>
+  </data>
+  <data name="DriveInfo_Removable" xml:space="preserve">
+    <value>Removable Media</value>
+  </data>
+  <data name="Favorite_ItemGroup" xml:space="preserve">
+    <value>Favorite</value>
+  </data>
+  <data name="Favorite_NotRegistered" xml:space="preserve">
+    <value>{0} is not registered to favorite.</value>
+  </data>
+  <data name="Favorite_Remove" xml:space="preserve">
+    <value>Remove {0} from favorite?</value>
+  </data>
+  <data name="FileDropList_Message" xml:space="preserve">
+    <value>\nand other {0} files/folders.</value>
+  </data>
+  <data name="Files_Extension" xml:space="preserve">
+    <value>Extension</value>
+  </data>
+  <data name="Files_ModifiedAt" xml:space="preserve">
+    <value>Modified at    </value>
+  </data>
+  <data name="Files_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Files_Size" xml:space="preserve">
+    <value>Size     </value>
+  </data>
+  <data name="File_Copying" xml:space="preserve">
+    <value>Copying</value>
+  </data>
+  <data name="File_Deleting" xml:space="preserve">
+    <value>Are you sure you want to delete {0}?</value>
+  </data>
+  <data name="File_DeletingProgress" xml:space="preserve">
+    <value>Deleting {0} files.</value>
+  </data>
+  <data name="File_Moving" xml:space="preserve">
+    <value>Moving</value>
+  </data>
+  <data name="File_Recycling" xml:space="preserve">
+    <value>Are you sure you want to send {0} to Recylce-Bin?</value>
+  </data>
+  <data name="File_Selecting" xml:space="preserve">
+    <value>Selecting </value>
+  </data>
+  <data name="File_Zipping" xml:space="preserve">
+    <value>Zipping {0} files.</value>
+  </data>
+  <data name="Folders_ModifiedAt" xml:space="preserve">
+    <value>Modified at      </value>
+  </data>
+  <data name="Folders_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="HoKey_InUse" xml:space="preserve">
+    <value>Hot-key is already in use. Please use another key.</value>
+  </data>
+  <data name="HotKey_Invalid" xml:space="preserve">
+    <value>Invalid Hot-key definition.</value>
+  </data>
+  <data name="HotKey_InvalidText" xml:space="preserve">
+    <value>{0} is invalid format.</value>
+  </data>
+  <data name="HotKey_NotSupported" xml:space="preserve">
+    <value>Hot-key is not supported.</value>
+  </data>
+  <data name="MessageBox_Cancel" xml:space="preserve">
+    <value>_Cancel</value>
+  </data>
+  <data name="MessageBox_Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="MessageBox_No" xml:space="preserve">
+    <value>_No</value>
+  </data>
+  <data name="MessageBox_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="MessageBox_Yes" xml:space="preserve">
+    <value>_Yes</value>
+  </data>
+  <data name="MyDocuments" xml:space="preserve">
+    <value>My Documents</value>
+  </data>
+  <data name="MyPictures" xml:space="preserve">
+    <value>My Pictures</value>
+  </data>
+  <data name="Navigation_QuickAccess" xml:space="preserve">
+    <value>Quick Access</value>
+  </data>
   <data name="Posfix_Copy" xml:space="preserve">
-    <value>- Copy</value>
+    <value> - Copy</value>
+  </data>
+  <data name="Rename_Invalid" xml:space="preserve">
+    <value>Includes invalid char.</value>
+  </data>
+  <data name="Rename_NotInput" xml:space="preserve">
+    <value>Filename is not input.</value>
   </data>
   <data name="Rename_UnauthorizedException" xml:space="preserve">
     <value>File is opened by other process or you don't have permission to access. Do you continue to rename file?</value>
+  </data>
+  <data name="Settings_FontSizeRange" xml:space="preserve">
+    <value>{0} must be between {1} and {2}.</value>
+  </data>
+  <data name="Store_ExpiredContent" xml:space="preserve">
+    <value>Thank you for using mmfm.&lt;LineBreak/&gt;If you would like to continue to use, please purchase.</value>
+  </data>
+  <data name="Store_ExpiredTitle" xml:space="preserve">
+    <value>Trial period has been expired.</value>
+  </data>
+  <data name="Store_NotExipredTitle" xml:space="preserve">
+    <value>Trial period will end in a {0} days.</value>
+  </data>
+  <data name="Store_NotExpiredContent" xml:space="preserve">
+    <value>If you were touched, please puchase.</value>
   </data>
   <data name="Zip_UnauthorizedException" xml:space="preserve">
     <value>File is opened by other process or you don't have permission to access. Do you continue to zip file?</value>

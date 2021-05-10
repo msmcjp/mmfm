@@ -21,7 +21,7 @@ namespace Mmfm.Converters
                 return null;
             }
 
-            var others = paths.Length > 1 ? $"\nand other {paths.Length - 1} files/folders." : "";
+            var others = paths.Length > 1 ? string.Format(Properties.Resources.FileDropList_Message, paths.Length-1) : "";
             return Path.GetFileName(paths.First()) + others;
         }
 

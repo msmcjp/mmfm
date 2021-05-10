@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccentColor_Invalid" xml:space="preserve">
+    <value>Accent color is invalid.</value>
+  </data>
+  <data name="AccentColor_InvalidText" xml:space="preserve">
+    <value>{0} は無効な色指定です。</value>
+  </data>
+  <data name="Caption_Error" xml:space="preserve">
+    <value>エラー</value>
+  </data>
   <data name="Copy_IOException" xml:space="preserve">
     <value>ファイルのコピーに失敗しました。コピーを続けますか？</value>
   </data>
@@ -126,11 +135,131 @@
   <data name="Delete_UnauthorizedException" xml:space="preserve">
     <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないためコピーできませんでした。削除を続けますか？</value>
   </data>
+  <data name="Desktop" xml:space="preserve">
+    <value>デスクトップ</value>
+  </data>
+  <data name="DriveInfo_Local" xml:space="preserve">
+    <value>ローカルディスク</value>
+  </data>
+  <data name="DriveInfo_Network" xml:space="preserve">
+    <value>ネットワークドライブ</value>
+  </data>
+  <data name="DriveInfo_Removable" xml:space="preserve">
+    <value>リムーバブルメディア</value>
+  </data>
+  <data name="Favorite_ItemGroup" xml:space="preserve">
+    <value>お気に入り</value>
+  </data>
+  <data name="Favorite_NotRegistered" xml:space="preserve">
+    <value>{0} はお気に入りに登録されませんでした。</value>
+  </data>
+  <data name="Favorite_Remove" xml:space="preserve">
+    <value>{0} をお気に入りから削除しますか?</value>
+  </data>
+  <data name="FileDropList_Message" xml:space="preserve">
+    <value>\nその他 {0} ファイル/フォルダ</value>
+  </data>
+  <data name="Files_Extension" xml:space="preserve">
+    <value>拡張子</value>
+  </data>
+  <data name="Files_ModifiedAt" xml:space="preserve">
+    <value>更新日時  </value>
+  </data>
+  <data name="Files_Name" xml:space="preserve">
+    <value>ファイル名</value>
+  </data>
+  <data name="Files_Size" xml:space="preserve">
+    <value>サイズ     </value>
+  </data>
+  <data name="File_Copying" xml:space="preserve">
+    <value>コピー中</value>
+  </data>
+  <data name="File_Deleting" xml:space="preserve">
+    <value>本当に {0} を削除しますか？</value>
+  </data>
+  <data name="File_DeletingProgress" xml:space="preserve">
+    <value>{0} ファイルを削除しています...</value>
+  </data>
+  <data name="File_Moving" xml:space="preserve">
+    <value>移動中</value>
+  </data>
+  <data name="File_Recycling" xml:space="preserve">
+    <value>本当に {0} ごみ箱へ移動しますか？</value>
+  </data>
+  <data name="File_Selecting" xml:space="preserve">
+    <value>選択中: </value>
+  </data>
+  <data name="File_Zipping" xml:space="preserve">
+    <value>{0} ファイルを圧縮しています...</value>
+  </data>
+  <data name="Folders_ModifiedAt" xml:space="preserve">
+    <value>更新日      </value>
+  </data>
+  <data name="Folders_Name" xml:space="preserve">
+    <value>ファイル名</value>
+  </data>
+  <data name="HotKey_InUse" xml:space="preserve">
+    <value>ホットキーは既に使用されています。他のホットキーを使用してください。</value>
+  </data>
+  <data name="HotKey_Invalid" xml:space="preserve">
+    <value>無効なホットキーが指定されました。</value>
+  </data>
+  <data name="HotKey_InvalidText" xml:space="preserve">
+    <value>{0} は無効なフォーマットです。</value>
+  </data>
+  <data name="HotKey_NotSupported" xml:space="preserve">
+    <value>指定されたホットキーはサポートされていません。</value>
+  </data>
+  <data name="MessageBox_Cancel" xml:space="preserve">
+    <value>キャンセル(_C)</value>
+  </data>
+  <data name="MessageBox_Confirm" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="MessageBox_No" xml:space="preserve">
+    <value>いいえ(_N)</value>
+  </data>
+  <data name="MessageBox_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="MessageBox_Yes" xml:space="preserve">
+    <value>はい(_Y)</value>
+  </data>
+  <data name="MyDocuments" xml:space="preserve">
+    <value>マイ ドキュメント</value>
+  </data>
+  <data name="MyPictures" xml:space="preserve">
+    <value>マイ ピクチャ</value>
+  </data>
+  <data name="Navigation_QuickAccess" xml:space="preserve">
+    <value>クイック アクセス</value>
+  </data>
   <data name="Posfix_Copy" xml:space="preserve">
-    <value>- コピー</value>
+    <value> - コピー</value>
+  </data>
+  <data name="Rename_Invalid" xml:space="preserve">
+    <value>無効な文字が含まれています。</value>
+  </data>
+  <data name="Rename_NotInput" xml:space="preserve">
+    <value>ファイル名が入力されていません。</value>
   </data>
   <data name="Rename_UnauthorizedException" xml:space="preserve">
     <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないため名前を変更できませんでした。名前の変更を続けますか？</value>
+  </data>
+  <data name="Settings_FontSizeRange" xml:space="preserve">
+    <value>{0} は {1} ～ {2} の範囲で指定してください。</value>
+  </data>
+  <data name="Store_ExpiredContent" xml:space="preserve">
+    <value>mmfmをご使用いただきありがとうございました。&lt;LineBreak/&gt;引き続きご使用になりたい場合はご購入ください。</value>
+  </data>
+  <data name="Store_ExpiredTitle" xml:space="preserve">
+    <value>試用期間は終了いたしました。</value>
+  </data>
+  <data name="Store_NotExipredTitle" xml:space="preserve">
+    <value>試用期限まであと {0} 日です。</value>
+  </data>
+  <data name="Store_NotExpiredContent" xml:space="preserve">
+    <value>お気に召しましたら是非ご購入をご検討ください。</value>
   </data>
   <data name="Zip_UnauthorizedException" xml:space="preserve">
     <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないためZIPアーカイブに追加できませんでした。ZIPアーカイブを続けますか？</value>

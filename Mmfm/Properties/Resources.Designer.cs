@@ -61,6 +61,33 @@ namespace Mmfm.Properties {
         }
         
         /// <summary>
+        ///   Accent color is invalid. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string AccentColor_Invalid {
+            get {
+                return ResourceManager.GetString("AccentColor_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {0} is invalid color format. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string AccentColor_InvalidText {
+            get {
+                return ResourceManager.GetString("AccentColor_InvalidText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Error に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Caption_Error {
+            get {
+                return ResourceManager.GetString("Caption_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cannot process file or directory. Do you continue to copy files? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Copy_IOException {
@@ -88,11 +115,326 @@ namespace Mmfm.Properties {
         }
         
         /// <summary>
-        ///   - Copy に類似しているローカライズされた文字列を検索します。
+        ///   Desktop に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Desktop {
+            get {
+                return ResourceManager.GetString("Desktop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Local Disk に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DriveInfo_Local {
+            get {
+                return ResourceManager.GetString("DriveInfo_Local", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Network Drive に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DriveInfo_Network {
+            get {
+                return ResourceManager.GetString("DriveInfo_Network", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Removable Media に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DriveInfo_Removable {
+            get {
+                return ResourceManager.GetString("DriveInfo_Removable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Favorite に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Favorite_ItemGroup {
+            get {
+                return ResourceManager.GetString("Favorite_ItemGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {0} is not registered to favorite. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Favorite_NotRegistered {
+            get {
+                return ResourceManager.GetString("Favorite_NotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Remove {0} from favorite? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Favorite_Remove {
+            get {
+                return ResourceManager.GetString("Favorite_Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Copying に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string File_Copying {
+            get {
+                return ResourceManager.GetString("File_Copying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to delete {0}? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string File_Deleting {
+            get {
+                return ResourceManager.GetString("File_Deleting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Deleting {0} files. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string File_DeletingProgress {
+            get {
+                return ResourceManager.GetString("File_DeletingProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Moving に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string File_Moving {
+            get {
+                return ResourceManager.GetString("File_Moving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Are you sure you want to send {0} to Recylce-Bin? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string File_Recycling {
+            get {
+                return ResourceManager.GetString("File_Recycling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Selecting  に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string File_Selecting {
+            get {
+                return ResourceManager.GetString("File_Selecting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Zipping {0} files. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string File_Zipping {
+            get {
+                return ResourceManager.GetString("File_Zipping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   \nand other {0} files/folders. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FileDropList_Message {
+            get {
+                return ResourceManager.GetString("FileDropList_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Extension に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Files_Extension {
+            get {
+                return ResourceManager.GetString("Files_Extension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Modified at     に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Files_ModifiedAt {
+            get {
+                return ResourceManager.GetString("Files_ModifiedAt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Files_Name {
+            get {
+                return ResourceManager.GetString("Files_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Size      に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Files_Size {
+            get {
+                return ResourceManager.GetString("Files_Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Modified at       に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Folders_ModifiedAt {
+            get {
+                return ResourceManager.GetString("Folders_ModifiedAt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Folders_Name {
+            get {
+                return ResourceManager.GetString("Folders_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Hot-key is already in use. Please use another key. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HoKey_InUse {
+            get {
+                return ResourceManager.GetString("HoKey_InUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Invalid Hot-key definition. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HotKey_Invalid {
+            get {
+                return ResourceManager.GetString("HotKey_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {0} is invalid format. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HotKey_InvalidText {
+            get {
+                return ResourceManager.GetString("HotKey_InvalidText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Hot-key is not supported. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string HotKey_NotSupported {
+            get {
+                return ResourceManager.GetString("HotKey_NotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   _Cancel に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageBox_Cancel {
+            get {
+                return ResourceManager.GetString("MessageBox_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Confirm に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageBox_Confirm {
+            get {
+                return ResourceManager.GetString("MessageBox_Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   _No に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageBox_No {
+            get {
+                return ResourceManager.GetString("MessageBox_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   _OK に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageBox_OK {
+            get {
+                return ResourceManager.GetString("MessageBox_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   _Yes に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MessageBox_Yes {
+            get {
+                return ResourceManager.GetString("MessageBox_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   My Documents に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MyDocuments {
+            get {
+                return ResourceManager.GetString("MyDocuments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   My Pictures に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string MyPictures {
+            get {
+                return ResourceManager.GetString("MyPictures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Quick Access に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Navigation_QuickAccess {
+            get {
+                return ResourceManager.GetString("Navigation_QuickAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    - Copy に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string Posfix_Copy {
             get {
                 return ResourceManager.GetString("Posfix_Copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Includes invalid char. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Rename_Invalid {
+            get {
+                return ResourceManager.GetString("Rename_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Filename is not input. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Rename_NotInput {
+            get {
+                return ResourceManager.GetString("Rename_NotInput", resourceCulture);
             }
         }
         
@@ -102,6 +444,51 @@ namespace Mmfm.Properties {
         internal static string Rename_UnauthorizedException {
             get {
                 return ResourceManager.GetString("Rename_UnauthorizedException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {0} must be between {1} and {2}. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Settings_FontSizeRange {
+            get {
+                return ResourceManager.GetString("Settings_FontSizeRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Thank you for using mmfm.&lt;LineBreak/&gt;If you would like to continue to use, please purchase. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Store_ExpiredContent {
+            get {
+                return ResourceManager.GetString("Store_ExpiredContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Trial period has been expired. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Store_ExpiredTitle {
+            get {
+                return ResourceManager.GetString("Store_ExpiredTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Trial period will end in a {0} days. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Store_NotExipredTitle {
+            get {
+                return ResourceManager.GetString("Store_NotExipredTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   If you were touched, please puchase. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Store_NotExpiredContent {
+            get {
+                return ResourceManager.GetString("Store_NotExpiredContent", resourceCulture);
             }
         }
         

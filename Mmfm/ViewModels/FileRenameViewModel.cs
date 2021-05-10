@@ -57,8 +57,8 @@ namespace Mmfm
             }
         }
 
-        [Required(ErrorMessage = "Filename is not input.")]
-        [ValidFileName(ErrorMessage = "Includes invalid char.")]
+        [Required(ErrorMessageResourceType =typeof(Properties.Resources), ErrorMessageResourceName ="Rename_NotInput")]
+        [ValidFileName(ErrorMessageResourceType = typeof(Properties.Resources), ErrorMessageResourceName = "Rename_Invalid")]
         public string NextFileName => fileNameWithoutExtension?.Length + fileExtension?.Length > 0 ? $"{FileNameWithoutExtension}.{FileExtension}" : "";
 
         public bool CanRename => GetErrors(nameof(NextFileName)).GetEnumerator().MoveNext() == false;

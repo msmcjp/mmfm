@@ -17,13 +17,13 @@ namespace Mmfm
             this.appLicense = appLicense;
             if (IsNotExpired)
             {
-                title = $"Trial period will end in a {(int)(appLicense.ExpirationDate - DateTime.Now).TotalDays} days.";
-                content = "If you were touched, please puchase.";
+                title = string.Format(Properties.Resources.Store_NotExipredTitle, (int)(appLicense.ExpirationDate - DateTime.Now).TotalDays);
+                content = Properties.Resources.Store_NotExpiredContent;
             }
             else
             {
-                title = "Trial period has been expired.";
-                content = "Thank you for using mmfm.<LineBreak/>If you would like to continue to use, please purchase.";
+                title = Properties.Resources.Store_ExpiredTitle;
+                content = Properties.Resources.Store_ExpiredContent;
             }
         }
 

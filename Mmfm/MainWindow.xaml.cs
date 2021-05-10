@@ -233,7 +233,7 @@ namespace Mmfm
             {
                 var messageBox = new MessageBoxViewModel
                 {
-                    Caption = "Hot-key is not supported.",
+                    Caption = Properties.Resources.HotKey_NotSupported,
                     Button = MessageBoxButton.OK,
                     Icon = MessageBoxImage.Error,
                 };
@@ -243,8 +243,8 @@ namespace Mmfm
             {
                 var messageBox = new MessageBoxViewModel
                 {
-                    Caption = "Invalid Hot-key definition.",
-                    Text = $"{keyGestureString} is invalid format.",
+                    Caption = Properties.Resources.HotKey_Invalid,
+                    Text = string.Format(Properties.Resources.HotKey_InvalidText, keyGestureString),
                     Button = MessageBoxButton.OK,
                     Icon = MessageBoxImage.Error,
                 };
@@ -254,7 +254,7 @@ namespace Mmfm
             {
                 var messageBox = new MessageBoxViewModel
                 {
-                    Caption = "Hot-key is already in use. Please use another key.",
+                    Caption = Properties.Resources.HoKey_InUse,
                     Button = MessageBoxButton.OK,
                     Icon = MessageBoxImage.Error,
                 };
@@ -283,8 +283,8 @@ namespace Mmfm
                         {
                             await Messenger.Default.SendAsync(new MessageBoxViewModel
                             {
-                                Caption = "Accent color is invalid.",
-                                Text = $"{settings.AccentColor} is invalid color format.",
+                                Caption = Properties.Resources.AccentColor_Invalid,
+                                Text = string.Format(Properties.Resources.AccentColor_InvalidText, settings.AccentColor),
                                 Button = MessageBoxButton.OK
                             });
                         }

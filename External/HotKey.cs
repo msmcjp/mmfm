@@ -81,7 +81,7 @@ namespace HotKey
             isKeyRegistered = HotKeyWinApi.RegisterHotKey(handle, id, ModifierKey, (uint)KeyInterop.VirtualKeyFromKey(Key));
             if (!isKeyRegistered)
             {
-                throw new ApplicationException("Hotkey already in use.");
+                throw new ApplicationException(Mmfm.Properties.Resources.HoKey_InUse);
             }
         }
 

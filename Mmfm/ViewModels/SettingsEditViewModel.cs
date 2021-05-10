@@ -86,7 +86,7 @@ namespace Mmfm
             }
         }
 
-        [Range(6, 64, ErrorMessage = "{0} must be between {1} and {2}.")]
+        [Range(6, 64, ErrorMessageResourceType=typeof(Properties.Resources), ErrorMessageResourceName = "Settings_FontSizeRange")]
         public int FontSize
         {
             get => settings.FontSize;

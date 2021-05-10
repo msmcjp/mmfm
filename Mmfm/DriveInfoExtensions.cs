@@ -14,13 +14,13 @@ namespace Mmfm
             switch (di.DriveType)
             {
                 case DriveType.Fixed:
-                    return "Local Disk";
+                    return Properties.Resources.DriveInfo_Local;
 
                 case DriveType.Network:
-                    return "Network Drive";
+                    return Properties.Resources.DriveInfo_Network; 
 
                 case DriveType.Removable:
-                    return "Removable Media";
+                    return Properties.Resources.DriveInfo_Removable;
 
                 default:
                     return null;

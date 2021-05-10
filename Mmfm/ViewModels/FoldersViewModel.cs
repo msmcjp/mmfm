@@ -16,8 +16,8 @@ namespace Mmfm
 
         public FoldersViewModel(Action<FileViewModel> action) : base(new Dictionary<string, ISortDescription<FileViewModel>>
         {
-            { "Name" , new SortDescriptionViewModel<FileViewModel>("Name", x => x.Name) },
-            { "Modified" ,new SortDescriptionViewModel<FileViewModel>("Modified", x => x.ModifiedAt, "Modified at    ") },
+            { "Name" , new SortDescriptionViewModel<FileViewModel>("Name", x => x.Name, Properties.Resources.Folders_Name) },
+            { "Modified" ,new SortDescriptionViewModel<FileViewModel>("Modified", x => x.ModifiedAt, Properties.Resources.Folders_ModifiedAt) },
         })
         {
             LaunchAction = action;

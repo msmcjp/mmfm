@@ -21,23 +21,23 @@ namespace Mmfm
             switch (messageBox.Button)
             {
                 case MessageBoxButton.OK:
-                    contentDialog.PrimaryButtonText = "_OK";
+                    contentDialog.PrimaryButtonText = Properties.Resources.MessageBox_OK;
                     contentDialog.DefaultButton = ContentDialogButton.Primary;
                     break;
                 case MessageBoxButton.OKCancel:
-                    contentDialog.PrimaryButtonText = "_OK";
-                    contentDialog.CloseButtonText = "_Cancel";
+                    contentDialog.PrimaryButtonText = Properties.Resources.MessageBox_OK;
+                    contentDialog.CloseButtonText = Properties.Resources.MessageBox_Cancel;
                     contentDialog.DefaultButton = (messageBox.DefaultResult == MessageBoxResult.OK) ? ContentDialogButton.Primary : ContentDialogButton.Close;
                     break;
                 case MessageBoxButton.YesNo:
-                    contentDialog.PrimaryButtonText = "_Yes";
-                    contentDialog.SecondaryButtonText = "_No";
+                    contentDialog.PrimaryButtonText = Properties.Resources.MessageBox_Yes;
+                    contentDialog.SecondaryButtonText = Properties.Resources.MessageBox_No;
                     contentDialog.DefaultButton = (messageBox.DefaultResult == MessageBoxResult.Yes) ? ContentDialogButton.Primary : ContentDialogButton.Secondary;
                     break;
                 case MessageBoxButton.YesNoCancel:
-                    contentDialog.PrimaryButtonText = "_Yes";
-                    contentDialog.SecondaryButtonText = "_No";
-                    contentDialog.CloseButtonText = "_Cancel";
+                    contentDialog.PrimaryButtonText = Properties.Resources.MessageBox_Yes;
+                    contentDialog.SecondaryButtonText = Properties.Resources.MessageBox_No;
+                    contentDialog.CloseButtonText = Properties.Resources.MessageBox_Cancel;
                     contentDialog.DefaultButton = (messageBox.DefaultResult == MessageBoxResult.Yes) ? ContentDialogButton.Primary :
                         (messageBox.DefaultResult == MessageBoxResult.No) ? ContentDialogButton.Secondary : ContentDialogButton.Close;
                     break;

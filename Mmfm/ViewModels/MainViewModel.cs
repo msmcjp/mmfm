@@ -215,9 +215,9 @@ namespace Mmfm
         private Func<FolderShortcutViewModel[]> CreateShortcutsGenerator(IEnumerable<FolderShortcutViewModel> extra) => () =>
         {
             var specialFolders = new FolderShortcutViewModel[] {
-                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Desktop" , defaultItemGroup, IconExtractor.Extract("shell32.dll", 34, true) ),
-                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Documents", defaultItemGroup, IconExtractor.Extract("shell32.dll", 1, true) ),
-                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "My Pictures", defaultItemGroup, IconExtractor.Extract("shell32.dll", 325, true) )
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), Properties.Resources.Desktop , defaultItemGroup, IconExtractor.Extract("shell32.dll", 34, true) ),
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Properties.Resources.MyDocuments, defaultItemGroup, IconExtractor.Extract("shell32.dll", 1, true) ),
+                new FolderShortcutViewModel(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), Properties.Resources.MyPictures, defaultItemGroup, IconExtractor.Extract("shell32.dll", 325, true) )
             };
 
             var drives = DriveInfo.GetDrives().Select(di =>

@@ -55,20 +55,21 @@ namespace Mmfm
                 if (fileCount + folderCount == 0) { return ""; }
 
                 var text = "";
-                if (fileCount > 0)
-                {
-                    text += $@"{fileCount} file{(fileCount > 1 ? "s" : "")}{(folderCount > 0 ? " / " : "")}";
-                }
-
                 if (folderCount > 0)
                 {
-                    text += $@"{folderCount} folder{(folderCount > 1 ? "s" : "")}";
+                    text += $"\U0001f4c1 {folderCount} ";
                 }
+
+                if (fileCount > 0)
+                {
+                    text += $"\U0001f4c4 {fileCount} ";
+                }
+             
                 return text;
             }
         }
 
-        public string SelectionStatusText => $"{(string.IsNullOrEmpty(SelectionText) ? "" :  "Selecting ")}{SelectionText}{(SelectionText.Length > 0 ? "." : "")}";
+        public string SelectionStatusText => $"{(string.IsNullOrEmpty(SelectionText) ? "" :  Properties.Resources.File_Selecting)}{SelectionText}";
    
         private Settings.FileManager settings;
         public Settings.FileManager Settings 

@@ -17,7 +17,7 @@ namespace Mmfm.Plugins
     {
         public string Name => "Favorite";
 
-        private readonly string FavoriteItemGroup = "\U0001f496 Favorite";
+        private readonly string FavoriteItemGroup = "\U0001f496 " + Properties.Resources.Favorite_ItemGroup;
 
         private NavigationViewModel Navigation => Host.ActiveFileManager?.Navigation;
      
@@ -114,8 +114,8 @@ namespace Mmfm.Plugins
             {
                 await Messenger?.SendAsync(new MessageBoxViewModel
                 {
-                    Caption = "Error",
-                    Text = $"{path} is not registered to favorite.",
+                    Caption = Properties.Resources.Caption_Error,
+                    Text = string.Format(Properties.Resources.Favorite_NotRegistered, path),
                     Icon = System.Windows.MessageBoxImage.Error,
                     Button = System.Windows.MessageBoxButton.OK
                 });
@@ -125,7 +125,7 @@ namespace Mmfm.Plugins
             var message = new MessageBoxViewModel
             {
                 Caption = "Confirm",
-                Text = $"Remove {path} from favorite?",
+                Text = string.Format(Properties.Resources.Favorite_Remove, path),
                 Icon = System.Windows.MessageBoxImage.Question,
                 Button = System.Windows.MessageBoxButton.YesNo
             };

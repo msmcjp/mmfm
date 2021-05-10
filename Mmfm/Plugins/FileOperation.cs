@@ -118,7 +118,7 @@ namespace Mmfm.Plugins
         {
             var message = new MessageBoxViewModel
             {
-                Caption = "Error",
+                Caption = Properties.Resources.Caption_Error,
                 Icon = MessageBoxImage.Error,
                 Button = MessageBoxButton.YesNo,
                 Text = messageText
@@ -164,7 +164,7 @@ namespace Mmfm.Plugins
 
             var dialog = new OperationProgressViewModel(operations)
             {
-                Caption = $"{(move ? "Moving" : "Copying")} {operations.Sum(o => o.Count)} files."
+                Caption = $"{(move ? Properties.Resources.File_Moving : Properties.Resources.File_Copying)} {operations.Sum(o => o.Count)} files."
             };
 
             await Messenger.SendAsync(dialog);
@@ -325,8 +325,8 @@ namespace Mmfm.Plugins
             {
                 Button = MessageBoxButton.YesNo,
                 Icon = MessageBoxImage.Question,
-                Caption = "Confirm",
-                Text = $"Are you sure you want to {(moveToRecycleBin ? $"send {selectionText} to the Recyle Bin" : $"delete {selectionText}")}?"
+                Caption = Properties.Resources.MessageBox_Confirm,
+                Text = string.Format(moveToRecycleBin ? Properties.Resources.File_Recycling : Properties.Resources.File_Deleting, selectionText)
             };
             await Messenger.SendAsync(messageBox);
             if (messageBox.Result != MessageBoxResult.Yes)
@@ -336,7 +336,7 @@ namespace Mmfm.Plugins
 
             await Messenger.SendAsync(new OperationProgressViewModel(operations)
             {
-                Caption = $"Deleting {operations.Sum(o => o.Count)} files."
+                Caption = string.Format(Properties.Resources.File_DeletingProgress, operations.Sum(o => o.Count))
             });
         }
 
@@ -390,7 +390,7 @@ namespace Mmfm.Plugins
 
                 var dialog = new OperationProgressViewModel(operations)
                 {
-                    Caption = $"Zipping {operations.Sum(o => o.Count)} files."
+                    Caption = string.Format(Properties.Resources.File_Zipping, operations.Sum(o => o.Count))
                 };
 
                 await Messenger.SendAsync(dialog);

@@ -24,10 +24,10 @@ namespace Mmfm
 
         public FilesViewModel() : base(new Dictionary<string, ISortDescription<FileViewModel>>()
         {
-            { "Name" , new SortDescriptionViewModel<FileViewModel>("Name", x => x.Name) },
-            { "Extension", new SortDescriptionViewModel<FileViewModel>("Extension", x => x.Extension) },
-            { "Modified" , new SortDescriptionViewModel<FileViewModel>("Modified", x => x.ModifiedAt, "Modified at   ") },
-            { "Size" ,new SortDescriptionViewModel<FileViewModel>("Size", x => x.FileSize, "Size    ") },
+            { "Name" , new SortDescriptionViewModel<FileViewModel>("Name", x => x.Name, Properties.Resources.Files_Name) },
+            { "Extension", new SortDescriptionViewModel<FileViewModel>("Extension", x => x.Extension, Properties.Resources.Files_Extension) },
+            { "Modified" , new SortDescriptionViewModel<FileViewModel>("Modified", x => x.ModifiedAt, Properties.Resources.Files_ModifiedAt) },
+            { "Size" ,new SortDescriptionViewModel<FileViewModel>("Size", x => x.FileSize, Properties.Resources.Files_Size) },
         })
         {
           
