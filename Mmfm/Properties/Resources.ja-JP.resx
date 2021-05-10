@@ -126,6 +126,9 @@
   <data name="Caption_Error" xml:space="preserve">
     <value>エラー</value>
   </data>
+  <data name="ContentDialog_Cancel" xml:space="preserve">
+    <value>キャンセル(_C)</value>
+  </data>
   <data name="Copy_IOException" xml:space="preserve">
     <value>ファイルのコピーに失敗しました。コピーを続けますか？</value>
   </data>
@@ -147,6 +150,9 @@
   <data name="DriveInfo_Removable" xml:space="preserve">
     <value>リムーバブルメディア</value>
   </data>
+  <data name="FavoriteRegister_Title" xml:space="preserve">
+    <value>お気に入りに登録する名前を入力してください：</value>
+  </data>
   <data name="Favorite_ItemGroup" xml:space="preserve">
     <value>お気に入り</value>
   </data>
@@ -156,8 +162,29 @@
   <data name="Favorite_Remove" xml:space="preserve">
     <value>{0} をお気に入りから削除しますか?</value>
   </data>
+  <data name="FileConflict_ApplyAll" xml:space="preserve">
+    <value>すべてに適用(_A)</value>
+  </data>
+  <data name="FileConflict_Destination" xml:space="preserve">
+    <value>コピー先</value>
+  </data>
+  <data name="FileConflict_Overwrite" xml:space="preserve">
+    <value>上書き (_O)</value>
+  </data>
+  <data name="FileConflict_Skip" xml:space="preserve">
+    <value>スキップ(_S)</value>
+  </data>
+  <data name="FileConflict_Source" xml:space="preserve">
+    <value>コピー元</value>
+  </data>
+  <data name="FileConflict_Title" xml:space="preserve">
+    <value>コピー先のフォルダは既に存在します：</value>
+  </data>
   <data name="FileDropList_Message" xml:space="preserve">
     <value>\nその他 {0} ファイル/フォルダ</value>
+  </data>
+  <data name="FileRename_Title" xml:space="preserve">
+    <value>新しいファイル名を入力してください：</value>
   </data>
   <data name="Files_Extension" xml:space="preserve">
     <value>拡張子</value>
@@ -246,6 +273,39 @@
   <data name="Rename_UnauthorizedException" xml:space="preserve">
     <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないため名前を変更できませんでした。名前の変更を続けますか？</value>
   </data>
+  <data name="SettingsEdit_AccentColor" xml:space="preserve">
+    <value>アクセント色</value>
+  </data>
+  <data name="SettingsEdit_Command" xml:space="preserve">
+    <value>コマンド</value>
+  </data>
+  <data name="SettingsEdit_Dark" xml:space="preserve">
+    <value>ダーク</value>
+  </data>
+  <data name="SettingsEdit_Font" xml:space="preserve">
+    <value>フォント</value>
+  </data>
+  <data name="SettingsEdit_HotKey" xml:space="preserve">
+    <value>ホットキー</value>
+  </data>
+  <data name="SettingsEdit_Keybinding" xml:space="preserve">
+    <value>キー割り当て</value>
+  </data>
+  <data name="SettingsEdit_Keybindings" xml:space="preserve">
+    <value>キー割り当て</value>
+  </data>
+  <data name="SettingsEdit_Light" xml:space="preserve">
+    <value>ライト</value>
+  </data>
+  <data name="SettingsEdit_Save" xml:space="preserve">
+    <value>保存(_S)</value>
+  </data>
+  <data name="SettingsEdit_Theme" xml:space="preserve">
+    <value>テーマ</value>
+  </data>
+  <data name="SettingsEdit_Title" xml:space="preserve">
+    <value>設定</value>
+  </data>
   <data name="Settings_FontSizeRange" xml:space="preserve">
     <value>{0} は {1} ～ {2} の範囲で指定してください。</value>
   </data>
@@ -260,6 +320,18 @@
   </data>
   <data name="Store_NotExpiredContent" xml:space="preserve">
     <value>お気に召しましたら是非ご購入をご検討ください。</value>
+  </data>
+  <data name="UserCommands_Command" xml:space="preserve">
+    <value>コマンド文字列</value>
+  </data>
+  <data name="UserCommands_Keybinding" xml:space="preserve">
+    <value>キー割り当て</value>
+  </data>
+  <data name="UserCommands_Name" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="UserCommands_Title" xml:space="preserve">
+    <value>ユーザー定義コマンド</value>
   </data>
   <data name="Zip_UnauthorizedException" xml:space="preserve">
     <value>ファイルは他のプロセスで使用中、もしくはアクセスする権限がないためZIPアーカイブに追加できませんでした。ZIPアーカイブを続けますか？</value>

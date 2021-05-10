@@ -6,14 +6,15 @@
              xmlns:local="clr-namespace:Mmfm"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:converter="clr-namespace:Mmfm.Converters"
+             xmlns:p="clr-namespace:Mmfm.Properties"
              xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:pt="http://propertytools.org/wpf"
              mc:Ignorable="d"
-             PrimaryButtonText="_Save"
+             PrimaryButtonText="{x:Static p:Resources.SettingsEdit_Save}"
              IsPrimaryButtonEnabled="{Binding HasNoErrors}"
-             CloseButtonText="_Cancel"
+             CloseButtonText="{x:Static p:Resources.ContentDialog_Cancel}"
              DefaultButton="Close"
-             Title="Settings">
+             Title="{x:Static p:Resources.SettingsEdit_Title}">
     <ScrollViewer ui:ScrollViewerHelper.AutoHideScrollBars="True">
         <StackPanel>
             <StackPanel.Resources>
@@ -22,7 +23,7 @@
             </StackPanel.Resources>
 
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Hot key"  Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <TextBlock Text="{x:Static p:Resources.SettingsEdit_HotKey}"  Style="{StaticResource SettingsCategoryTextStyle}"/>
                 <TextBox Text="{Binding HotKey}" HorizontalAlignment="Left" Width="200" Margin="10">
                     <i:Interaction.Behaviors>
                         <local:HotKeyEditBehavior/>
@@ -31,15 +32,15 @@
             </StackPanel>
             
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Theme" Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <TextBlock Text="{x:Static p:Resources.SettingsEdit_Theme}" Style="{StaticResource SettingsCategoryTextStyle}"/>
                 <StackPanel Orientation="Horizontal" Margin="10">
-                    <RadioButton IsChecked="{Binding Theme, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Dark}">Dark</RadioButton>
-                    <RadioButton IsChecked="{Binding Theme, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Light}">Light</RadioButton>
+                    <RadioButton IsChecked="{Binding Theme, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Dark}" Content="{x:Static p:Resources.SettingsEdit_Dark}"/>
+                    <RadioButton IsChecked="{Binding Theme, Converter={StaticResource EnumBoolConverter}, ConverterParameter=Light}" Content="{x:Static p:Resources.SettingsEdit_Light}"/>
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Accent color" Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <TextBlock Text="{x:Static p:Resources.SettingsEdit_AccentColor}" Style="{StaticResource SettingsCategoryTextStyle}"/>
                 <pt:ColorPicker 
                     Margin="10" 
                     Width="200" 
@@ -51,7 +52,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Font" Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <TextBlock Text="{x:Static p:Resources.SettingsEdit_Font}" Style="{StaticResource SettingsCategoryTextStyle}"/>
                 <StackPanel Orientation="Horizontal">
                     <ComboBox SelectedItem="{Binding FontFamily}" ItemsSource="{Binding FontFamilies}" Margin="10" MinWidth="200"/>
                     <TextBox x:Name="FontSize" Text="{Binding FontSize}" VerticalAlignment="Center">
@@ -69,11 +70,11 @@
                 </ItemsControl>
             </StackPanel>
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Key bindings" Style="{StaticResource SettingsCategoryTextStyle}"/>
+                <TextBlock Text="{x:Static p:Resources.SettingsEdit_Keybindings}" Style="{StaticResource SettingsCategoryTextStyle}"/>
                 <DataGrid ItemsSource="{Binding KeyBindings}" AutoGenerateColumns="False" Margin="20" CanUserAddRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Command" Binding="{Binding CommandName}" IsReadOnly="True"/>
-                        <DataGridTemplateColumn Header="Key binding">
+                        <DataGridTextColumn Header="{x:Static p:Resources.SettingsEdit_Command}" Binding="{Binding CommandName}" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="{x:Static p:Resources.SettingsEdit_Keybinding}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox BorderThickness="0" Text="{Binding KeyGesture, UpdateSourceTrigger=PropertyChanged}">

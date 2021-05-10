@@ -5,23 +5,24 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:ui="http://schemas.modernwpf.com/2019"
-             Title="A destination folder already contains :"
-             PrimaryButtonText="_Overwrite"
-             SecondaryButtonText="_Skip"
-             CloseButtonText="_Cancel"
+             xmlns:p="clr-namespace:Mmfm.Properties"
+             Title="{x:Static p:Resources.FileConflict_Title}"
+             PrimaryButtonText="{x:Static p:Resources.FileConflict_Overwrite}"
+             SecondaryButtonText="{x:Static p:Resources.FileConflict_Skip}"
+             CloseButtonText="{x:Static p:Resources.ContentDialog_Cancel}"
              DefaultButton="Close"
              mc:Ignorable="d">
     <StackPanel Orientation="Vertical">
         <Label Content="{Binding FileName}" FontWeight="Bold"/>
 
-        <Label Content="Source" Margin="0,10,0,10" FontWeight="Bold"/>
+        <Label Content="{x:Static p:Resources.FileConflict_Source}" Margin="0,10,0,10" FontWeight="Bold"/>
         <Label Content="{Binding SourceDirectory}" Margin="10,0" FontFamily="Segoe UI Emoji"/>
         <Label Content="{Binding SourceLastWriteTime}" Margin="10,0" FontFamily="Segoe UI Emoji"/>
 
-        <Label Content="Destination" Margin="0,10,0,10" FontWeight="Bold"/>
+        <Label Content="{x:Static p:Resources.FileConflict_Destination}" Margin="0,10,0,10" FontWeight="Bold"/>
         <Label Content="{Binding DestinationDirectory}" Margin="10,0" FontFamily="Segoe UI Emoji"/>
         <Label Content="{Binding DestinationLastWriteTime}" Margin="10,0" FontFamily="Segoe UI Emoji"/>
 
-        <CheckBox Content="_Apply to all" Margin="10,20,10,10" VerticalAlignment="Center" IsChecked="{Binding ApplyToAll}"/>
+        <CheckBox Content="{x:Static p:Resources.FileConflict_ApplyAll}" Margin="10,20,10,10" VerticalAlignment="Center" IsChecked="{Binding ApplyToAll}"/>
     </StackPanel>
 </ui:ContentDialog>

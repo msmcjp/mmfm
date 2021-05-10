@@ -6,10 +6,11 @@
     xmlns:local="clr-namespace:Mmfm"
     xmlns:c="clr-namespace:Mmfm.Commands"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:p="clr-namespace:Mmfm.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    Title="Enter new name of:"
+    Title="{x:Static p:Resources.FileRename_Title}"
     PrimaryButtonText="_OK"    
-    CloseButtonText="_Cancel"
+    CloseButtonText="{x:Static p:Resources.ContentDialog_Cancel}"
     DefaultButton="Primary"   
     mc:Ignorable="d"
     IsPrimaryButtonEnabled="{Binding CanRename}">

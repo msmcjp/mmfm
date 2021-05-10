@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:p="clr-namespace:Mmfm.Properties"
              xmlns:ui="http://schemas.modernwpf.com/2019"
-             CloseButtonText="_Cancel" 
+             CloseButtonText="{x:Static p:Resources.ContentDialog_Cancel}" 
              DefaultButton="Close"
              mc:Ignorable="d" >
     <i:Interaction.Triggers >

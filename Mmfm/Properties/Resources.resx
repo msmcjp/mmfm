@@ -126,6 +126,9 @@
   <data name="Caption_Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="ContentDialog_Cancel" xml:space="preserve">
+    <value>_Cancel</value>
+  </data>
   <data name="Copy_IOException" xml:space="preserve">
     <value>Cannot process file or directory. Do you continue to copy files?</value>
   </data>
@@ -147,6 +150,9 @@
   <data name="DriveInfo_Removable" xml:space="preserve">
     <value>Removable Media</value>
   </data>
+  <data name="FavoriteRegister_Title" xml:space="preserve">
+    <value>Enter your favaorite name of:</value>
+  </data>
   <data name="Favorite_ItemGroup" xml:space="preserve">
     <value>Favorite</value>
   </data>
@@ -156,8 +162,29 @@
   <data name="Favorite_Remove" xml:space="preserve">
     <value>Remove {0} from favorite?</value>
   </data>
+  <data name="FileConflict_ApplyAll" xml:space="preserve">
+    <value>_Apply to all</value>
+  </data>
+  <data name="FileConflict_Destination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="FileConflict_Overwrite" xml:space="preserve">
+    <value>_Overwrite</value>
+  </data>
+  <data name="FileConflict_Skip" xml:space="preserve">
+    <value>_Skip</value>
+  </data>
+  <data name="FileConflict_Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="FileConflict_Title" xml:space="preserve">
+    <value>A destination folder already contains :</value>
+  </data>
   <data name="FileDropList_Message" xml:space="preserve">
     <value>\nand other {0} files/folders.</value>
+  </data>
+  <data name="FileRename_Title" xml:space="preserve">
+    <value>Enter new name of:</value>
   </data>
   <data name="Files_Extension" xml:space="preserve">
     <value>Extension</value>
@@ -246,6 +273,39 @@
   <data name="Rename_UnauthorizedException" xml:space="preserve">
     <value>File is opened by other process or you don't have permission to access. Do you continue to rename file?</value>
   </data>
+  <data name="SettingsEdit_AccentColor" xml:space="preserve">
+    <value>Accent color</value>
+  </data>
+  <data name="SettingsEdit_Command" xml:space="preserve">
+    <value>Command</value>
+  </data>
+  <data name="SettingsEdit_Dark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SettingsEdit_Font" xml:space="preserve">
+    <value>Font</value>
+  </data>
+  <data name="SettingsEdit_HotKey" xml:space="preserve">
+    <value>Hot Key</value>
+  </data>
+  <data name="SettingsEdit_Keybinding" xml:space="preserve">
+    <value>Key binding</value>
+  </data>
+  <data name="SettingsEdit_Keybindings" xml:space="preserve">
+    <value>Key bindings</value>
+  </data>
+  <data name="SettingsEdit_Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="SettingsEdit_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SettingsEdit_Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsEdit_Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="Settings_FontSizeRange" xml:space="preserve">
     <value>{0} must be between {1} and {2}.</value>
   </data>
@@ -260,6 +320,18 @@
   </data>
   <data name="Store_NotExpiredContent" xml:space="preserve">
     <value>If you were touched, please puchase.</value>
+  </data>
+  <data name="UserCommands_Command" xml:space="preserve">
+    <value>Command</value>
+  </data>
+  <data name="UserCommands_Keybinding" xml:space="preserve">
+    <value>Key binding</value>
+  </data>
+  <data name="UserCommands_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="UserCommands_Title" xml:space="preserve">
+    <value>User commands</value>
   </data>
   <data name="Zip_UnauthorizedException" xml:space="preserve">
     <value>File is opened by other process or you don't have permission to access. Do you continue to zip file?</value>

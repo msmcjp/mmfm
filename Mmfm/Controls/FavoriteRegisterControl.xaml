@@ -5,11 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:c="clr-namespace:Mmfm.Commands"
+             xmlns:p="clr-namespace:Mmfm.Properties"
              xmlns:local="clr-namespace:Mmfm"
              xmlns:ui="http://schemas.modernwpf.com/2019"
-             Title="Enter your favaorite name of:"
+             Title="{x:Static p:Resources.FavoriteRegister_Title}"
              PrimaryButtonText="_OK"
-             CloseButtonText="_Cancel"
+             CloseButtonText="{x:Static p:Resources.ContentDialog_Cancel}"
              DefaultButton="Primary"
              mc:Ignorable="d">
     
