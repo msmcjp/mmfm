@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Dynamic;
+using System.IO;
 using System.Windows.Input;
 
 namespace Mmfm
@@ -13,7 +14,12 @@ namespace Mmfm
         {
             try
             {
-                var startInfo = new ProcessStartInfo(item.Path) { UseShellExecute = true };
+                var startInfo = new ProcessStartInfo(item.Path)
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = Path.GetDirectoryName(item.Path)
+                };
                 Process.Start(startInfo);
             }
             catch (Win32Exception)
