@@ -16,8 +16,7 @@ namespace Mmfm
             {
                 var startInfo = new ProcessStartInfo(item.Path)
                 {
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
+                    UseShellExecute = true,
                     WorkingDirectory = Path.GetDirectoryName(item.Path)
                 };
                 Process.Start(startInfo);
