@@ -502,6 +502,15 @@ namespace Mmfm.Properties {
         }
         
         /// <summary>
+        ///   QuickLook is not installed or launched. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string QuickLook_Timeout {
+            get {
+                return ResourceManager.GetString("QuickLook_Timeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Includes invalid char. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Rename_Invalid {

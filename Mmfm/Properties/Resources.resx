@@ -264,6 +264,9 @@
   <data name="Posfix_Copy" xml:space="preserve">
     <value> - Copy</value>
   </data>
+  <data name="QuickLook_Timeout" xml:space="preserve">
+    <value>QuickLook is not installed or launched.</value>
+  </data>
   <data name="Rename_Invalid" xml:space="preserve">
     <value>Includes invalid char.</value>
   </data>
