@@ -172,7 +172,15 @@ namespace Mmfm
             get => keyBindings;
             set
             {
-                keyBindings = value;
+                keyBindings = Defaults?.KeyBindings ?? new Dictionary<string, string>();
+                if (value != null)
+                {
+                    // merge two dictionaries(overwrite with `value`)
+                    keyBindings = keyBindings
+                        .Concat(value)
+                        .GroupBy((pair) =>  pair.Key, (key, values) => values.Last())
+                        .ToDictionary((pair) => pair.Key, (pair) => pair.Value);
+                }              
                 OnPropertyChanged(nameof(KeyBindings));
             }
         }
