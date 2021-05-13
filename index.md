@@ -2,7 +2,7 @@
 
 mmfm is a modern Dual-Pane File Manager App for Windows 10.
 
-![](assets/screenshots/main1.png) 
+![](assets/screenshots/main1.PNG) 
 
 ![](assets/screenshots/light-theme-main.png)
 
