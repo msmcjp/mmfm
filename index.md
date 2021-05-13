@@ -81,6 +81,14 @@ Open in Windows Explorer
 explorer %fullpath%
 ```
 
+
+
+## QuickLook Integration
+
+mmfm supports [QuickLook](https://github.com/QL-Win/QuickLook).  Install QuickLook and launch, you can preview file selected in mmfm. Default key-binding is `Alt+Q`. You can modify key-binding in Settings.
+
+
+
 ## Privacy Policy
 
 mmfm and MARSHMALLOW MACHINE Inc. do not store any personal information, keyboard typing.
