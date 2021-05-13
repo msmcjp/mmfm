@@ -211,7 +211,7 @@
     <value>移動中</value>
   </data>
   <data name="File_Recycling" xml:space="preserve">
-    <value>本当に {0} ごみ箱へ移動しますか？</value>
+    <value>本当に {0} をごみ箱へ移動しますか？</value>
   </data>
   <data name="File_Selecting" xml:space="preserve">
     <value>選択中: </value>

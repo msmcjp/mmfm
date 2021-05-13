@@ -619,7 +619,7 @@ namespace Mmfm.Properties {
         }
         
         /// <summary>
-        ///   Save に類似しているローカライズされた文字列を検索します。
+        ///   _Save に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsEdit_Save {
             get {

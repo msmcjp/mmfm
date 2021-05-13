@@ -301,7 +301,7 @@
     <value>Light</value>
   </data>
   <data name="SettingsEdit_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>_Save</value>
   </data>
   <data name="SettingsEdit_Theme" xml:space="preserve">
     <value>Theme</value>
