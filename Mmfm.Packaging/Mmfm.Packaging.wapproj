@@ -52,7 +52,7 @@
   <PropertyGroup>
     <ProjectGuid>4f54ca06-6f89-4b07-8134-bcf6b7c926ab</ProjectGuid>
     <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <DefaultLanguage>ja-JP</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <EntryPointProjectUniqueName>..\mmfm\Mmfm.csproj</EntryPointProjectUniqueName>
