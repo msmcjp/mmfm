@@ -1,0 +1,15 @@
+﻿<ContentDialog x:Class="Mmfm.Controls.StoreContextControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             PrimaryButtonText="Purchase"
+             SecondaryButtonText="No, thank you."
+             IsSecondaryButtonEnabled="{Binding IsNotExpired}"                  
+             DefaultButton="Primary"
+             Title="{Binding Title}"
+             mc:Ignorable="d">
+    <Grid>
+        <TextBlock Text="{Binding Content}"/>
+    </Grid>
+</ContentDialog>

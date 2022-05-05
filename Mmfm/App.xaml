@@ -1,49 +1,50 @@
-﻿<Application x:Class="Mmfm.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Mmfm"
-             xmlns:plugin="clr-namespace:Mmfm.Plugins"
-             StartupUri="MainWindow.xaml"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:ui="http://schemas.modernwpf.com/2019">
+﻿<Application
+    x:Class="Mmfm.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:Mmfm.ViewModel"
+    xmlns:control="using:Mmfm.Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="using:Mmfm">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources />
-                <ui:XamlControlsResources />
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!-- Other merged dictionaries here -->
-                <ResourceDictionary>
-                    <sys:Double x:Key="ContentDialogMaxWidth">900</sys:Double>
-
-                    <Style TargetType="TextBlock" x:Key="SettingsCategoryTextStyle">
-                        <Setter Property="FontSize" Value="20"/>
-                    </Style>
-
-                    <DataTemplate DataType="{x:Type local:OperationProgressViewModel}">
-                        <local:OperationProgressControl />
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:CommandPaletteViewModel}">
-                        <local:CommandPaletteControl/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:FileConflictViewModel}">
-                        <local:FileConflictControl/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:FileRenameViewModel}">
-                        <local:FileRenameControl/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:FavoriteRegisterViewModel}">
-                        <local:FavoriteRegisterControl/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:SettingsEditViewModel}">
-                        <local:SettingsEditControl/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:StoreContextViewModel}">
-                        <local:StoreContextControl/>
-                    </DataTemplate>
-
-                    <sys:Double x:Key="FileManagerFontSize">14</sys:Double>
-                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
+            <!-- Other app resources here -->
+            <ResourceDictionary>
+                <sys:Double x:Key="ContentDialogMaxWidth">900</sys:Double>
+
+                <Style TargetType="TextBlock" x:Key="SettingsCategoryTextStyle">
+                    <Setter Property="FontSize" Value="20"/>
+                </Style>
+
+                <DataTemplate DataType="{x:Type vm:OperationProgressViewModel}">
+                    <controls:OperationProgressControl />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:CommandPaletteViewModel}">
+                    <controls:CommandPaletteControl/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:FileConflictViewModel}">
+                    <controls:FileConflictControl/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:FileRenameViewModel}">
+                    <controls:FileRenameControl/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:FavoriteRegisterViewModel}">
+                    <controls:FavoriteRegisterControl/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:SettingsEditViewModel}">
+                    <controls:SettingsEditControl/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type local:StoreContextViewModel}">
+                    <locontrolscal:StoreContextControl/>
+                </DataTemplate>
+
+                <sys:Double x:Key="FileManagerFontSize">14</sys:Double>
+            </ResourceDictionary>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,0 +1,43 @@
+﻿<ContentDialog x:Class="Mmfm.Controls.FileRenameControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:Mmfm"
+    xmlns:c="clr-namespace:Mmfm.Commands"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:p="clr-namespace:Mmfm.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title=""
+    PrimaryButtonText="_OK"    
+    CloseButtonText=""
+    DefaultButton="Primary"   
+    mc:Ignorable="d"
+    IsPrimaryButtonEnabled="{Binding CanRename}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" Text="{Binding Current}" Margin="10" FontSize="18" FontWeight="Bold"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox x:Name="FileName" Width="300" Text="{Binding FileNameWithoutExtension, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,0,10" FontSize="18"/>
+            <TextBlock Text="." VerticalAlignment="Bottom" Margin="5,10,5,10" FontSize="20"/>
+            <TextBox x:Name="Extension" Width="100" Text="{Binding FileExtension, UpdateSourceTrigger=PropertyChanged}" Margin="0,10,10,10" FontSize="18" />
+        </StackPanel>
+
+        <TextBlock x:Name="NewFileName" Grid.Row="2" Text="{Binding NextFileName}" Visibility="Collapsed"/>
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding ElementName=NewFileName}" Margin="10,0" IsTabStop="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding ErrorContent}" Foreground="Red"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+
+</ContentDialog>

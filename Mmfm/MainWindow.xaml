@@ -1,133 +1,41 @@
-﻿<Window x:Class="Mmfm.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Mmfm"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:c="clr-namespace:Mmfm.Commands"
-        xmlns:converters="clr-namespace:Mmfm.Converters"
-        mc:Ignorable="d" 
-        xmlns:ui="http://schemas.modernwpf.com/2019"
-        ui:WindowHelper.UseModernWindowStyle="True"
-        ui:TitleBar.ExtendViewIntoTitleBar="True"
-        Width="600"
-        Height="600"
-        MinWidth="600"
-        MinHeight="600"
-        WindowStartupLocation="CenterScreen" 
-        Title="{Binding DualFileManager.ActiveFileManager.Navigation.WindowTitle}"
-        local:InputBindingsSourceAttachedProperty.InputBindingsSource="{Binding InputBindings}"
-        local:HwndSourceHookAttachedProperty.WndProc="{Binding DriveInfoMonitor.WndProc}"
-        Loaded="Window_Loaded"
-        Closing="Window_Closing">
+﻿<Window
+    x:Class="Mmfm.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:controls="using:Mmfm.Controls"    
+    mc:Ignorable="d">
 
-    <Window.Resources>
-        <c:FocusCommand x:Key="FocusCommand"/>
-        <converters:PixelsToGridLengthConverter x:Key="PixelsToGridLength" />
-        <Style x:Key="AppTitleBarButtonStyle" TargetType="ui:TitleBarButton">
-            <Setter Property="IsActive" Value="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}"/>
-        </Style>
-    </Window.Resources>
-
-    <Window.DataContext>
-        <local:MainViewModel/>
-    </Window.DataContext>
-    
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
-                                MethodName="InitializeLicenseAsync"/>
-            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=UpdateSettingsCommand}" 
-                                   CommandParameter="{Binding Settings}"/>
-            <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
-                                MethodName="RestoreGrid"/>
-            <i:InvokeCommandAction Command="{Binding LoadResourcesCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                   CommandParameter="{Binding ResourceNames}"/>
-        </i:EventTrigger>
-
-        <i:EventTrigger EventName="Closing" >
-            <i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
-                                MethodName="SaveWindow"/>
-            <i:CallMethodAction TargetObject="{Binding}" MethodName="Dispose"/>
-        </i:EventTrigger>
-
-        <i:PropertyChangedTrigger Binding="{Binding Settings}">
-            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=UpdateSettingsCommand}" 
-                                   CommandParameter="{Binding Settings}"/>
-        </i:PropertyChangedTrigger>
-    </i:Interaction.Triggers>
-    
     <Grid>
-        <Grid.InputBindings>
-            <KeyBinding Command="" Gesture="Tab"/>
-        </Grid.InputBindings>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid 
-            x:Name="AppTitleBar"
-            Background="{DynamicResource SystemControlBackgroundAccentBrush}"
-            Height="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=(ui:TitleBar.Height)}">
+        <muxc:MenuBar Grid.Row="0">
+            <muxc:MenuBarItem Title="File">
+                <MenuFlyoutItem Text="Exit" Click="Exit_Click"/>
+            </muxc:MenuBarItem>
 
-            <Grid.Style>
-                <Style TargetType="Grid">
-                    <Setter Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False">
-                            <Setter Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Style>
+            <muxc:MenuBarItem Title="View">
+                <MenuFlyoutItem x:Name="ShowCommandPallete" Text="Show Command Pallete" Click="ShowCommandPallette_Click" >
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control,Shift" Key="P"/>
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+            </muxc:MenuBarItem>
+        </muxc:MenuBar>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=(ui:TitleBar.SystemOverlayRightInset), Converter={StaticResource PixelsToGridLength}}" />
-            </Grid.ColumnDefinitions>
+        <controls:DualFileManagerControl Grid.Row="1"/>
 
-            <TextBlock
-                FontSize="14"
-                Grid.ColumnSpan="2"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Margin="7"
-                FontWeight="Bold"
-                Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" />
-
-            <ui:TitleBarButton
-                Grid.Column="0"
-                FontFamily="Segoe UI Emoji"
-                FontSize="14"
-                Content="&#x2630;"
-                HorizontalAlignment="Right"
-                Style="{StaticResource AppTitleBarButtonStyle}"
-                IsEnabled="{Binding IsNotShowingContentDialog}"
-                Command="{Binding ShowCommandPalleteCommand}">
-            </ui:TitleBarButton>
-        </Grid>
-
-        <Grid x:Name="Grid" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <local:FileManagerControl x:Name="First" Grid.Column="0" DataContext="{Binding DualFileManager.First}" IsActive="{Binding IsActive, Mode=OneWayToSource}" />
-            <GridSplitter HorizontalAlignment="Stretch" Grid.Column="1" IsTabStop="False"/>
-            <local:FileManagerControl x:Name="Second"  Grid.Column="2" DataContext="{Binding DualFileManager.Second}" IsActive="{Binding IsActive, Mode=OneWayToSource}" />
-        </Grid>
-
-        <StatusBar Grid.Row="2" Height="24">
-            <TextBlock Text="{Binding DualFileManager.ActiveFileManager.SelectionStatusText}"/>
-        </StatusBar>
-
-        <ui:ProgressRing x:Name="ProgressRing" Grid.Row="1" Width="64" Height="64" />
-
-        <Border x:Name="ContentDialogBorder" Grid.Row="1" VerticalAlignment="Stretch"/>
+        <controls:CommandPaletteControl 
+            x:Name="CommandPallette" 
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top" 
+            Visibility="Collapsed" 
+            Margin="0,-10,0,0"/>
     </Grid>
 </Window>

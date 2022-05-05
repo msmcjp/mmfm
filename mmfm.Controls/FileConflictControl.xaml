@@ -1,0 +1,25 @@
+﻿<ContentDialog x:Class="Mmfm.Controls.FileConflictControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"            
+             Title=""
+             PrimaryButtonText=""
+             SecondaryButtonText=""
+             CloseButtonText=""
+             DefaultButton="Close"
+             mc:Ignorable="d">
+    <StackPanel Orientation="Vertical">
+        <TextBlock Text="{Binding FileName}" FontWeight="Bold"/>
+
+        <TextBlock Text="" Margin="0,10,0,10" FontWeight="Bold"/>
+        <TextBlock Text="{Binding SourceDirectory}" Margin="10,0" FontFamily="Segoe UI Emoji"/>
+        <TextBlock Text="{Binding SourceLastWriteTime}" Margin="10,0" FontFamily="Segoe UI Emoji"/>
+
+        <TextBlock Text="" Margin="0,10,0,10" FontWeight="Bold"/>
+        <TextBlock Text="{Binding DestinationDirectory}" Margin="10,0" FontFamily="Segoe UI Emoji"/>
+        <TextBlock Text="{Binding DestinationLastWriteTime}" Margin="10,0" FontFamily="Segoe UI Emoji"/>
+
+        <CheckBox Content="" Margin="10,20,10,10" VerticalAlignment="Center" IsChecked="{Binding ApplyToAll}"/>
+    </StackPanel>
+</ContentDialog>
